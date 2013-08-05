@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainframe.ui'
 #
-# Created: Tue Aug 28 21:40:39 2012
-#      by: pyside-uic 0.2.14 running on PySide 1.1.1
+# Created: Wed Jul 31 22:03:24 2013
+#      by: pyside-uic 0.2.14 running on PySide 1.2.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -52,7 +52,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.tree)
         self.toolBox.addItem(self.page1, "")
         self.page2 = QtGui.QWidget()
-        self.page2.setGeometry(QtCore.QRect(0, 0, 256, 393))
+        self.page2.setGeometry(QtCore.QRect(0, 0, 98, 71))
         self.page2.setObjectName("page2")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.page2)
         self.verticalLayout_4.setSpacing(3)
@@ -100,6 +100,8 @@ class Ui_MainWindow(object):
         self.menuHelp.setObjectName("menuHelp")
         self.menuDebug = QtGui.QMenu(self.menubar)
         self.menuDebug.setObjectName("menuDebug")
+        self.menuTask = QtGui.QMenu(self.menubar)
+        self.menuTask.setObjectName("menuTask")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -121,6 +123,12 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionFile_List = QtGui.QAction(MainWindow)
         self.actionFile_List.setObjectName("actionFile_List")
+        self.actionDefault = QtGui.QAction(MainWindow)
+        self.actionDefault.setCheckable(True)
+        self.actionDefault.setObjectName("actionDefault")
+        self.actionAuto = QtGui.QAction(MainWindow)
+        self.actionAuto.setCheckable(True)
+        self.actionAuto.setObjectName("actionAuto")
         self.menuFile.addAction(self.actionTaskDir)
         self.menuFile.addAction(self.actionTaskFile)
         self.menuFile.addAction(self.actionClose)
@@ -129,7 +137,11 @@ class Ui_MainWindow(object):
         self.menuHelp.addAction(self.actionAbout)
         self.menuHelp.addAction(self.actionAbout_Qt)
         self.menuDebug.addAction(self.actionFile_List)
+        self.menuTask.addAction(self.actionAuto)
+        self.menuTask.addAction(self.actionDefault)
+        self.menuTask.addSeparator()
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuTask.menuAction())
         self.menubar.addAction(self.menuDebug.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
@@ -143,9 +155,11 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionAbout, QtCore.SIGNAL("triggered()"), MainWindow.OnAbout)
         QtCore.QObject.connect(self.actionAbout_Qt, QtCore.SIGNAL("triggered()"), MainWindow.OnAbout_Qt)
         QtCore.QObject.connect(self.toolBox, QtCore.SIGNAL("currentChanged(int)"), MainWindow.OnToolBoxChanged)
-        QtCore.QObject.connect(self.tree, QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)"), MainWindow.OnTreeItemPressed)
-        QtCore.QObject.connect(self.db_tree, QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)"), MainWindow.OnTreeItemPressed)
-        QtCore.QObject.connect(self.actionFile_List, QtCore.SIGNAL("triggered()"), MainWindow.OnDebugMenu)
+        QtCore.QObject.connect(self.tree, QtCore.SIGNAL("itemExpanded(QTreeWidgetItem*)"), MainWindow.OnTreeItemSelected)
+        QtCore.QObject.connect(self.tree, QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)"), MainWindow.OnTreeItemSelected)
+        QtCore.QObject.connect(self.db_tree, QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)"), MainWindow.OnTreeItemSelected)
+        QtCore.QObject.connect(self.actionFile_List, QtCore.SIGNAL("triggered()"), MainWindow.OnFileList)
+        QtCore.QObject.connect(self.menuTask, QtCore.SIGNAL("triggered(QAction*)"), MainWindow.OnTaskMenu)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -159,6 +173,7 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuDebug.setTitle(QtGui.QApplication.translate("MainWindow", "Debug", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuTask.setTitle(QtGui.QApplication.translate("MainWindow", "Task", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTaskDir.setText(QtGui.QApplication.translate("MainWindow", "Task Dir", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTaskDir.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+D", None, QtGui.QApplication.UnicodeUTF8))
@@ -171,4 +186,6 @@ class Ui_MainWindow(object):
         self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_Qt.setText(QtGui.QApplication.translate("MainWindow", "About Qt", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFile_List.setText(QtGui.QApplication.translate("MainWindow", "File List", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDefault.setText(QtGui.QApplication.translate("MainWindow", "Default", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAuto.setText(QtGui.QApplication.translate("MainWindow", "Auto", None, QtGui.QApplication.UnicodeUTF8))
 

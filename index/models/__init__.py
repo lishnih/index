@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2012-03-01
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import os
 from datetime import datetime
 
@@ -14,89 +17,13 @@ DBSession = scoped_session(sessionmaker())
 Base = declarative_base()
 
 
-class Task(Base):                               # rev. 20130224
-    __tablename__ = 'tasks'
-    id = Column(Integer, primary_key=True)
-
-    name      = Column(String)                  # Имя задачи
-    status    = Column(Integer)                 # Состояние
-    img       = Column(String)                  # Изображение
-    pos_x     = Column(Integer)                 # Позиция
-    pos_y     = Column(Integer)
-    count     = Column(Integer)                 # Кол-во элементов в задаче
-    method    = Column(String)                  # Метод, которым будут обрабатываться данные
-    created   = Column(Integer, default=datetime.utcnow)  # Время создания задания
-    updated   = Column(Integer, onupdate=datetime.utcnow) # Время обновления задания
-
-#     def __init__(self, **kargs):
-#         Base.__init__(self, **kargs)
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
-    def __unicode__(self):
-        return u"<Задача '{0}' (Состояние {1})>".format(self.name, self.status)
-
-
-class Source(Base):                             # rev. 20130224
-    __tablename__ = 'sources'
-    id = Column(Integer, primary_key=True)
-    _tasks_id = Column(Integer, ForeignKey('tasks.id', onupdate='CASCADE', ondelete='CASCADE'))
-    _task = relationship(Task, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
-
-    name      = Column(String)                  # Имя файла
-    type      = Column(String)                  # Файл/директория
-    status    = Column(Integer)                 # Состояние
-    method    = Column(String)                  # для пакета index
-    indexed   = Column(Integer, default=datetime.utcnow)  # Время последней индексации
-
-    def __init__(self, **kargs):
-        Base.__init__(self, **kargs)
-        if   os.path.isdir(self.name):
-            self.type = 'dir'
-        elif os.path.isfile(self.name):
-            self.type = 'file'
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
-    def __unicode__(self):
-        return u"<Источник '{0}' <{1}> (Состояние {2})>".format(self.name, self.type, self.status)
-
-
-class Option(Base):                             # rev. 20130223
-    __tablename__ = 'options'
-    id = Column(Integer, primary_key=True)
-    _tasks_id = Column(Integer, ForeignKey('tasks.id', onupdate='CASCADE', ondelete='CASCADE'))
-    _task = relationship(Task, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
-    _source_id = Column(Integer, ForeignKey('sources.id', onupdate='CASCADE', ondelete='CASCADE'))
-    _source = relationship(Source, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
-
-    name      = Column(String)                  # Имя параметра
-    type      = Column(String)                  # Тип
-    status    = Column(Integer)                 # Состояние
-    value     = Column(Integer)                 # Значение
-
-#     def __init__(self, **kargs):
-#         Base.__init__(self, **kargs)
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
-    def __unicode__(self):
-        return u"<Параметр '{0}' <{1}>='{2}' (Состояние {3})>".format(self.name, self.type, self.value, self.status)
-
-
-class Dir(Base):                                # rev. 20120930
+class Dir(Base):                                # rev. 20130730
     __tablename__ = 'dirs'
     id = Column(Integer, primary_key=True)
-    _sources_id = Column(Integer, ForeignKey('sources.id', onupdate='CASCADE', ondelete='CASCADE'))
-    _source = relationship(Source, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
 
     name      = Column(String)                  # Имя директории
-    ndirs     = Column(Integer)                 # Кол-во поддиректорий
-    nfiles    = Column(Integer)                 # Суммарное кол-во файлов
-    volume    = Column(Integer)                 # Объём директории
+    location  = Column(String)                  # Имя компьютера
+    status    = Column(Integer)                 # Состояние
 
 #   def __init__(self, **kargs):
 #       Base.__init__(self, **kargs)
@@ -105,10 +32,10 @@ class Dir(Base):                                # rev. 20120930
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Директория '{0}'>".format(self.name)
+        return "<Директория '{0}' ({1})>".format(self.name, self.status)
 
 
-class File(Base):                               # rev. 20120928
+class File(Base):                               # rev. 20130730
     __tablename__ = 'files'
     id = Column(Integer, primary_key=True)
     _dirs_id = Column(Integer, ForeignKey('dirs.id', onupdate='CASCADE', ondelete='CASCADE'))
@@ -117,6 +44,7 @@ class File(Base):                               # rev. 20120928
     name      = Column(String)                  # Имя файла
     size      = Column(Integer)                 # Размер
     mtime     = Column(Integer)                 # Время модификации
+    status    = Column(Integer)                 # Состояние
 
     def __init__(self, **kargs):
         Base.__init__(self, **kargs)
@@ -126,21 +54,33 @@ class File(Base):                               # rev. 20120928
             self.mtime = statinfo.st_mtime
 
             if self._dir:
-                if self._dir.nfiles is None:
-                    self._dir.nfiles = 0
-                if self._dir.volume is None:
-                    self._dir.volume = 0
-
-                self._dir.nfiles += 1
-                self._dir.volume += self.size
-
-            self.name  = os.path.basename(self.name)
+                self.name = os.path.basename(self.name)
 
     def __str__(self):
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Файл '{0}'>".format(self.name)
+        return "<Файл '{0}' ({1})>".format(self.name, self.status)
+
+
+class Handler(Base):                            # rev. 20130730
+    __tablename__ = 'handlers'
+    id = Column(Integer, primary_key=True)
+
+    name      = Column(String)                  # Имя обработчика
+    status    = Column(Integer)                 # Состояние
+    created   = Column(Integer, default=datetime.utcnow)  # Время создания
+    updated   = Column(Integer, onupdate=datetime.utcnow) # Время обновления
+    options   = Column(String)                  # для пакета index
+
+#   def __init__(self, **kargs):
+#       Base.__init__(self, **kargs)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def __unicode__(self):
+        return "<Источник '{0}' <{1}> (Состояние {2})>".format(self.name, self.type, self.status)
 
 
 class Sheet(Base):                              # rev. 20120913
@@ -169,12 +109,14 @@ class Sheet(Base):                              # rev. 20120913
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Таблица '{0}' (файл: '{1}')>".format(self.name, self._file.name)
+        return "<Таблица '{0}' (файл: '{1}')>".format(self.name, self._file.name)
 
 
 class Doc(Base):                                # rev. 20121020
     __tablename__ = 'docs'
     id = Column(Integer, primary_key=True)
+    _handlers_id = Column(Integer, ForeignKey('handlers.id', onupdate="CASCADE", ondelete="CASCADE"))
+    _handler = relationship(Handler, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
 
     name       = Column(String)                 # Номер документа
     doc_pre    = Column(String)
@@ -189,7 +131,7 @@ class Doc(Base):                                # rev. 20121020
         if not self.name:
             name_list = filter(lambda x: x, [self.doc_pre, self.doc_seq])
             name_list = map(unicode, name_list)
-            self.name = u"/".join(name_list)
+            self.name = "/".join(name_list)
             if self.doc_sign:
                 self.name += ' ' + format(self.doc_sign)
 
@@ -197,7 +139,7 @@ class Doc(Base):                                # rev. 20121020
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Документ ({0}) '{1}' от '{2}'>".format(self.type, self.name, self.date_str)
+        return "<Документ ({0}) '{1}' от '{2}'>".format(self.type, self.name, self.date_str)
 
 
 class Piece(Base):                              # rev. 20121020
@@ -214,13 +156,13 @@ class Piece(Base):                              # rev. 20121020
         if not self.name:
             name_list = filter(lambda x: x, [self.piece_type, self.piece_name, self.piece_scheme])
             name_list = map(unicode, name_list)
-            self.name = u" ".join(name_list)
+            self.name = " ".join(name_list)
 
     def __str__(self):
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Изделие '{0}'>".format(self.name)
+        return "<Изделие '{0}'>".format(self.name)
 
 
 class Piece_entry(Base):                        # rev. 20121020
@@ -249,13 +191,13 @@ class Piece_entry(Base):                        # rev. 20121020
     def __init__(self, **kargs):
         Base.__init__(self, **kargs)
         if not self.name:
-            self.name = u"{0} [{1}]".format(self.piece, self.y)
+            self.name = "{0} [{1}]".format(self.piece, self.y)
 
     def __str__(self):
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Запись изделия '{0}' (лист: '{1}')>".format(self.name, self._sheet.name)
+        return "<Запись изделия '{0}' (лист: '{1}')>".format(self.name, self._sheet.name)
 
 
 class Joint(Base):                              # rev. 20121015
@@ -278,7 +220,7 @@ class Joint(Base):                              # rev. 20121015
         if not self.name:
             name_list = filter(lambda x: x, [self.joint_pre, self.joint_line, self.joint_seq])
             name_list = map(unicode, name_list)
-            self.name = u"-".join(name_list)
+            self.name = "-".join(name_list)
 #             if self.joint_sign:
 #                 self.name += ' ' + format(self.joint_sign)
 
@@ -286,7 +228,7 @@ class Joint(Base):                              # rev. 20121015
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Стык '{0}'>".format(self.name)
+        return "<Стык '{0}'>".format(self.name)
 
 
 class Joint_entry(Base):                        # rev. 20121020
@@ -315,15 +257,10 @@ class Joint_entry(Base):                        # rev. 20121020
     def __init__(self, **kargs):
         Base.__init__(self, **kargs)
         if not self.name:
-            self.name = u"{0} [{1}]".format(self.joint, self.y)
+            self.name = "{0} [{1}]".format(self.joint, self.y)
 
     def __str__(self):
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Запись стыка '{0}' (лист: '{1}')>".format(self.name, self._sheet.name)
-
-
-
-if __name__ == '__main__':
-    pass
+        return "<Запись стыка '{0}' [{1}]>".format(self.name, self.y)

@@ -77,8 +77,11 @@ def reg_object1(Object, object_dict, PARENT=None, style='', brief=None):
 
 
 def set_object(OBJECT, PARENT, style='', brief=None):
+    if isinstance(OBJECT, basestring):
+        OBJECT = dict(name=OBJECT)
     if isinstance(OBJECT, dict):
         OBJECT = aObject(**OBJECT)
+
     show_object(OBJECT, PARENT, style=style, brief=brief)
 
     return OBJECT
@@ -87,9 +90,9 @@ def set_object(OBJECT, PARENT, style='', brief=None):
 def set_object1(OBJECT, PARENT, style='', brief=None):
     if isinstance(OBJECT, dict):
         OBJECT = aObject(**OBJECT)
-    count = PARENT.tree_item.childCount()
 
     tree_item = None
+    count = PARENT.tree_item.childCount()
     for i in range(count):
         child = PARENT.tree_item.child(i)
         name = child.text(0)
@@ -129,3 +132,9 @@ class aObject():
     def __init__(self, **kargs):
         for key, val in kargs.items():
             setattr(self, key, val)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def __unicode__(self):
+        return u"<Элемент>"

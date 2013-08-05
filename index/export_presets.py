@@ -24,17 +24,18 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     s = Settings()
-    s.init_path('datadir', '~~~')
+    s.init_path("datadir", "~~~")
     datadir = s.get("datadir")
 
-    logging.info(u"Export to '{0}'".format(datadir))
-
-    for key, value in globals().items():
-        if isinstance(value, dict):
-            description = value.get('description', '')
-            logging.info(u"{0:20}: {1}".format(key, description))
-            filename = os.path.join(datadir, "{0}.pickle".format(key))
-            save_entry(filename, value)
+    if datadir:
+        logging.info("Export to '{0}'".format(datadir))
+    
+        for key, value in globals().items():
+            if isinstance(value, dict):
+                description = value.get("description", "")
+                logging.info("{0:20}: {1}".format(key, description))
+                filename = os.path.join(datadir, "{0}.pickle".format(key))
+                save_entry(filename, value)
 
 
 if __name__ == '__main__':

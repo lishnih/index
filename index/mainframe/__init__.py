@@ -2,7 +2,7 @@
 # coding=utf-8
 # Stan 2011-06-22
 
-import sys, os, re
+import sys, os, re, fnmatch
 from PySide import QtCore, QtGui, __version__
 
 from mainframe_ui import Ui_MainWindow
@@ -46,6 +46,10 @@ class MainFrame(QtGui.QMainWindow):
 
         # Обрабатываем параметры
         self.proceed_args(args)
+
+        # Обновляем задачи
+        self.proceed_methods()
+        self.set_method()   # Auto is default
 
 
 # Callback-функции для Таймера
@@ -93,7 +97,7 @@ class MainFrame(QtGui.QMainWindow):
             self.set_status(selected_dir)
 
             # Запускаем обработку
-            th.start(ProceedInit, selected_dir, self.s, {}, tree_widget=self.ui.tree)
+            th.start(ProceedInit, selected_dir, filename=self.default_method, tree_widget=self.ui.tree)
 
 
     def OnTaskFile(self):
@@ -114,7 +118,7 @@ class MainFrame(QtGui.QMainWindow):
             self.set_status(selected_file)
 
             # Запускаем обработку
-            th.start(ProceedInit, selected_file, self.s, {}, tree_widget=self.ui.tree)
+            th.start(ProceedInit, selected_file, filename=self.default_method, tree_widget=self.ui.tree)
 
 
     def OnClose(self):
@@ -125,7 +129,7 @@ class MainFrame(QtGui.QMainWindow):
         self.ui.tree.clear()
 
 
-    def OnDebugMenu(self):
+    def OnFileList(self):
         from export import tracing
 
         dialog = QtGui.QDialog(self)
@@ -146,7 +150,11 @@ class MainFrame(QtGui.QMainWindow):
         dialog.activateWindow()
 
 
-    def OnTreeItemPressed(self, item, prev):
+    def OnTaskMenu(self, action):
+        self.set_method(action.text())
+
+
+    def OnTreeItemSelected(self, item, prev=None):
         if not item:
             self.ui.text1.setHtml('')
             self.ui.text2.setHtml('')
@@ -230,4 +238,35 @@ class MainFrame(QtGui.QMainWindow):
 
             # Запускаем обработку
             args = dict(args._get_kwargs())
-            th.start(ProceedInit, args['files'], self.s, args, tree_widget=self.ui.tree)
+
+            datadir  = self.s.get("datadir", '.')
+            method   = args.get("method", "Default")
+            filename = os.path.join(datadir, "{0}.pickle".format(method))
+
+            th.start(ProceedInit, args['files'], filename=filename, tree_widget=self.ui.tree)
+
+
+    def set_method(self, method=""):
+        self.default_method = method
+        if method:
+            self.set_status("Current method: {0}".format(method))
+
+
+    def proceed_methods(self):
+        datadir = self.s.get("datadir")
+
+        matches = []
+        for root, dirnames, filenames in os.walk(datadir):
+            for filename in fnmatch.filter(filenames, '*.pickle'):
+                matches.append(os.path.join(root, filename))
+
+        alignmentGroup = QtGui.QActionGroup(self)
+        alignmentGroup.addAction(self.ui.actionAuto)
+        alignmentGroup.addAction(self.ui.actionDefault)
+
+        for i in matches:
+            action = QtGui.QAction(i, self, checkable=True)
+            self.ui.menuTask.addAction(action)
+            alignmentGroup.addAction(action)
+
+        self.ui.actionAuto.setChecked(True)

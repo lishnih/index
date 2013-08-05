@@ -27,8 +27,7 @@ def parse_doc(sh, options, SHEET):
     doc_objects  = get_list(options.get('doc_objects'))
     doc_objects1 = get_list(options.get('doc_objects1'))
 
-    TASK = SHEET._file._dir._source._task
-    doc_dict = dict(_task=TASK)
+    doc_dict = dict()
     test = u""
 
     last_y, last_x = None, None
@@ -137,8 +136,7 @@ def parse_table_iter(sh, options, SHEET):
     for j in xrange(row_start, row_stop):
         typical_column = get_value(sh, j, typical_index) if typical_index else True
         if typical_column:
-            TASK = SHEET._file._dir._source._task
-            row_dict = dict(_task=TASK, j=j)
+            row_dict = dict(j=j)
             test = u"Номер строки: {0}\n".format(j)
 
             if col_mode == 'column':

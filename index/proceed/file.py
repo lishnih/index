@@ -27,7 +27,8 @@ def proceed_file2(filename, options, DIR):
     root, ext = os.path.splitext(basename)
     ext = ext.lower()
 
-    file_dict = dict(_dir=DIR, name=filename)
+    file_dict = dict(_dir=DIR, name=basename)
+    FILE = reg_object(File, file_dict, DIR)
 
     if ext == '.xls' or ext == '.xlsx':
         # Sheet
@@ -41,10 +42,10 @@ def proceed_file2(filename, options, DIR):
         sheets_list = filter_list(sheets, sheets_filter)
 
         brief = [sheets, '---', sheets_list]
-        FILE = reg_object(File, file_dict, DIR, brief=brief)
+        FILE.tree_item.setBrief(brief)
 
         if ext == '.xlsx':
-            reg_warning(FILE, "formatting_info=True not yet implemented")
+            reg_warning(FILE, "'formatting_info=True' not yet implemented")
 
         nsheets = book.nsheets
         FILE.nsheets = nsheets
@@ -56,5 +57,4 @@ def proceed_file2(filename, options, DIR):
             book.unload_sheet(name)
         return
 
-    file_dict['name'] = basename
-    FILE = set_object(file_dict, DIR, brief=u"Этот файл не индексируется!")
+#     FILE = set_object(file_dict, DIR, brief=u"Этот файл не индексируется!")

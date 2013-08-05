@@ -78,6 +78,9 @@ class Item(QtGui.QTreeWidgetItem):
             self.set_bold()
         if 'I' in style:
             self.set_italic()
+        if 'D' in style:
+            self.set_quiet()
+#           self.setDisabled(True)
         if 'E' in style:
             self.setExpanded(True)
 
@@ -92,6 +95,10 @@ class Item(QtGui.QTreeWidgetItem):
         font = self.font(0)
         font.setItalic(True)
         self.setFont(0, font)
+
+
+    def set_quiet(self):
+        self.setForeground(0, QtGui.QBrush(QtCore.Qt.gray))
 
 
 # Элемент дерева - директория

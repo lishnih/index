@@ -92,8 +92,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>256</width>
-          <height>393</height>
+          <width>98</width>
+          <height>71</height>
          </rect>
         </property>
         <attribute name="label">
@@ -197,7 +197,16 @@
     </property>
     <addaction name="actionFile_List"/>
    </widget>
+   <widget class="QMenu" name="menuTask">
+    <property name="title">
+     <string>Task</string>
+    </property>
+    <addaction name="actionAuto"/>
+    <addaction name="actionDefault"/>
+    <addaction name="separator"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTask"/>
    <addaction name="menuDebug"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -258,6 +267,22 @@
   <action name="actionFile_List">
    <property name="text">
     <string>File List</string>
+   </property>
+  </action>
+  <action name="actionDefault">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Default</string>
+   </property>
+  </action>
+  <action name="actionAuto">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto</string>
    </property>
   </action>
  </widget>
@@ -377,9 +402,25 @@
   </connection>
   <connection>
    <sender>tree</sender>
+   <signal>itemExpanded(QTreeWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnTreeItemSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>127</x>
+     <y>256</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>349</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tree</sender>
    <signal>currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)</signal>
    <receiver>MainWindow</receiver>
-   <slot>OnTreeItemPressed()</slot>
+   <slot>OnTreeItemSelected()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>127</x>
@@ -395,7 +436,7 @@
    <sender>db_tree</sender>
    <signal>currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)</signal>
    <receiver>MainWindow</receiver>
-   <slot>OnTreeItemPressed()</slot>
+   <slot>OnTreeItemSelected()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>127</x>
@@ -411,11 +452,27 @@
    <sender>actionFile_List</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>OnDebugMenu()</slot>
+   <slot>OnFileList()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>349</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>menuTask</sender>
+   <signal>triggered(QAction*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnTaskMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>51</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -430,8 +487,9 @@
   <slot>OnClose()</slot>
   <slot>OnAbout()</slot>
   <slot>OnAbout_Qt()</slot>
-  <slot>OnTreeItemPressed()</slot>
+  <slot>OnTreeItemSelected()</slot>
   <slot>OnToolBoxChanged()</slot>
-  <slot>OnDebugMenu()</slot>
+  <slot>OnFileList()</slot>
+  <slot>OnTaskMenu()</slot>
  </slots>
 </ui>
