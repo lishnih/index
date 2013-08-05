@@ -20,6 +20,8 @@ from lib.dump_funcs import plain, html_val, html
 company_section = "lishnih@gmail.com"
 app_section = re.sub(r'\W', '_', os.path.dirname(os.path.dirname(__file__)))
 
+status = {}
+
 
 class MainFrame(QtGui.QMainWindow):
     def __init__(self, args=None):
@@ -66,13 +68,23 @@ class MainFrame(QtGui.QMainWindow):
 
     def update_func(self, msecs):
         time_str = self.convert_time(msecs)
-        self.ui.statusbar.showMessage(u"{0}   |   Processing {1}".format(self.sb_message, time_str))
+        status_text = u"{0}   |   Processing {1}".format(self.sb_message, time_str)
+
+        if status:
+            status_text += u"   |   " + u", ".join(["{0}: {1}".format(i, status[i]) for i in status.keys()])
+
+        self.ui.statusbar.showMessage(status_text)
 
 
     def ending_func(self, msecs, message=''):
         time_str = self.convert_time(msecs)
         message = u"   |   {0}".format(message) if message else ''
-        self.ui.statusbar.showMessage(u"{0}   |   Processed in {1}{2}".format(self.sb_message, time_str, message))
+        status_text = u"{0}   |   Processed in {1}{2}".format(self.sb_message, time_str, message)
+
+        if status:
+            status_text += u"   |   " + u", ".join(["{0}: {1}".format(i, status[i]) for i in status.keys()])
+
+        self.ui.statusbar.showMessage(status_text)
 
 
 # События
@@ -97,7 +109,7 @@ class MainFrame(QtGui.QMainWindow):
             self.set_status(selected_dir)
 
             # Запускаем обработку
-            th.start(ProceedInit, selected_dir, filename=self.default_method, tree_widget=self.ui.tree)
+            th.start(ProceedInit, selected_dir, filename=self.default_method, tree_widget=self.ui.tree, status=status)
 
 
     def OnTaskFile(self):

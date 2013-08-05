@@ -23,7 +23,7 @@ from lib.dump           import plain
 tracing = []
 
 
-def ProceedInit(sources, method=None, filename=None, tree_widget=None):
+def ProceedInit(sources, method=None, filename=None, tree_widget=None, status=None):
     # Получаем настройки метода
     options = {}
     if method:
@@ -43,7 +43,7 @@ def ProceedInit(sources, method=None, filename=None, tree_widget=None):
     dbpath = options.get('dbpath', '.')
     dbname = options.get('dbname', "{0}.sqlite".format(method))
     db_path = os.path.join(dbpath, dbname)
-    db_uri_default = u'sqlite:///{0}'.format(db_path)
+    db_uri_default = "sqlite:///{0}".format(db_path)
     db_uri = options.get('db_uri', db_uri_default)
     try:
         initDb(db_uri, DBSession, Base)
@@ -51,12 +51,16 @@ def ProceedInit(sources, method=None, filename=None, tree_widget=None):
         reg_exception(ROOT, e)
         return
 
+    if isinstance(status, dict):
+        status['dirs']  = 0
+        status['files'] = 0
+
     sources = get_list(sources)
     for source in sources:
-        Proceed(source, options, ROOT)
+        Proceed(source, options, ROOT, status)
 
 
-def Proceed(source, options=None, ROOT=None):
+def Proceed(source, options=None, ROOT=None, status=None):
     filename = os.path.abspath(source)
     filename = filename.replace('\\', '/')    # приводим к стилю Qt
 
@@ -70,6 +74,8 @@ def Proceed(source, options=None, ROOT=None):
         for root, dirs, files in os.walk(filename):
             tracing.append(root)
             DIR = proceed_dir(root, options, ROOT)
+            if isinstance(status, dict):
+                status['dirs'] += 1
 
             for dirname in dirs:
                 if filter_match(dirname, dirs_filter):
@@ -87,7 +93,9 @@ def Proceed(source, options=None, ROOT=None):
                     filename = os.path.join(root, filename)
                     proceed_file(filename, options, DIR)
                 else:
-                    set_object(filename, DIR, style='D', brief=u"Этот файл не индексируется!")
+                    set_object(filename, DIR, style='D', brief="Этот файл не индексируется!")
+                if isinstance(status, dict):
+                    status['files'] += 1
 
     elif os.path.isfile(filename):
         logging.info("Обработка файла '{0}'".format(filename))
