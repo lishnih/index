@@ -165,8 +165,7 @@ class Settings(object):
 
     def init_path(self, key, default, check=None):
         value = self.get(key)
-
-        if not value or not isinstance(value, basestring):
+        if not value:
             value = self.expand_path(default)
             self.set(key, value)
 

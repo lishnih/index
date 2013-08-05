@@ -4,6 +4,7 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import xlrd
 
@@ -36,14 +37,14 @@ def parse_doc(sh, options, SHEET):
     last_y, last_x = None, None
     for key, params in doc_values.items():
         l = len(params)
-        if isinstance(params, basestring):
+        if isinstance(params, string_types):
             yx = search_value(sh, params)
             if yx:
                 last_y, last_x = yx
                 val = get_value(sh, last_y, last_x)
                 doc_dict[key] = val
                 val_list = []
-                for i in xrange(last_x + 1, sh.ncols):
+                for i in range(last_x + 1, sh.ncols):
                     val2 = get_value(sh, last_y, i)
                     if val2:
                         val_list.append(val2)
@@ -54,18 +55,18 @@ def parse_doc(sh, options, SHEET):
                 return
         elif l == 2:
             y, x = params
-            if isinstance(x, basestring):
+            if isinstance(x, string_types):
                 x = last_x + int(x)
-            if isinstance(y, basestring):
+            if isinstance(y, string_types):
                 y = last_y + int(y)
             val = get_value(sh, y, x)
             doc_dict[key] = val
             test += "{0} [{1},{2}]: {3} /{4!r}/\n".format(key, y, x, val, val)
         elif l == 3:
             y, x = params
-            if isinstance(x, basestring):
+            if isinstance(x, string_types):
                 x = last_x + int(x)
-            if isinstance(y, basestring):
+            if isinstance(y, string_types):
                 y = last_y + int(y)
             val = get_value(sh, y, x)
             doc_dict[key] = val
@@ -117,7 +118,7 @@ def parse_table_iter(sh, options, SHEET):
     row_objects  = get_list(options.get('row_objects'))
     row_objects1 = get_list(options.get('row_objects1'))
 
-    if isinstance(row_start, basestring):
+    if isinstance(row_start, string_types):
         yx = search_value(sh, row_start)
         if not yx:
             reg_warning(SHEET, "Начало таблицы не найдено: '{0}', пропускаем лист!".format(row_start))
@@ -127,7 +128,7 @@ def parse_table_iter(sh, options, SHEET):
     else:
         row_start = row_start - 1
 
-    if isinstance(row_stop, basestring):
+    if isinstance(row_stop, string_types):
         yx = search_value(sh, row_stop)
         if not yx:
             reg_warning(SHEET, "Конец таблицы не найден: '{0}', индексируем весь лист!".format(row_stop))
@@ -136,7 +137,7 @@ def parse_table_iter(sh, options, SHEET):
             row_stop = yx[0] - row_stop_skip
         SHEET.row_stop = row_stop
 
-    for j in xrange(row_start, row_stop):
+    for j in range(row_start, row_stop):
         typical_column = get_value(sh, j, typical_index) if typical_index else True
         if typical_column:
             row_dict = dict(j=j)
@@ -146,7 +147,7 @@ def parse_table_iter(sh, options, SHEET):
                 i = 0
                 for col_name in col_names:
                     if col_name:
-                        if isinstance(col_name, basestring):
+                        if isinstance(col_name, string_types):
                             val = get_value(sh, j, i)
                             row_dict[col_name] = val
                             test += "({0}:{1}) {2}: {3} /{4!r}/\n".format(j, i, col_name, val, val)
@@ -160,7 +161,7 @@ def parse_table_iter(sh, options, SHEET):
                     i += 1
             elif col_mode == 'value':
                 col = 0
-                for i in xrange(sh.ncols):
+                for i in range(sh.ncols):
                     val = get_value(sh, j, i)
                     if val:
                         col_name = col_names[col]
@@ -186,7 +187,7 @@ def parse_table_iter(sh, options, SHEET):
                 SHEET.res = res
 
 #             test_row = ''
-#             for i in xrange(sh.ncols):
+#             for i in range(sh.ncols):
 #                 val = get_value(sh, j, i)
 #                 test_row += "({0}): {1} /{2!r}/\n".format(i, val, val)
 #             row_dict['test_row'] = test_row

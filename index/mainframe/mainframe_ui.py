@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainframe.ui'
 #
-# Created: Mon Aug 05 14:26:41 2013
-#      by: pyside-uic 0.2.14 running on PySide 1.1.2
+# Created: Mon Aug 05 22:07:51 2013
+#      by: pyside-uic 0.2.14 running on PySide 1.2.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -152,6 +152,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.tree, QtCore.SIGNAL("itemExpanded(QTreeWidgetItem*)"), MainWindow.OnTreeItemSelected)
         QtCore.QObject.connect(self.tree, QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)"), MainWindow.OnTreeItemSelected)
         QtCore.QObject.connect(self.db_tree, QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)"), MainWindow.OnTreeItemSelected)
+        QtCore.QObject.connect(self.menuTask, QtCore.SIGNAL("triggered(QAction*)"), MainWindow.OnTaskMenu)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

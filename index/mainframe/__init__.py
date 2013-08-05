@@ -4,6 +4,7 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import sys, os, re, fnmatch
 from PySide import QtCore, QtGui, __version__
@@ -15,7 +16,6 @@ from .view_db import view_db
 from export import ProceedInit          # Модуль обработки
 
 from lib.info import __description__, __version__
-from lib.backwardcompat import *
 from lib.settings import Settings
 from lib.dump_html import html_val, html
 
@@ -57,7 +57,6 @@ class MainFrame(QtGui.QMainWindow):
         # Обновляем задачи
         self.proceed_methods()
         self.set_method()   # Auto is default
-        self.default_method = 'C:\\Users\\SP0025\\.config\\index\\welding.pickle'
 
 
 # Callback-функции для Таймера

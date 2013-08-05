@@ -4,6 +4,7 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import re
 
@@ -12,7 +13,7 @@ from lib.sheet_funcs import get_date
 
 def prepare_str(_dict, item, remarks):
     val = _dict.get(item)
-    if val and isinstance(val, basestring):
+    if val and isinstance(val, string_types):
         _dict[item] = re.sub('[ \n\t]+', ' ', val.strip())
 
 
@@ -36,7 +37,7 @@ def proceed_int_str(_dict, item, remarks):
         return
     elif val == '' or val == '-' or val == '---':
         _dict[item] = 0
-    elif isinstance(val, basestring):
+    elif isinstance(val, string_types):
         _dict[item] = int(val) if val.isdigit() else val
     else:
         try:
@@ -120,7 +121,7 @@ def proceed_d_w_th(_dict, item, remarks):
         if val == '---':
             return
 
-        if isinstance(val, basestring):
+        if isinstance(val, string_types):
             res = re.match('(?:Ду)?(\d+)[×XХxх ]*(\d*) *(?:/(?:Ду)?(\d+)[×XХxх ]*(\d*))?', val)
             if res:
                 d1, th1, d2, th2 = res.groups()

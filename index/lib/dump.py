@@ -9,6 +9,12 @@ try:    from .backwardcompat import *
 except: from backwardcompat import *
 
 
+""" Отладочный вывод переменных
+plain_type возвращает тип объекта
+plain      вывод переменной
+"""
+
+
 def plain_type(obj):
     buf = unicode(type(obj)).replace("'", "").replace("type ", "")\
           .replace("class ", "").replace("<", "[").replace(">", "]")
@@ -16,6 +22,9 @@ def plain_type(obj):
 
 
 def plain(obj, level=0):
+    if level > 2:
+        return "*** stopped ***"
+
     wrap = " " * 4 * level
 
     buf = ""

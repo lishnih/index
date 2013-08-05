@@ -4,17 +4,17 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import re, time, calendar, logging
-from itertools import ifilter
 import xlrd
 
 
 def get_int(sh, row, col, default=0):
     val = get_value(sh, row, col)
-    if   isinstance(val, int):
+    if isinstance(val, int):
         return val
-    elif isinstance(val, basestring):
+    elif isinstance(val, string_types):
         return int(val) if val.isdigit() else default
     return default
 
@@ -32,14 +32,14 @@ def in_crange(row, col, crange):
 # Возращает значение из ячейки [row, col] листа sh
 def get_value(sh, row, col):
     # Этот блок проверяет, не является ли требуемая ячейка объединённой с другой ячейкой
-    for crange in ifilter(lambda crange: in_crange(row, col, crange), sh.merged_cells):
+    for crange in filter(lambda crange: in_crange(row, col, crange), sh.merged_cells):
         rlo, rhi, clo, chi = crange
         row, col = rlo, clo
 
     try:
         cell_type = sh.cell_type(row, col)
         val = None if cell_type == xlrd.XL_CELL_ERROR else sh.cell_value(row, col)
-        if isinstance(val, basestring):
+        if isinstance(val, string_types):
             val = val.strip()
     except IndexError:
         val = None
@@ -67,7 +67,7 @@ def get_date(date_str):
         date = int(time.mktime(date_list))
         date_str = "{:02}.{:02}.{:02}".format(date_list[2], date_list[1], date_list[0])
     except:         # дата, возможно, записана в текстовом формате
-        res = re.search(ur"(\d{1,2}).(\d{1,2}).(\d{4}|\d{2})", date_str)
+        res = re.search(r"(\d{1,2}).(\d{1,2}).(\d{4}|\d{2})", date_str)
         if res:
             reslist = res.groups()
             day, month, year = reslist

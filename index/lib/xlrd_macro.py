@@ -1,8 +1,10 @@
+#!/usr/bin/env python
 # coding=utf-8
 # Stan 2007-10-10, 2012-10-28
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import re, logging
 import xlrd                     # XLS reader
@@ -19,7 +21,7 @@ def get_value(sh, row, col):
     try:
         cell_type = sh.cell_type(row, col)
         val = None if cell_type == xlrd.XL_CELL_ERROR else sh.cell_value(row, col)
-        if isinstance(val, basestring):
+        if isinstance(val, string_types):
             val = val.strip()
     except IndexError:
         val = None
@@ -41,7 +43,7 @@ def contain_value(sh, row, col, seaching_value):
 #               logging.debug("found:  {0!r} ({1!r})".format(val, type(val)))
                 return None
 
-        if isinstance(seaching_value, basestring):
+        if isinstance(seaching_value, string_types):
             result = re.search(seaching_value, val)
             return result
         else:
@@ -56,8 +58,8 @@ def contain_value(sh, row, col, seaching_value):
 # Возращает [row, col] если нашёл и None в противном случае
 # sh - лист; search - значение для поиска
 def search_value(sh, seaching_value):
-    for i in xrange(sh.ncols):
-        for j in xrange(sh.nrows):
+    for i in range(sh.ncols):
+        for j in range(sh.nrows):
             if contain_value(sh, j, i, seaching_value):
                 return j, i
     return None

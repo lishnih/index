@@ -4,13 +4,12 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 try:
-    from .lib.backwardcompat import *
     from .lib.settings import Settings
     from .lib.tkprop import propertyDialog
 except:
-    from lib.backwardcompat import *
     from lib.settings import Settings
     from lib.tkprop import propertyDialog
 

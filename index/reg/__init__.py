@@ -4,6 +4,7 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import logging
 from PySide import QtGui
@@ -15,7 +16,7 @@ from lib.items import DirItem, FileItem
 
 
 def reg_object(Object, object_dict, PARENT=None, style='', brief=None):
-    if isinstance(Object, basestring):
+    if isinstance(Object, string_types):
         try:
             Object = getattr(models, Object)
         except:
@@ -47,7 +48,7 @@ def reg_object(Object, object_dict, PARENT=None, style='', brief=None):
 
 
 def reg_object1(Object, object_dict, PARENT=None, style='', brief=None):
-    if isinstance(Object, basestring):
+    if isinstance(Object, string_types):
         try:
             Object = models.__getattribute__(Object)
         except:
@@ -81,7 +82,7 @@ def reg_object1(Object, object_dict, PARENT=None, style='', brief=None):
 
 
 def set_object(OBJECT, PARENT, style='', brief=None):
-    if isinstance(OBJECT, basestring):
+    if isinstance(OBJECT, string_types):
         OBJECT = dict(name=OBJECT)
     if isinstance(OBJECT, dict):
         OBJECT = aObject(**OBJECT)

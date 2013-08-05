@@ -1,9 +1,15 @@
+#!/usr/bin/env python
 # coding=utf-8
 # Stan 2007-08-02
+
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import logging
 from inspect import ismethod
 from xml.sax.saxutils import escape, prepare_input_source
+
 
 """ Отладочный вывод переменных различных типов
 plain_val  возвращает строковое представление объекта
@@ -13,16 +19,13 @@ html_type  возвращает тип объекта для html
 html_val   html-версия функции plain_val
 html       html-версия функции plain
 html_r     вспомогательная функция для функции html
-
-plain_l    нумерует каждую строку в заданной
-html_l     html-версия функции plain_l
 """
 
 
 def plain_val(obj):
     if obj is None:
         buf = '/is None/'
-    elif isinstance(obj, (int, float, long, complex)):
+    elif isinstance(obj, numeric_types):
         buf = unicode(obj)
     else:
         try:
@@ -41,7 +44,7 @@ def plain(obj):
     # === Iter ===
     buf += 'Iter свойства:\n==============\n'
     list_buf = ''
-    if not isinstance(obj, basestring):
+    if not isinstance(obj, string_types):
         try:
             for val in obj:
                 list_buf += "{0}\n".format(plain_val(val))
@@ -55,7 +58,7 @@ def plain(obj):
     # === Dict ===
     buf += 'Dict свойства:\n==============\n'
     list_buf = ''
-    if not isinstance(obj, basestring):
+    if not isinstance(obj, string_types):
         try:
             for key, val in obj.items():
                 list_buf += '{0:20}: {1}\n'.format(key, plain_val(val))
@@ -137,9 +140,9 @@ def html(obj, it=1, root=None, collection=[]):
 
     if obj is None:
         buf = '<span style="color: Gray"><i>is None</i></span>'
-    elif isinstance(obj, (int, float, long, complex)):
+    elif isinstance(obj, numeric_types):
         buf = html_val(obj, 'blue')
-    elif isinstance(obj, (basestring, bytearray)):
+    elif isinstance(obj, simple_types):
         buf = html_val(obj)
 
     if buf:
@@ -191,7 +194,7 @@ def html_r(obj, it=1, root=None, collection=[]):
         buf += dirs_buf
 
     # === ITER ===
-#     if not isinstance(obj, basestring):
+#     if not isinstance(obj, string_types):
 #         list_buf = ''
 #         try:
 #             for val in obj:
@@ -211,46 +214,5 @@ def html_r(obj, it=1, root=None, collection=[]):
 #                 buf += '  <tr><td style="color: blue"><b>{0}</b></td><td>{1}</td></tr>\n'.format(key, html(val, it, obj, collection))
 
     buf += '</table>\n'
-
-    return buf
-
-
-def plain_l(obj):
-    buf = ''
-
-    if isinstance(obj, basestring):
-        obj = obj.replace('\r\n', '\n')
-        obj = obj.replace('\r',   '\n')
-        obj_list = obj.split('\n')
-
-        line = 1
-        for s in obj_list:
-            buf += '{0:05}: {1}'.format(line, s) if s else \
-                   '{0:05}:-'.format(line)
-            line += 1
-    else:
-        logging.warning('Переменная должна быть строкой: {0!r}'.format(obj))
-
-    return buf
-
-
-def html_l(obj):
-    buf = ''
-
-    if isinstance(obj, basestring):
-        obj = obj.replace('\r\n', '\n')
-        obj = obj.replace('\r',   '\n')
-        obj_list = obj.split('\n')
-
-        buf = '<table border="1">\n'
-        line = 1
-        for s in obj_list:
-            if not s:
-                s = '<i>пустая строка</i>'
-            buf += '  <tr><td>{0:05}</td><td>{1}</td></tr>\n'.format(line, s)
-            line += 1
-        buf += '</table>\n'
-    else:
-        logging.warning('Переменная должна быть строкой: {0!r}'.format(obj))
 
     return buf

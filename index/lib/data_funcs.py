@@ -4,6 +4,7 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import re, logging
 
@@ -68,7 +69,7 @@ def get_int_sequence(sequence_str, from_list=None):
                 if stop == None:
                     raise ValueError("Impossible to calculate the count of array! Array is not defined!")
 
-                for i in xrange(start, stop, step):
+                for i in range(start, stop, step):
                     if i not in int_sequence:
                         int_sequence.append(i)
                 nosequence = False
@@ -86,7 +87,7 @@ def filter_list(from_list, filter):
 
     new_list = []
 
-    if   isinstance(filter, basestring):
+    if isinstance(filter, string_types):
 
         # Строка вида "[i0, i1]" интерпретируется как массив индексов
         res = re.match('^\[(.*)\]$', filter)
@@ -143,7 +144,7 @@ def filter_match(name, filter, index=None):
     if filter == None:
         return True
 
-    elif isinstance(filter, basestring):
+    elif isinstance(filter, string_types):
 
         # Строка вида [i0, i1] интерпретируется как массив индексов
         res = re.match('^\[(.*)\]$', filter)
