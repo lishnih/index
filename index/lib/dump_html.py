@@ -21,7 +21,7 @@ html_l     html-версия функции plain_l
 
 def plain_val(obj):
     if obj is None:
-        buf = u'/is None/'
+        buf = '/is None/'
     elif isinstance(obj, (int, float, long, complex)):
         buf = unicode(obj)
     else:
@@ -36,11 +36,11 @@ def plain_val(obj):
 
 
 def plain(obj):
-    buf = u'\n'
+    buf = '\n'
 
     # === Iter ===
-    buf += u'Iter свойства:\n==============\n'
-    list_buf = u''
+    buf += 'Iter свойства:\n==============\n'
+    list_buf = ''
     if not isinstance(obj, basestring):
         try:
             for val in obj:
@@ -50,58 +50,58 @@ def plain(obj):
 
     if list_buf:
         buf += list_buf
-    buf += u'\n'
+    buf += '\n'
 
     # === Dict ===
-    buf += u'Dict свойства:\n==============\n'
-    list_buf = u''
+    buf += 'Dict свойства:\n==============\n'
+    list_buf = ''
     if not isinstance(obj, basestring):
         try:
             for key, val in obj.items():
-                list_buf += u'{0:20}: {1}\n'.format(key, plain_val(val))
+                list_buf += '{0:20}: {1}\n'.format(key, plain_val(val))
         except:
             pass
 
     if list_buf:
         buf += list_buf
-    buf += u'\n'
+    buf += '\n'
 
     # === dict ===
-    buf += u'dict свойства:\n==============\n'
+    buf += 'dict свойства:\n==============\n'
     if hasattr(obj, '__dict__'):
         d = obj.__dict__
         for key in sorted(d.keys()):
             if key[0:2] != '__':
                 val = d.get(key)
-                buf += u'{0:20}: {1}\n'.format(key, plain_val(val))
+                buf += '{0:20}: {1}\n'.format(key, plain_val(val))
 
-    buf += u'\n'
+    buf += '\n'
 
     # === dir ===
-    buf += u'dir свойства:\n=============\n'
-    dirs_buf = u''
+    buf += 'dir свойства:\n=============\n'
+    dirs_buf = ''
     for key in dir(obj):
         val = getattr(obj, key)
         if not callable(val):
             if key[0:2] != '__':
-                dirs_buf += u'{0:20}: {1}\n'.format(key, plain_val(val))
+                dirs_buf += '{0:20}: {1}\n'.format(key, plain_val(val))
 
     if dirs_buf:
         buf += dirs_buf
-    buf += u'\n'
+    buf += '\n'
 
     # === Callable ===
-    buf += u'Callable свойства:\n==================\n'
-    dirs_buf = u''
+    buf += 'Callable свойства:\n==================\n'
+    dirs_buf = ''
     for key in dir(obj):
         val = getattr(obj, key)
         if callable(val):
             if key[0:2] != '__':
-                dirs_buf += u'{0:20}: {1}\n'.format(key, plain_val(val))
+                dirs_buf += '{0:20}: {1}\n'.format(key, plain_val(val))
 
     if dirs_buf:
         buf += dirs_buf
-    buf += u'\n'
+    buf += '\n'
 
     return buf
 
@@ -117,9 +117,9 @@ def html_val(obj, color=""):
     obj = obj.replace('\r',   '<br />')
     obj = obj.replace('\n',   '<br />')
     if color:
-        buf = u'<span title="{0}" style="color: {1}">{2}</span>'.format(type_obj, color, obj)
+        buf = '<span title="{0}" style="color: {1}">{2}</span>'.format(type_obj, color, obj)
     else:
-        buf = u'<span title="{0}">{1}</span>'.format(type_obj, obj)
+        buf = '<span title="{0}">{1}</span>'.format(type_obj, obj)
 
     return buf
 
@@ -131,12 +131,12 @@ def html(obj, it=1, root=None, collection=[]):
         collection = []
 
     if root is obj:
-        return u'<span style="color: red"><i>on self</i></span>'
+        return '<span style="color: red"><i>on self</i></span>'
 
     buf = ""
 
     if obj is None:
-        buf = u'<span style="color: Gray"><i>is None</i></span>'
+        buf = '<span style="color: Gray"><i>is None</i></span>'
     elif isinstance(obj, (int, float, long, complex)):
         buf = html_val(obj, 'blue')
     elif isinstance(obj, (basestring, bytearray)):
@@ -152,15 +152,15 @@ def html(obj, it=1, root=None, collection=[]):
     collection.append(obj)
 
     if isinstance(obj, (list, tuple)):
-        buf = u'<ul>\n'
+        buf = '<ul>\n'
         for value in obj:
-            buf += u'<li>{0}</li>'.format(html(value, it, obj, collection))
-        buf += u'</ul>\n'
+            buf += '<li>{0}</li>'.format(html(value, it, obj, collection))
+        buf += '</ul>\n'
     elif isinstance(obj, dict):
-        buf = u'<ul>\n'
+        buf = '<ul>\n'
         for key, value in obj.items():
-            buf += u'<li>{0}: {1}</li>'.format(key, html(value, it, obj, collection))
-        buf += u'</ul>\n'
+            buf += '<li>{0}: {1}</li>'.format(key, html(value, it, obj, collection))
+        buf += '</ul>\n'
 
     if buf:
         return buf
@@ -176,47 +176,47 @@ def html(obj, it=1, root=None, collection=[]):
 
 
 def html_r(obj, it=1, root=None, collection=[]):
-    buf = u'<table border="1">\n'
-    buf += u'  <tr><th colspan="2" style="background-color: Cornflowerblue">{0}</th></tr>\n'.format(html_val(obj))
+    buf = '<table border="1">\n'
+    buf += '  <tr><th colspan="2" style="background-color: Cornflowerblue">{0}</th></tr>\n'.format(html_val(obj))
 
     # === DIR ===
-    dirs_buf = u''
+    dirs_buf = ''
     for key in dir(obj):
         val = getattr(obj, key)
         if not ismethod(val):
             if key[0:2] != '__':
-                dirs_buf += u'  <tr><td style="color: blue"><b>{0}</b></td><td>{1}</td></tr>\n'.format(key, html(val, it, obj, collection))
+                dirs_buf += '  <tr><td style="color: blue"><b>{0}</b></td><td>{1}</td></tr>\n'.format(key, html(val, it, obj, collection))
     if dirs_buf:
-#       buf += u'  <tr><th colspan="2" style="background-color: yellow">Dirs свойства:</th></tr>\n{0}'.format(dirs_buf)
+#       buf += '  <tr><th colspan="2" style="background-color: yellow">Dirs свойства:</th></tr>\n{0}'.format(dirs_buf)
         buf += dirs_buf
 
     # === ITER ===
 #     if not isinstance(obj, basestring):
-#         list_buf = u''
+#         list_buf = ''
 #         try:
 #             for val in obj:
-#                 list_buf += u'  <tr><td></td><td>{0}</td></tr>\n'.format(html(val, it, obj, collection))
+#                 list_buf += '  <tr><td></td><td>{0}</td></tr>\n'.format(html(val, it, obj, collection))
 #         except:
 #             pass
 #         if list_buf:
-#             buf += u'  <tr><th colspan="2" style="background-color: yellow">Iter свойства:</th></tr>\n{0}'.format(list_buf)
+#             buf += '  <tr><th colspan="2" style="background-color: yellow">Iter свойства:</th></tr>\n{0}'.format(list_buf)
 
     # === DICT ===
 #     if hasattr(obj, '__dict__'):
-#         buf += u'  <tr><th colspan="2" style="background-color: yellow">Dict свойства:</th></tr>\n'
+#         buf += '  <tr><th colspan="2" style="background-color: yellow">Dict свойства:</th></tr>\n'
 #         d = obj.__dict__
 #         for key in sorted(d.keys()):
 #             if key[0:2] != '__':
 #                 val = d.get(key)
-#                 buf += u'  <tr><td style="color: blue"><b>{0}</b></td><td>{1}</td></tr>\n'.format(key, html(val, it, obj, collection))
+#                 buf += '  <tr><td style="color: blue"><b>{0}</b></td><td>{1}</td></tr>\n'.format(key, html(val, it, obj, collection))
 
-    buf += u'</table>\n'
+    buf += '</table>\n'
 
     return buf
 
 
 def plain_l(obj):
-    buf = u''
+    buf = ''
 
     if isinstance(obj, basestring):
         obj = obj.replace('\r\n', '\n')
@@ -225,32 +225,32 @@ def plain_l(obj):
 
         line = 1
         for s in obj_list:
-            buf += u'{0:05}: {1}'.format(line, s) if s else \
-                   u'{0:05}:-'.format(line)
+            buf += '{0:05}: {1}'.format(line, s) if s else \
+                   '{0:05}:-'.format(line)
             line += 1
     else:
-        logging.warning(u'Переменная должна быть строкой: {0!r}'.format(obj))
+        logging.warning('Переменная должна быть строкой: {0!r}'.format(obj))
 
     return buf
 
 
 def html_l(obj):
-    buf = u''
+    buf = ''
 
     if isinstance(obj, basestring):
         obj = obj.replace('\r\n', '\n')
         obj = obj.replace('\r',   '\n')
         obj_list = obj.split('\n')
 
-        buf = u'<table border="1">\n'
+        buf = '<table border="1">\n'
         line = 1
         for s in obj_list:
             if not s:
                 s = '<i>пустая строка</i>'
-            buf += u'  <tr><td>{0:05}</td><td>{1}</td></tr>\n'.format(line, s)
+            buf += '  <tr><td>{0:05}</td><td>{1}</td></tr>\n'.format(line, s)
             line += 1
-        buf += u'</table>\n'
+        buf += '</table>\n'
     else:
-        logging.warning(u'Переменная должна быть строкой: {0!r}'.format(obj))
+        logging.warning('Переменная должна быть строкой: {0!r}'.format(obj))
 
     return buf

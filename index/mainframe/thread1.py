@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2011-06-22
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import logging
 from PySide import QtCore
 
@@ -53,7 +56,7 @@ class Thread(QtCore.QThread):
             try:
                 self.message = self.func(*self.args, **self.kargs)
             except Exception as e:
-                msg = u"Завершено с ошибкой: '{0}'".format(e)
+                msg = "Завершено с ошибкой: '{0}'".format(e)
                 logging.exception(msg)
                 self.message = msg
 

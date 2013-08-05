@@ -1,10 +1,16 @@
 # coding=utf-8
 # Stan 2007-10-10, 2012-10-28
+
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
+import re, logging
+import xlrd                     # XLS reader
+
+
 """
 Интерфейс для работы c модулем xlrd
 """
-import re, logging
-import xlrd                     # XLS reader
 
 
 # Возращает значение из ячейки [row, col] листа sh
@@ -75,7 +81,7 @@ def search_hor_value(sh, formsearch):
         try:
             res = re.search(pattern, str, re.MULTILINE | re.DOTALL)
         except Exception as e:
-            logging.error(u"""Ошибка при выборке данных!
+            logging.error("""Ошибка при выборке данных!
 Проверьте ячейки, из которой извлекаются данные
 Возможно, у Вас неправильно настроен шаблон
 {0!r}
@@ -130,6 +136,6 @@ str:     {2!r}""".format(e, pattern, str))
                         found.append("")
 
     else:
-        logging.error(u"Неправильный formsearch [{0}]".format(form_len))
+        logging.error("Неправильный formsearch [{0}]".format(form_len))
 
     return [x0, y0, found] if found else hint

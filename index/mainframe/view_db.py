@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2012-03-12
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import sys, os, logging
 from sqlalchemy import MetaData, distinct
 
@@ -21,11 +24,11 @@ def view_db(tree_widget):
             for column in tdata.c:
                 if column.primary_key:
                     column_item = DisabledItem(table_item, column.name)
-                    column_item.setBrief(u"Главный ключ, просмотр отключен!")
+                    column_item.setBrief("Главный ключ, просмотр отключен!")
 #                   column_item.setSummary(column)
                 elif column.foreign_keys:
                     column_item = DisabledItem(table_item, column.name)
-                    column_item.setBrief(u"Ссылка на другую таблицу, просмотр отключен!")
+                    column_item.setBrief("Ссылка на другую таблицу, просмотр отключен!")
 #                   column_item.setSummary(column)
                 else:
                     column_item = FileItem(table_item, column.name)
@@ -43,4 +46,4 @@ def get_distinct(column):
 
     td_list = [unicode(row[0]) for row in rows]
 
-    return u"\n".join(td_list)
+    return "\n".join(td_list)

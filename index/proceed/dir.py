@@ -2,10 +2,13 @@
 # coding=utf-8
 # Stan 2012-03-10
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import os, re
 
-from reg import reg_object1
 from models import Dir
+from reg import reg_object1
 
 
 def proceed_dir(dirname, options, ROOT=None):

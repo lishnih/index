@@ -2,25 +2,27 @@
 # coding=utf-8
 # Stan 2011-06-22
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import sys, os, re, fnmatch
 from PySide import QtCore, QtGui, __version__
 
-from mainframe_ui import Ui_MainWindow
-from thread1 import th                  # Поток (уже созданный)
+from .mainframe_ui import Ui_MainWindow
+from .thread1 import th                 # Поток (уже созданный)
+from .view_db import view_db
+
 from export import ProceedInit          # Модуль обработки
-from view_db import view_db
 
 from lib.info import __description__, __version__
 from lib.backwardcompat import *
 from lib.settings import Settings
-from lib.dump_funcs import plain, html_val, html
+from lib.dump_html import html_val, html
 
 
 # Настройки: [HKCU\Software\lishnih@gmail.com\<app_section>]
 company_section = "lishnih@gmail.com"
 app_section = re.sub(r'\W', '_', os.path.dirname(os.path.dirname(__file__)))
-
-status = {}
 
 
 class MainFrame(QtGui.QMainWindow):
@@ -40,6 +42,9 @@ class MainFrame(QtGui.QMainWindow):
         self.s = Settings()
         self.s.saveEnv()
 
+        # Переменная для ProceedInit
+        self.proceed_status = {}
+
         # Назначаем потоку callback-функции
         th.set_callback(self.update_func, self.ending_func)
 
@@ -52,6 +57,7 @@ class MainFrame(QtGui.QMainWindow):
         # Обновляем задачи
         self.proceed_methods()
         self.set_method()   # Auto is default
+        self.default_method = 'C:\\Users\\SP0025\\.config\\index\\welding.pickle'
 
 
 # Callback-функции для Таймера
@@ -68,21 +74,23 @@ class MainFrame(QtGui.QMainWindow):
 
     def update_func(self, msecs):
         time_str = self.convert_time(msecs)
-        status_text = u"{0}   |   Processing {1}".format(self.sb_message, time_str)
+        status_text = "{0}   |   Processing {1}".format(self.sb_message, time_str)
 
-        if status:
-            status_text += u"   |   " + u", ".join(["{0}: {1}".format(i, status[i]) for i in status.keys()])
+        if self.proceed_status:
+            status_text += "   |   " + ", ".join(["{0}: {1}".format(i, self.proceed_status[i]) for i in self.proceed_status.keys()])
 
         self.ui.statusbar.showMessage(status_text)
 
 
-    def ending_func(self, msecs, message=''):
+    def ending_func(self, msecs, message=None):
         time_str = self.convert_time(msecs)
-        message = u"   |   {0}".format(message) if message else ''
-        status_text = u"{0}   |   Processed in {1}{2}".format(self.sb_message, time_str, message)
+        status_text = "{0}   |   Processed in {1}".format(self.sb_message, time_str)
 
-        if status:
-            status_text += u"   |   " + u", ".join(["{0}: {1}".format(i, status[i]) for i in status.keys()])
+        if self.proceed_status:
+            status_text += "   |   " + ", ".join(["{0}: {1}".format(i, self.proceed_status[i]) for i in self.proceed_status.keys()])
+
+        if message:
+            status_text += "   |   " + message
 
         self.ui.statusbar.showMessage(status_text)
 
@@ -109,7 +117,7 @@ class MainFrame(QtGui.QMainWindow):
             self.set_status(selected_dir)
 
             # Запускаем обработку
-            th.start(ProceedInit, selected_dir, filename=self.default_method, tree_widget=self.ui.tree, status=status)
+            th.start(ProceedInit, selected_dir, filename=self.default_method, tree_widget=self.ui.tree, status=self.proceed_status)
 
 
     def OnTaskFile(self):
@@ -141,27 +149,6 @@ class MainFrame(QtGui.QMainWindow):
         self.ui.tree.clear()
 
 
-    def OnFileList(self):
-        from export import tracing
-
-        dialog = QtGui.QDialog(self)
-
-        gridLayout = QtGui.QGridLayout(dialog)
-        gridLayout.setContentsMargins(0, 0, 0, 0)
-
-        splitter = QtGui.QSplitter(dialog)
-        gridLayout.addWidget(splitter)
-
-        text = QtGui.QPlainTextEdit(dialog)
-        splitter.addWidget(text)
-
-        text.setPlainText('\n'.join(tracing))
-
-        dialog.show()
-        dialog.raise_()
-        dialog.activateWindow()
-
-
     def OnTaskMenu(self, action):
         self.set_method(action.text())
 
@@ -172,7 +159,7 @@ class MainFrame(QtGui.QMainWindow):
             self.ui.text2.setHtml('')
             return
 
-        tmpl = u"""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+        tmpl = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <html>
 <head></head>
 <body>
@@ -185,7 +172,7 @@ class MainFrame(QtGui.QMainWindow):
         text1 = item.data(0, QtCore.Qt.UserRole)
         if text1 is not None:
             obj_dump = html(text1, it)
-            text1 = tmpl.format(u"", obj_dump)
+            text1 = tmpl.format("", obj_dump)
         self.ui.text1.setHtml(text1)
 
         if th.isRunning():
@@ -206,15 +193,15 @@ class MainFrame(QtGui.QMainWindow):
 
 
     def OnAbout(self):
-        msg  = u"{0}\n".format(__description__)
-        msg += u"Version: {0}\n\n".format(__version__)
+        msg  = "{0}\n".format(__description__)
+        msg += "Version: {0}\n\n".format(__version__)
 
-        msg += u"Author: Stan <lishnih@gmail.com>\n"
-        msg += u"License: MIT\n\n"
+        msg += "Author: Stan <lishnih@gmail.com>\n"
+        msg += "License: MIT\n\n"
 
-        msg += u"Python: {0}\n".format(sys.version)
-        msg += u"PySide: {0}\n".format(__version__)
-        msg += u"Qt: {0}\n".format(QtCore.__version__)
+        msg += "Python: {0}\n".format(sys.version)
+        msg += "PySide: {0}\n".format(__version__)
+        msg += "Qt: {0}\n".format(QtCore.__version__)
         QtGui.QMessageBox.about(None, "About", msg)
 
 
@@ -238,7 +225,7 @@ class MainFrame(QtGui.QMainWindow):
 
     def set_status(self, message=''):
         if isinstance(message, (list, tuple)):
-            message = u"{0} и др. значения".format(message[0])
+            message = "{0} и др. значения".format(message[0])
         self.sb_message = message
         self.ui.statusbar.showMessage(self.sb_message)
 

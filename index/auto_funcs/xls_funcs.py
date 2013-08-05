@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2012-04-07
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import re
 
 from lib.sheet_funcs import get_date
@@ -81,7 +84,7 @@ def proceed_joint(_dict, item, remarks):
     _dict[item+'_seq']  = None
 
     if val:
-        res = re.match(u'([^-]+)-(.+)-(\d+)', val, re.UNICODE)
+        res = re.match('([^-]+)-(.+)-(\d+)', val, re.UNICODE)
         if res:
             joint_pre, joint_line, joint_seq = res.groups()
             _dict[item+'_pre']  = joint_pre
@@ -89,14 +92,14 @@ def proceed_joint(_dict, item, remarks):
             _dict[item+'_seq']  = joint_seq
             return
 
-        res = re.match(u'(\d+)-(\d+)', val)
+        res = re.match('(\d+)-(\d+)', val)
         if res:
             joint_pre, joint_seq = res.groups()
             _dict[item+'_pre']  = joint_pre
             _dict[item+'_seq']  = joint_seq
             return
 
-        res = re.match(u'(.+) *стык № *(\d+)', val)
+        res = re.match('(.+) *стык № *(\d+)', val)
         if res:
             joint_pre, joint_seq = res.groups()
             _dict[item+'_pre']  = joint_pre
@@ -118,7 +121,7 @@ def proceed_d_w_th(_dict, item, remarks):
             return
 
         if isinstance(val, basestring):
-            res = re.match(u'(?:Ду)?(\d+)[×XХxх ]*(\d*) *(?:/(?:Ду)?(\d+)[×XХxх ]*(\d*))?', val)
+            res = re.match('(?:Ду)?(\d+)[×XХxх ]*(\d*) *(?:/(?:Ду)?(\d+)[×XХxх ]*(\d*))?', val)
             if res:
                 d1, th1, d2, th2 = res.groups()
                 if d1:  _dict['diameter1']  = d1
@@ -127,7 +130,7 @@ def proceed_d_w_th(_dict, item, remarks):
                 if th2: _dict['thickness2'] = th2
                 return
 
-            res = re.match(u'(\d+\.?\d*)', val)
+            res = re.match('(\d+\.?\d*)', val)
             if res:
                 th1, = res.groups()
                 _dict['thickness1'] = float(th1)
@@ -149,7 +152,7 @@ def proceed_doc_w_date(_dict, item, remarks):
 
     val = _dict.get(item)
     if val:
-        res = re.match(u'(.*) от (.*)', val)
+        res = re.match('(.*) от (.*)', val)
         if res:
             doc_str, date_str = res.groups()
 
@@ -158,7 +161,7 @@ def proceed_doc_w_date(_dict, item, remarks):
             _dict['date_str'] = date_str
 
             _dict['doc'] = doc_str
-            res = re.match(u'(?:(.*)/)?(.*)', doc_str)
+            res = re.match('(?:(.*)/)?(.*)', doc_str)
             if res:
                 doc_pre, doc_seq = res.groups()
 
@@ -176,11 +179,11 @@ def prepare_piece(_dict, item, remarks):
         _dict['piece_scheme'] = None
     name_list = filter(lambda x: x, [_dict['piece_type'], _dict['piece_name'], _dict['piece_scheme']])
     name_list = map(unicode, name_list)
-    _dict['piece'] = u" ".join(name_list)
+    _dict['piece'] = " ".join(name_list)
 
 
 def prepare_doc_vt_act(_dict, item, remarks):
-    _dict['type'] = u"Акт ВК"
+    _dict['type'] = "Акт ВК"
 
     val = _dict.get(item)
     if val:
@@ -189,7 +192,7 @@ def prepare_doc_vt_act(_dict, item, remarks):
 
 
 def prepare_doc_invoice(_dict, item, remarks):
-    _dict['type'] = u"Накладная"
+    _dict['type'] = "Накладная"
 
     val = _dict.get(item)
     if val:
@@ -198,7 +201,7 @@ def prepare_doc_invoice(_dict, item, remarks):
 
 
 def prepare_dt_doc_name(_dict, item, remarks):
-    _dict['type'] = u"Протокол МИ"
+    _dict['type'] = "Протокол МИ"
 
     name_list = _dict[item+'_list']
     if name_list:

@@ -2,6 +2,12 @@
 # coding=utf-8
 # Stan 2012-10-13
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
+import logging
+
+
 foreign_keys = {}
 foreign_keys_c = {}
 
@@ -45,13 +51,19 @@ def link_objects(*args):
         im += 1
 
 
-
-if __name__ == '__main__':
+def main():
     from __init__ import DBSession, Base
     from db import initDb
 
-    DBSession = initDb()
+    db_uri = "sqlite://"
+    initDb(db_uri, DBSession, Base)
     initlinks(Base)
 
-    print(foreign_keys)
-    print(foreign_keys_c)
+    logging.info(foreign_keys)
+    logging.info(foreign_keys_c)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+
+    main()

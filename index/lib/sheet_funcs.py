@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2012-03-10
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import re, time, calendar, logging
 from itertools import ifilter
 import xlrd

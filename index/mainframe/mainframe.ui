@@ -51,7 +51,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>393</height>
+          <height>373</height>
          </rect>
         </property>
         <attribute name="label">
@@ -93,7 +93,7 @@
           <x>0</x>
           <y>0</y>
           <width>98</width>
-          <height>71</height>
+          <height>87</height>
          </rect>
         </property>
         <attribute name="label">
@@ -171,7 +171,7 @@
      <x>0</x>
      <y>0</y>
      <width>700</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -191,12 +191,6 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
-   <widget class="QMenu" name="menuDebug">
-    <property name="title">
-     <string>Debug</string>
-    </property>
-    <addaction name="actionFile_List"/>
-   </widget>
    <widget class="QMenu" name="menuTask">
     <property name="title">
      <string>Task</string>
@@ -207,7 +201,6 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTask"/>
-   <addaction name="menuDebug"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -262,11 +255,6 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt</string>
-   </property>
-  </action>
-  <action name="actionFile_List">
-   <property name="text">
-    <string>File List</string>
    </property>
   </action>
   <action name="actionDefault">
@@ -448,38 +436,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>actionFile_List</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>OnFileList()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>349</x>
-     <y>249</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>menuTask</sender>
-   <signal>triggered(QAction*)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>OnTaskMenu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>67</x>
-     <y>51</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>349</x>
-     <y>249</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>OnTaskDir()</slot>
@@ -489,7 +445,6 @@
   <slot>OnAbout_Qt()</slot>
   <slot>OnTreeItemSelected()</slot>
   <slot>OnToolBoxChanged()</slot>
-  <slot>OnFileList()</slot>
   <slot>OnTaskMenu()</slot>
  </slots>
 </ui>

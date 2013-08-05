@@ -20,9 +20,6 @@ from lib.items          import DirItem
 from lib.dump           import plain
 
 
-tracing = []
-
-
 def ProceedInit(sources, method=None, filename=None, tree_widget=None, status=None):
     # Получаем настройки метода
     options = {}
@@ -62,7 +59,7 @@ def ProceedInit(sources, method=None, filename=None, tree_widget=None, status=No
 
 def Proceed(source, options=None, ROOT=None, status=None):
     filename = os.path.abspath(source)
-    filename = filename.replace('\\', '/')    # приводим к стилю Qt
+#   filename = filename.replace('\\', '/')    # приводим к стилю Qt
 
     if os.path.isdir(filename):
         logging.info("Обработка директории '{0}'".format(filename))
@@ -72,7 +69,6 @@ def Proceed(source, options=None, ROOT=None, status=None):
 
         # Dir
         for root, dirs, files in os.walk(filename):
-            tracing.append(root)
             DIR = proceed_dir(root, options, ROOT)
             if isinstance(status, dict):
                 status['dirs'] += 1
@@ -87,8 +83,6 @@ def Proceed(source, options=None, ROOT=None, status=None):
 
             for filename in files:
                 if filename in files_filtered:
-                    tracing.append(filename)
-    
                     # File
                     filename = os.path.join(root, filename)
                     proceed_file(filename, options, DIR)
@@ -129,11 +123,11 @@ if __name__ == '__main__':
     import argparse
     from lib.argparse_funcs import readable_file_or_dir_list
 
-    parser = argparse.ArgumentParser(description='Indexing files and directories.')
+    parser = argparse.ArgumentParser(description="Indexing files and directories.")
     parser.add_argument('files', action=readable_file_or_dir_list, nargs='*',
-                        help='files and directories to proceed')
+                        help="files and directories to proceed")
     parser.add_argument('-m', '--method',
-                        help='specify the method name')
+                        help="specify the method name")
 
     if sys.version_info >= (3,):
         argv = sys.argv

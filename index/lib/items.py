@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2011-06-30
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 from PySide import QtCore, QtGui
 
 

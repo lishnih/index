@@ -32,7 +32,7 @@ class Dir(Base):                                # rev. 20130730
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Директория '{0}' ({1})>".format(self.name, self.status)
+        return "<Директория '{0}' ({1})>".format(self.name, self.id)
 
 
 class File(Base):                               # rev. 20130730
@@ -60,7 +60,7 @@ class File(Base):                               # rev. 20130730
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Файл '{0}' ({1})>".format(self.name, self.status)
+        return "<Файл '{0}' ({1})>".format(self.name, self.id)
 
 
 class Handler(Base):                            # rev. 20130730
@@ -80,7 +80,7 @@ class Handler(Base):                            # rev. 20130730
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Источник '{0}' <{1}> (Состояние {2})>".format(self.name, self.type, self.status)
+        return "<Обработчик '{0}' ({1})>".format(self.name, self.id)
 
 
 class Sheet(Base):                              # rev. 20120913
@@ -109,7 +109,7 @@ class Sheet(Base):                              # rev. 20120913
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Таблица '{0}' (файл: '{1}')>".format(self.name, self._file.name)
+        return "<Таблица '{0}' ({1})>".format(self.name, self.id)
 
 
 class Doc(Base):                                # rev. 20121020
@@ -139,7 +139,7 @@ class Doc(Base):                                # rev. 20121020
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Документ ({0}) '{1}' от '{2}'>".format(self.type, self.name, self.date_str)
+        return "<Документ '{0}' ({1})>".format(self.name, self.id)
 
 
 class Piece(Base):                              # rev. 20121020
@@ -162,7 +162,7 @@ class Piece(Base):                              # rev. 20121020
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Изделие '{0}'>".format(self.name)
+        return "<Изделие '{0}' ({1})>".format(self.name, self.id)
 
 
 class Piece_entry(Base):                        # rev. 20121020
@@ -197,7 +197,7 @@ class Piece_entry(Base):                        # rev. 20121020
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Запись изделия '{0}' (лист: '{1}')>".format(self.name, self._sheet.name)
+        return "<Запись изделия '{0}' ({1})>".format(self.name, self.id)
 
 
 class Joint(Base):                              # rev. 20121015
@@ -228,7 +228,7 @@ class Joint(Base):                              # rev. 20121015
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Стык '{0}'>".format(self.name)
+        return "<Стык '{0}' ({1})>".format(self.name, self.id)
 
 
 class Joint_entry(Base):                        # rev. 20121020
@@ -263,4 +263,4 @@ class Joint_entry(Base):                        # rev. 20121020
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return "<Запись стыка '{0}' [{1}]>".format(self.name, self.y)
+        return "<Запись стыка '{0}' ({1})>".format(self.name, self.id)

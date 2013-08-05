@@ -2,12 +2,16 @@
 # coding=utf-8
 # Stan 2012-04-08
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import logging
 from PySide import QtGui
 
+from .result import reg_warning, reg_error, reg_exception
+
 import models
 from lib.items import DirItem, FileItem
-from reg.result import reg_warning, reg_error, reg_exception
 
 
 def reg_object(Object, object_dict, PARENT=None, style='', brief=None):
@@ -16,7 +20,7 @@ def reg_object(Object, object_dict, PARENT=None, style='', brief=None):
             Object = getattr(models, Object)
         except:
             OBJECT = set_object(object_dict, PARENT, style, brief)
-            reg_error(OBJECT, u"Объект не найден: '{0}'!".format(Object), Object, object_dict)
+            reg_error(OBJECT, "Объект не найден: '{0}'!".format(Object), Object, object_dict)
             return OBJECT
 
     object_reg = {}
@@ -34,7 +38,7 @@ def reg_object(Object, object_dict, PARENT=None, style='', brief=None):
         show_object(OBJECT, PARENT, style=style, brief=brief)
 
         for key, val in object_debug.items():
-            key = u"_debug_{0}".format(key)
+            key = "_debug_{0}".format(key)
             setattr(OBJECT, key, val)
 
     models.DBSession.add(OBJECT)
@@ -48,7 +52,7 @@ def reg_object1(Object, object_dict, PARENT=None, style='', brief=None):
             Object = models.__getattribute__(Object)
         except:
             OBJECT = set_object(object_dict, PARENT, style, brief)
-            reg_error(OBJECT, u"Объект не найден: '{0}'!".format(Object), Object, object_dict)
+            reg_error(OBJECT, "Объект не найден: '{0}'!".format(Object), Object, object_dict)
             return OBJECT
 
     object_find = {}
@@ -65,7 +69,7 @@ def reg_object1(Object, object_dict, PARENT=None, style='', brief=None):
             l = len(rows)
             if l > 1:
 #               cond_output = [unicode(i) for i in cond]
-                reg_error(PARENT, u"Найдено несколько одинаковых записей ({0})!".format(l), Object, object_find)
+                reg_error(PARENT, "Найдено несколько одинаковых записей ({0})!".format(l), Object, object_find)
             show_object(OBJECT, PARENT, style=style, brief=brief)
             return OBJECT
     except Exception as e:
@@ -115,7 +119,7 @@ def show_object(OBJECT, PARENT, style='', brief=None):
     elif PARENT and hasattr(PARENT, 'tree_item'):
         tree_item = PARENT.tree_item
     else:
-        logging.warning(u"Данный элемент не имеет отображения: {0!r}".format(PARENT))
+        logging.warning("Данный элемент не имеет отображения: {0!r}".format(PARENT))
         tree_item = None
 
     if tree_item:
@@ -137,4 +141,4 @@ class aObject():
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
-        return u"<Элемент>"
+        return "<Элемент>"

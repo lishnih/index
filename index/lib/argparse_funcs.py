@@ -2,17 +2,20 @@
 # coding=utf-8
 # Stan 2013-02-23
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import os, argparse
 
 
 class readable_file(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         if not os.path.isfile(values):
-            raise argparse.ArgumentTypeError(u"FILE: '{0}' is not a valid path".format(values))
+            raise argparse.ArgumentTypeError("FILE: '{0}' is not a valid path".format(values))
         if os.access(values, os.R_OK):
             setattr(namespace, self.dest, values)
         else:
-            raise argparse.ArgumentTypeError(u"FILE: '{0}' is not a readable file".format(values))
+            raise argparse.ArgumentTypeError("FILE: '{0}' is not a readable file".format(values))
 
 
 class readable_dir(argparse.Action):
@@ -22,11 +25,11 @@ class readable_dir(argparse.Action):
             return
 
         if not os.path.isdir(values):
-            raise argparse.ArgumentTypeError(u"DIR: '{0}' is not a valid path".format(values))
+            raise argparse.ArgumentTypeError("DIR: '{0}' is not a valid path".format(values))
         if os.access(values, os.R_OK):
             setattr(namespace, self.dest, values)
         else:
-            raise argparse.ArgumentTypeError(u"DIR: '{0}' is not a readable dir".format(values))
+            raise argparse.ArgumentTypeError("DIR: '{0}' is not a readable dir".format(values))
 
 
 class readable_file_or_dir(argparse.Action):
@@ -36,11 +39,11 @@ class readable_file_or_dir(argparse.Action):
             return
 
         if not os.path.exists(values):
-            raise argparse.ArgumentTypeError(u"DIR_or_FILE: '{0}' is not a valid path".format(values))
+            raise argparse.ArgumentTypeError("DIR_or_FILE: '{0}' is not a valid path".format(values))
         if os.access(values, os.R_OK):
             setattr(namespace, self.dest, values)
         else:
-            raise argparse.ArgumentTypeError(u"DIR_or_FILE: '{0}' is not a readable dir".format(values))
+            raise argparse.ArgumentTypeError("DIR_or_FILE: '{0}' is not a readable dir".format(values))
 
 
 class readable_file_or_dir_list(argparse.Action):
@@ -51,11 +54,11 @@ class readable_file_or_dir_list(argparse.Action):
                 continue
 
             if not os.path.exists(value):
-                raise argparse.ArgumentTypeError(u"DIR_or_FILE: '{0}' is not a valid path".format(value))
+                raise argparse.ArgumentTypeError("DIR_or_FILE: '{0}' is not a valid path".format(value))
             if os.access(value, os.R_OK):
                 self.append_file(namespace, value)
             else:
-                raise argparse.ArgumentTypeError(u"DIR_or_FILE: '{0}' is not a readable dir".format(value))
+                raise argparse.ArgumentTypeError("DIR_or_FILE: '{0}' is not a readable dir".format(value))
 
     def append_file(self, namespace, value):
         files_list = getattr(namespace, self.dest)

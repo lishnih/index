@@ -2,24 +2,41 @@
 # coding=utf-8
 # Stan 2012-09-29
 
-import logging
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
 
-import xls_funcs
+import os, glob, importlib, logging
 
 
 functions = dict()
 
-for i in dir(xls_funcs):
-    obj = getattr(xls_funcs, i)
-    if callable(obj):
-        if i not in functions:
-            functions[i] = obj
-        else:
-            logging.warning(u"Функция '{0}' уже загружена!".format(i))
+
+modulepath = os.path.dirname(__file__)
+modulename = os.path.basename(modulepath)
+
+
+modulesnames = []
+for filename in glob.glob(os.path.join(modulepath, '*.py')):
+    basename = os.path.basename(filename)
+    if basename != '__init__.py':
+        root, ext = os.path.splitext(basename)
+        modulesnames.append(root)
+
+
+for i in modulesnames:
+    module = importlib.import_module('.' + i, modulename)
+
+    for i in dir(module):
+        obj = getattr(module, i)
+        if callable(obj):
+            if i in functions:
+                logging.warning("Функция '{0}' уже загружена!".format(i))
+            else:
+                functions[i] = obj
 
 
 def empty_func(*args, **kargs):
-    msg = u"""(((((((
+    msg = """(((((((
 Вызвана заглушка с параметрами:
 args:  {0!r}
 kargs: {1!r}
@@ -28,7 +45,7 @@ kargs: {1!r}
 
 
 def default_error_callback(func_name, e, *args, **kargs):
-    msg = u"""(((((((
+    msg = """(((((((
 Функция '{0}' вызвала ошибку:
 {1}!
 Были переданый следующие параметры:
@@ -40,7 +57,7 @@ kargs: {3!r}
 
 def get(func_name):
     if func_name not in functions:
-        logging.warning(u"Функция не найдена: {0}, используем заглушку!".format(func_name))
+        logging.warning("Функция не найдена: {0}, используем заглушку!".format(func_name))
         functions[func_name] = empty_func
 
     func = functions.get(func_name)
@@ -54,8 +71,7 @@ def call(func_name, *args, **kargs):
     try:
         res = func(*args, **kargs)
     except Exception as e:
-        if error_callback:
-            error_callback(func_name, e, *args, **kargs)
+        error_callback(func_name, e, *args, **kargs)
         res = None
 
     return res

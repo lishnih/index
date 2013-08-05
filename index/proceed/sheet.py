@@ -2,12 +2,15 @@
 # coding=utf-8
 # Stan 2012-03-10
 
-import re
-import xlrd
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
 
+import re
+
+from models import Sheet
 from reg import reg_object
 from reg.result import reg_debug, reg_warning
-from models import Sheet
+
 from lib.sheet_funcs import get_str
 from lib.sheet_parse import parse_doc, parse_table
 
@@ -31,7 +34,7 @@ def proceed_sheet(sh, options, FILE, i=None):
             SHEET.sheet_test = test_cell
             SHEET.groups = groups
         else:
-            msg = u"В ({0},{1}) ожидается: '{2}', найдено: '{3}'".format(row, col, test_pattern, test_cell)
+            msg = "В ({0},{1}) ожидается: '{2}', найдено: '{3}'".format(row, col, test_pattern, test_cell)
             reg_warning(SHEET, msg)
 
         TASK = FILE._dir._source._task

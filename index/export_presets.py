@@ -21,8 +21,6 @@ def save_entry(filename, entry):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
-
     s = Settings()
     s.init_path("datadir", "~~~")
     datadir = s.get("datadir")
@@ -39,4 +37,6 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+
     main()

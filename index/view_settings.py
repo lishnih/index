@@ -5,7 +5,6 @@
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
-
 try:
     from .lib.backwardcompat import *
     from .lib.settings import Settings

@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2012-03-10
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import os, shutil, logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -17,12 +20,13 @@ def initDb(db_uri=None, session=None, base=None):
 
     if engine.name == 'sqlite':
         filename = engine.url.database
-        dirname = os.path.dirname(filename)
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-        if not os.path.isdir(dirname):
-            logging.error(u'Невозможно создать директорию "{0}"'.format(dirname))
-            return
+        if filename:
+            dirname = os.path.dirname(filename)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
+            if not os.path.isdir(dirname):
+                logging.error("Невозможно создать директорию '{0}'".format(dirname))
+                return
 
     session.configure(bind=engine)
     if base:
@@ -50,7 +54,7 @@ def archiveDb(engine):
         filename = engine.url.database
         archivefile(filename)
     else:
-        logging.warning(u"Для данного типа БД архивирование не предусмотрено: {0}, пропускаем архивирование!".format(engine.name))
+        logging.warning("Для данного типа БД архивирование не предусмотрено: {0}, пропускаем архивирование!".format(engine.name))
 
 
 def archiveFile(filename):
@@ -61,8 +65,8 @@ def archiveFile(filename):
         basename  = os.path.basename(filename)
         root, ext = os.path.splitext(basename)
 
-        basename_new = u"{0}_{1}{2}".format(root, timestamp, ext)
-        dirname_new  = os.path.join(dirname, u"backup")
+        basename_new = "{0}_{1}{2}".format(root, timestamp, ext)
+        dirname_new  = os.path.join(dirname, "backup")
         if not os.path.exists(dirname_new):
             os.makedirs(dirname_new)
         filename_new = os.path.join(dirname_new, basename_new)

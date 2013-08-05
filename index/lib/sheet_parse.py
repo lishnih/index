@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2012-09-01
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import xlrd
 
 from models import DBSession
@@ -28,7 +31,7 @@ def parse_doc(sh, options, SHEET):
     doc_objects1 = get_list(options.get('doc_objects1'))
 
     doc_dict = dict()
-    test = u""
+    test = ""
 
     last_y, last_x = None, None
     for key, params in doc_values.items():
@@ -45,9 +48,9 @@ def parse_doc(sh, options, SHEET):
                     if val2:
                         val_list.append(val2)
                 doc_dict[key+'_list'] = val_list
-                test += u"{0} [{1},{2}]: {3} /{4!r}/ + /{5!r}/\n".format(key, last_y, last_x, val, val, val_list)
+                test += "{0} [{1},{2}]: {3} /{4!r}/ + /{5!r}/\n".format(key, last_y, last_x, val, val, val_list)
             else:
-                reg_warning(SHEET, u"Значение не найдено: '{0}', пропускаем лист!".format(params))
+                reg_warning(SHEET, "Значение не найдено: '{0}', пропускаем лист!".format(params))
                 return
         elif l == 2:
             y, x = params
@@ -57,7 +60,7 @@ def parse_doc(sh, options, SHEET):
                 y = last_y + int(y)
             val = get_value(sh, y, x)
             doc_dict[key] = val
-            test += u"{0} [{1},{2}]: {3} /{4!r}/\n".format(key, y, x, val, val)
+            test += "{0} [{1},{2}]: {3} /{4!r}/\n".format(key, y, x, val, val)
         elif l == 3:
             y, x = params
             if isinstance(x, basestring):
@@ -66,7 +69,7 @@ def parse_doc(sh, options, SHEET):
                 y = last_y + int(y)
             val = get_value(sh, y, x)
             doc_dict[key] = val
-            test += u"{0} [{1},{2},{3}]: {4} /{5!r}/\n".format(key, y, x, pattern, val, val)
+            test += "{0} [{1},{2},{3}]: {4} /{5!r}/\n".format(key, y, x, pattern, val, val)
 
     remarks = {}
     for item, funcs_name in doc_funcs.items():
@@ -117,7 +120,7 @@ def parse_table_iter(sh, options, SHEET):
     if isinstance(row_start, basestring):
         yx = search_value(sh, row_start)
         if not yx:
-            reg_warning(SHEET, u"Начало таблицы не найдено: '{0}', пропускаем лист!".format(row_start))
+            reg_warning(SHEET, "Начало таблицы не найдено: '{0}', пропускаем лист!".format(row_start))
             return
         row_start = yx[0] + 1 + row_start_skip
         SHEET.row_start = row_start
@@ -127,7 +130,7 @@ def parse_table_iter(sh, options, SHEET):
     if isinstance(row_stop, basestring):
         yx = search_value(sh, row_stop)
         if not yx:
-            reg_warning(SHEET, u"Конец таблицы не найден: '{0}', индексируем весь лист!".format(row_stop))
+            reg_warning(SHEET, "Конец таблицы не найден: '{0}', индексируем весь лист!".format(row_stop))
             row_stop = sh.nrows
         else:
             row_stop = yx[0] - row_stop_skip
@@ -137,7 +140,7 @@ def parse_table_iter(sh, options, SHEET):
         typical_column = get_value(sh, j, typical_index) if typical_index else True
         if typical_column:
             row_dict = dict(j=j)
-            test = u"Номер строки: {0}\n".format(j)
+            test = "Номер строки: {0}\n".format(j)
 
             if col_mode == 'column':
                 i = 0
@@ -146,7 +149,7 @@ def parse_table_iter(sh, options, SHEET):
                         if isinstance(col_name, basestring):
                             val = get_value(sh, j, i)
                             row_dict[col_name] = val
-                            test += u"({0}:{1}) {2}: {3} /{4!r}/\n".format(j, i, col_name, val, val)
+                            test += "({0}:{1}) {2}: {3} /{4!r}/\n".format(j, i, col_name, val, val)
                         if isinstance(col_name, list):
                             inner_row = 0
                             for inner_col_name in col_name:
@@ -162,7 +165,7 @@ def parse_table_iter(sh, options, SHEET):
                     if val:
                         col_name = col_names[col]
                         row_dict[col_name] = val
-                        test += u"({0}:{1}) {2}: {3} /{4!r}/\n".format(j, i, col_name, val, val)
+                        test += "({0}:{1}) {2}: {3} /{4!r}/\n".format(j, i, col_name, val, val)
                         col += 1
                         if col > len(col_names):
                             break
@@ -185,7 +188,7 @@ def parse_table_iter(sh, options, SHEET):
 #             test_row = ''
 #             for i in xrange(sh.ncols):
 #                 val = get_value(sh, j, i)
-#                 test_row += u"({0}): {1} /{2!r}/\n".format(i, val, val)
+#                 test_row += "({0}): {1} /{2!r}/\n".format(i, val, val)
 #             row_dict['test_row'] = test_row
 
             if row_dict:

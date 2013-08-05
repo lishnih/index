@@ -27,7 +27,7 @@ def reg_warning(OBJ, msg=None):
 
 
 def reg_error(OBJ, msg=None, *args, **kargs):
-    msg = u"""(((((((
+    msg = """(((((((
 Ошибка '{0}'!
 Были переданый следующие параметры:
 args: {1!r}
@@ -43,7 +43,7 @@ kargs: {2!r}
 def reg_exception(OBJ, e, *args, **kargs):
     tb_msg = traceback.format_exc()
 
-    msg = u"""(((((((
+    msg = """(((((((
 Ошибка '{0}'!
 Были переданый следующие параметры:
 args: {1!r}
@@ -51,7 +51,7 @@ kargs: {2!r}
 ===\n""".format(e, args, kargs)
     try:    msg += tb_msg
     except: msg += repr(tb_msg)
-    msg += u")))))))\n"
+    msg += ")))))))\n"
 
     if OBJ and hasattr(OBJ, 'tree_item'):
         OBJ.tree_item.setError(msg)

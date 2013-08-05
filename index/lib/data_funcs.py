@@ -2,6 +2,9 @@
 # coding=utf-8
 # Stan 2012-04-06
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import re, logging
 
 
@@ -96,7 +99,7 @@ def filter_list(from_list, filter):
                 if i <= from_len:
                     new_list.append(from_list[i])
                 else:
-                    logging.warning(u'Недопустимый индекс {0}'.format(i+1))
+                    logging.warning("Недопустимый индекс: {0}".format(i+1))
                     break
 
         # Строка вида "(name0, name1)" - как массив имён
@@ -109,7 +112,7 @@ def filter_list(from_list, filter):
                 if name in from_list:
                     new_list.append(name)
                 else:
-                    logging.warning(u'Недопустимое значение {0}'.format(name))
+                    logging.warning("Недопустимое значение: {0}".format(name))
 
         # Строка вида "/patt/" - как шаблон
         res = re.match('^/(.*)/$', filter)
@@ -131,7 +134,7 @@ def filter_list(from_list, filter):
             if name in from_list:
                 new_list.append(name)
             else:
-                logging.warning(u'Недопустимое значение {0}'.format(name))
+                logging.warning("Недопустимое значение: {0}".format(name))
 
     return new_list
 
