@@ -157,6 +157,50 @@ ndt_reports = {
 }
 
 
+##############################
+### Разрушающий контроль   ###
+##############################
+
+dt_protocol = {
+    'description':      "Обработка протоколов РК",
+#   'dirs_filter':      None,
+#   'dirs_level':       0,
+    'files_filter':     "/^Стил.+\.xlsx?$/",
+
+    'handler':  {
+#       'sheets_filter':    '',
+#       'sheet_test':       [0, 0, ''],
+    
+        'doc':    {
+            'doc_values': {
+                'doc_pre':          ( 8,  8),
+#                 'doc_seq':          ( 8, 11),
+                'date':             (10,  0),
+            },
+            'doc_funcs': {
+                'date':             'proceed_date',
+            },
+            'doc_objects1':     'Doc',
+        },
+
+        'table':    {
+            'row_start':        20,
+            'check_column':     'C',
+            'row_objects':      'Joint_entry',
+            'row_objects1':     'Joint',
+            'col_names': [
+                'scheme',
+                '',
+                'joint',
+            ],
+            'col_funcs': {
+                'joint':            'proceed_joint',
+            }
+        },
+    },
+}
+
+
 def main():
     for key, value in globals().items():
         if isinstance(value, dict):

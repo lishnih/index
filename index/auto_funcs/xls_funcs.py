@@ -84,6 +84,9 @@ def proceed_joint(_dict, item, remarks):
     _dict[item+'_line'] = None
     _dict[item+'_seq']  = None
 
+    if isinstance(val, numeric_types):
+        val = unicode(val)
+
     if val:
         res = re.match('([^-]+)-(.+)-(\d+)', val, re.UNICODE)
         if res:
