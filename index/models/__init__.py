@@ -4,6 +4,7 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
+from lib.backwardcompat import *
 
 import os
 from datetime import datetime
@@ -17,7 +18,7 @@ DBSession = scoped_session(sessionmaker())
 Base = declarative_base()
 
 
-class Dir(Base):                                # rev. 20130730
+class Dir(Base, aStr):                          # rev. 20130730
     __tablename__ = 'dirs'
     id = Column(Integer, primary_key=True)
 
@@ -28,14 +29,11 @@ class Dir(Base):                                # rev. 20130730
 #   def __init__(self, **kargs):
 #       Base.__init__(self, **kargs)
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return "<Директория '{0}' ({1})>".format(self.name, self.id)
 
 
-class File(Base):                               # rev. 20130730
+class File(Base, aStr):                         # rev. 20130730
     __tablename__ = 'files'
     id = Column(Integer, primary_key=True)
     _dirs_id = Column(Integer, ForeignKey('dirs.id', onupdate='CASCADE', ondelete='CASCADE'))
@@ -56,14 +54,11 @@ class File(Base):                               # rev. 20130730
             if self._dir:
                 self.name = os.path.basename(self.name)
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return "<Файл '{0}' ({1})>".format(self.name, self.id)
 
 
-class Handler(Base):                            # rev. 20130730
+class Handler(Base, aStr):                      # rev. 20130730
     __tablename__ = 'handlers'
     id = Column(Integer, primary_key=True)
 
@@ -76,14 +71,11 @@ class Handler(Base):                            # rev. 20130730
 #   def __init__(self, **kargs):
 #       Base.__init__(self, **kargs)
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return "<Обработчик '{0}' ({1})>".format(self.name, self.id)
 
 
-class Sheet(Base):                              # rev. 20120913
+class Sheet(Base, aStr):                        # rev. 20120913
     __tablename__ = 'sheets'
     id = Column(Integer, primary_key=True)
     _files_id = Column(Integer, ForeignKey('files.id', onupdate="CASCADE", ondelete="CASCADE"))
@@ -105,14 +97,11 @@ class Sheet(Base):                              # rev. 20120913
             self.visible = self.sh.visibility
             self.sh = None
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return "<Таблица '{0}' ({1})>".format(self.name, self.id)
 
 
-class Doc(Base):                                # rev. 20121020
+class Doc(Base, aStr):                          # rev. 20121020
     __tablename__ = 'docs'
     id = Column(Integer, primary_key=True)
     _handlers_id = Column(Integer, ForeignKey('handlers.id', onupdate="CASCADE", ondelete="CASCADE"))
@@ -135,14 +124,11 @@ class Doc(Base):                                # rev. 20121020
             if self.doc_sign:
                 self.name += ' ' + format(self.doc_sign)
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return "<Документ '{0}' ({1})>".format(self.name, self.id)
 
 
-class Piece(Base):                              # rev. 20121020
+class Piece(Base, aStr):                        # rev. 20121020
     __tablename__ = 'pieces'
     id = Column(Integer, primary_key=True)
 
@@ -158,14 +144,11 @@ class Piece(Base):                              # rev. 20121020
             name_list = map(unicode, name_list)
             self.name = " ".join(name_list)
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return "<Изделие '{0}' ({1})>".format(self.name, self.id)
 
 
-class Piece_entry(Base):                        # rev. 20121020
+class Piece_entry(Base, aStr):                  # rev. 20121020
     __tablename__ = 'piece_entries'
     id = Column(Integer, primary_key=True)
     _sheets_id = Column(Integer, ForeignKey('sheets.id', onupdate='CASCADE', ondelete='CASCADE'))
@@ -193,14 +176,11 @@ class Piece_entry(Base):                        # rev. 20121020
         if not self.name:
             self.name = "{0} [{1}]".format(self.piece, self.y)
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return "<Запись изделия '{0}' ({1})>".format(self.name, self.id)
 
 
-class Joint(Base):                              # rev. 20121015
+class Joint(Base, aStr):                        # rev. 20121015
     __tablename__ = 'joints'
     id = Column(Integer, primary_key=True)
 
@@ -224,14 +204,11 @@ class Joint(Base):                              # rev. 20121015
 #             if self.joint_sign:
 #                 self.name += ' ' + format(self.joint_sign)
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return "<Стык '{0}' ({1})>".format(self.name, self.id)
 
 
-class Joint_entry(Base):                        # rev. 20121020
+class Joint_entry(Base, aStr):                  # rev. 20121020
     __tablename__ = 'joint_entries'
 
     id = Column(Integer, primary_key=True)
@@ -258,9 +235,6 @@ class Joint_entry(Base):                        # rev. 20121020
         Base.__init__(self, **kargs)
         if not self.name:
             self.name = "{0} [{1}]".format(self.joint, self.y)
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
 
     def __unicode__(self):
         return "<Запись стыка '{0}' ({1})>".format(self.name, self.id)

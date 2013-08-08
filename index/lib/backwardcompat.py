@@ -28,6 +28,10 @@ if sys.version_info >= (3,):
     from tkinter.messagebox import (showinfo, showwarning, showerror,
          askquestion, askokcancel, askyesno, askretrycancel)
 
+    class aStr():
+        def __str__(self):
+            return self.__unicode__()
+
     def cmp(a, b):
         return (a > b) - (a < b)
 
@@ -72,6 +76,10 @@ else:
     from tkFileDialog import askopenfilename, asksaveasfilename
     from tkMessageBox import (showinfo, showwarning, showerror,
          askquestion, askokcancel, askyesno, askretrycancel)
+
+    class aStr():
+        def __str__(self):
+            return self.__unicode__().encode('utf-8')
 
 #   cmp = cmp
     range = xrange
