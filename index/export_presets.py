@@ -27,7 +27,7 @@ def main():
 
     if datadir:
         logging.info("Export to '{0}'".format(datadir))
-    
+
         for key, value in globals().items():
             if isinstance(value, dict):
                 description = value.get("description", "")

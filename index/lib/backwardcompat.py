@@ -24,7 +24,8 @@ if sys.version_info >= (3,):
     import tkinter as tk
     from tkinter import ttk
     from tkinter.font import Font
-    from tkinter.filedialog import askopenfilename, asksaveasfilename
+    from tkinter.filedialog import (askdirectory, askopenfilename,
+         asksaveasfilename)
     from tkinter.messagebox import (showinfo, showwarning, showerror,
          askquestion, askokcancel, askyesno, askretrycancel)
 
@@ -57,6 +58,8 @@ if sys.version_info >= (3,):
     numeric_types = int, float, complex
     simple_types = int, float, complex, str, bytearray
     collections_types = list, tuple, set, frozenset
+    all_types = (int, float, complex, str, bytearray,
+                 list, tuple, set, frozenset, dict)
 
 else:
     from urllib2 import URLError, HTTPError
@@ -73,7 +76,8 @@ else:
     import Tkinter as tk
     import ttk
     from tkFont import Font
-    from tkFileDialog import askopenfilename, asksaveasfilename
+    from tkFileDialog import (askdirectory, askopenfilename,
+         asksaveasfilename)
     from tkMessageBox import (showinfo, showwarning, showerror,
          askquestion, askokcancel, askyesno, askretrycancel)
 
@@ -103,3 +107,5 @@ else:
     numeric_types = int, long, float, complex
     simple_types = int, long, float, complex, basestring, bytearray
     collections_types = list, tuple, set, frozenset
+    all_types = (int, long, float, complex, basestring, bytearray,
+                 list, tuple, set, frozenset, dict)

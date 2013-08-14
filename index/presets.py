@@ -75,7 +75,7 @@ ndt_register = {
     'handler':  {
         'sheets_filter':    '/^Журнал НК$/',
 #       'sheet_test':       [0, 0, ''],
-    
+
         'table':    {
             'row_start':        4,
             'check_column':     'I',
@@ -113,11 +113,11 @@ ndt_reports = {
     'handler':  {
     #   'sheets_filter':    None,
         'sheet_test':       [0, 0, "{def: pgu235/(.+); rev: \w+}"],
-    
+
         'СП_Астрахань_<Отдел>_<Документ>_001': {
             'deprecated': True,
         },
-    
+
         'СП_Астрахань_ОКК_Акт-ВИК-МК_001': {
             'doc':    {
                 'doc_values': {
@@ -145,11 +145,11 @@ ndt_reports = {
                 }
             },
         },
-    
+
         'СП_Астрахань_ОКК_Заключение-УЗК-МК_001': {
             'deprecated': True,
         },
-    
+
         'СП_Астрахань_ОКК_УЗК-арматура_001': {
             'deprecated': True,
         },
@@ -170,7 +170,7 @@ dt_protocol = {
     'handler':  {
 #       'sheets_filter':    '',
 #       'sheet_test':       [0, 0, ''],
-    
+
         'doc':    {
             'doc_values': {
                 'doc_pre':          ( 8,  8),
