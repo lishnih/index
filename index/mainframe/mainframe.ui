@@ -184,13 +184,6 @@
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionAbout"/>
-    <addaction name="actionAbout_Qt"/>
-   </widget>
    <widget class="QMenu" name="menuTask">
     <property name="title">
      <string>Task</string>
@@ -198,6 +191,13 @@
     <addaction name="actionAuto"/>
     <addaction name="actionDefault"/>
     <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTask"/>

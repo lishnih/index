@@ -22,7 +22,7 @@ def save_entry(filename, entry):
 
 def main():
     s = Settings()
-    s.init_path("datadir", "~~~")
+    s.get_path("datadir", "~~~")
     datadir = s.get("datadir")
 
     if datadir:

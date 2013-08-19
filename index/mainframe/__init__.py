@@ -49,7 +49,7 @@ class MainFrame(QtGui.QMainWindow):
         th.set_callback(self.update_func, self.ending_func)
 
         # Инициализируем datadir
-        self.s.init_path('datadir', '~~~')
+        self.s.get_path('datadir', '~~~')
 
         # Обрабатываем параметры
         self.proceed_args(args)
@@ -211,11 +211,11 @@ class MainFrame(QtGui.QMainWindow):
     def closeEvent(self, event):
         if th.isRunning():
             th.terminate()
-            event.ignore()
 
         # Сохраняем состояние окна
         self.settings.setValue("geometry", self.saveGeometry())
         self.settings.setValue("windowState", self.saveState())
+
         event.accept()
 
 

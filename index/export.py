@@ -107,7 +107,8 @@ def Proceed(source, options=None, ROOT=None, status=None):
     try:
         DBSession.commit()
     except Exception as e:    # StatementError
-        reg_exception(root, e)
+        reg_exception(ROOT, e)
+
 
 
 def main(args):
