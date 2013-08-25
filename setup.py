@@ -14,7 +14,7 @@ else:
     if py_version < (2, 6):
         raise RuntimeError('On Python 2, Index requires Python 2.6 or better')
 
-here = os.path.abspath(os.path.dirname(__file__))
+here = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 try:
     README = open(os.path.join(here, 'README.md')).read()
     CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()

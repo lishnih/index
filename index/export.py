@@ -20,25 +20,13 @@ from lib.items          import DirItem
 from lib.dump           import plain
 
 
-def ProceedInit(sources, method=None, filename=None, tree_widget=None, status=None):
-    # Получаем настройки метода
-    options = {}
-    if method:
-        options = Settings(method)
-    elif filename:
-        options = Settings(filename=filename)
-
-    if not method:
-        method = "default"
-
+def ProceedInit(sources, options={}, tree_widget=None, status=None):
     root_dict = dict(name="Root")
-    ROOT = set_object(root_dict, tree_widget,
-           brief = dict(sources=sources, method=method, filename=filename,
-                   options=options))
+    ROOT = set_object(root_dict, tree_widget, brief=options)
     ROOT.tree_item.setSelected(True)
 
     dbpath = options.get('dbpath', '.')
-    dbname = options.get('dbname', "{0}.sqlite".format(method))
+    dbname = options.get('dbname', "default.sqlite")
     db_path = os.path.join(dbpath, dbname)
     db_uri_default = "sqlite:///{0}".format(db_path)
     db_uri = options.get('db_uri', db_uri_default)

@@ -48,15 +48,11 @@ class MainFrame(QtGui.QMainWindow):
         # Назначаем потоку callback-функции
         th.set_callback(self.update_func, self.ending_func)
 
-        # Инициализируем datadir
-        self.s.get_path('datadir', '~~~')
+        # Загружаем список настроек
+        self.load_profiles()
 
         # Обрабатываем параметры
         self.proceed_args(args)
-
-        # Обновляем задачи
-        self.proceed_methods()
-        self.set_method()   # Auto is default
 
 
 # Callback-функции для Таймера
@@ -116,7 +112,8 @@ class MainFrame(QtGui.QMainWindow):
             self.set_status(selected_dir)
 
             # Запускаем обработку
-            th.start(ProceedInit, selected_dir, filename=self.default_method, tree_widget=self.ui.tree, status=self.proceed_status)
+            options = self.get_profile()
+            th.start(ProceedInit, selected_dir, options, tree_widget=self.ui.tree, status=self.proceed_status)
 
 
     def OnTaskFile(self):
@@ -137,7 +134,8 @@ class MainFrame(QtGui.QMainWindow):
             self.set_status(selected_file)
 
             # Запускаем обработку
-            th.start(ProceedInit, selected_file, filename=self.default_method, tree_widget=self.ui.tree)
+            options = self.get_profile()
+            th.start(ProceedInit, selected_file, options, tree_widget=self.ui.tree)
 
 
     def OnClose(self):
@@ -237,9 +235,8 @@ class MainFrame(QtGui.QMainWindow):
             # Запускаем обработку
             args = dict(args._get_kwargs())
 
-            datadir  = self.s.get("datadir", '.')
             method   = args.get("method", "Default")
-            filename = os.path.join(datadir, "{0}.pickle".format(method))
+            filename = os.path.join(self.datadir, "{0}.pickle".format(method))
 
             th.start(ProceedInit, args['files'], filename=filename, tree_widget=self.ui.tree)
 
@@ -250,21 +247,32 @@ class MainFrame(QtGui.QMainWindow):
             self.set_status("Current method: {0}".format(method))
 
 
-    def proceed_methods(self):
-        datadir = self.s.get("datadir")
-
-        matches = []
-        for root, dirnames, filenames in os.walk(datadir):
-            for filename in fnmatch.filter(filenames, '*.pickle'):
-                matches.append(os.path.join(root, filename))
+    def load_profiles(self):
+        self.profiles = self.s.get_group('profiles')
 
         alignmentGroup = QtGui.QActionGroup(self)
         alignmentGroup.addAction(self.ui.actionAuto)
         alignmentGroup.addAction(self.ui.actionDefault)
 
-        for i in matches:
-            action = QtGui.QAction(i, self, checkable=True)
+        for key, val in self.profiles:
+            action = QtGui.QAction(key, self, checkable=True)
             self.ui.menuTask.addAction(action)
             alignmentGroup.addAction(action)
 
         self.ui.actionAuto.setChecked(True)
+
+        self.set_method()   # Устанавливаем по умолчанию
+
+
+    def get_profile(self, name=None):
+        if not name:
+            name = self.default_method
+
+        if name == 'Default':
+            return {}
+
+        if name == 'Auto':
+            return {}
+
+        profile = self.profiles.get_group(name)
+        return profile.get_dict()

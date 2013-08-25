@@ -7,13 +7,13 @@ from __future__ import ( division, absolute_import,
 
 try:
     from .lib.backwardcompat import *
-    from .lib.info import (__pkgname__, __description__, __version__)
+    from .lib.info import __pkgname__, __description__, __version__
     from .lib.dump import plain
     from .lib.settings import Settings
     from .lib.tkprop import propertyDialog
 except:
     from lib.backwardcompat import *
-    from lib.info import (__pkgname__, __description__, __version__)
+    from lib.info import __pkgname__, __description__, __version__
     from lib.dump import plain
     from lib.settings import Settings
     from lib.tkprop import propertyDialog
@@ -258,7 +258,7 @@ Package: {4}
                         BRANCH = self.s.get_group(branch)
                     else:
                         BRANCH = self.s
-    
+
                     for i in dir(module):
                         if i[0] != '_':
                             value = getattr(module, i)
