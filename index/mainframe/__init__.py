@@ -11,7 +11,7 @@ from PySide import QtCore, QtGui, __version__
 
 from .mainframe_ui import Ui_MainWindow
 from .thread1 import th                 # Поток (уже созданный)
-from .view_db import view_db
+# from .view_db import view_db
 
 from export import ProceedInit          # Модуль обработки
 
@@ -208,7 +208,10 @@ class MainFrame(QtGui.QMainWindow):
 
     def closeEvent(self, event):
         if th.isRunning():
-            th.terminate()
+#           th.terminate()
+            print("running...")
+            event.ignore()
+            return
 
         # Сохраняем состояние окна
         self.settings.setValue("geometry", self.saveGeometry())
@@ -238,7 +241,9 @@ class MainFrame(QtGui.QMainWindow):
             method   = args.get("method", "Default")
             filename = os.path.join(self.datadir, "{0}.pickle".format(method))
 
-            th.start(ProceedInit, args['files'], filename=filename, tree_widget=self.ui.tree)
+            selected_file = args['files']
+            options = self.get_profile()
+            th.start(ProceedInit, selected_file, options, tree_widget=self.ui.tree)
 
 
     def set_method(self, method=""):

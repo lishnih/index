@@ -8,7 +8,6 @@ from __future__ import ( division, absolute_import,
 import sys, os, logging
 from sqlalchemy import MetaData, distinct
 
-from models import DBSession
 from lib.items import DirItem, FileItem, DisabledItem
 
 

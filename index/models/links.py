@@ -52,11 +52,11 @@ def link_objects(*args):
 
 
 def main():
-    from __init__ import DBSession, Base
+    from __init__ import Base
     from db import initDb
 
     db_uri = "sqlite://"
-    initDb(db_uri, DBSession, Base)
+    initDb(db_uri, base=Base)
     initlinks(Base)
 
     logging.info(foreign_keys)

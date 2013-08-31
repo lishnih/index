@@ -11,8 +11,8 @@ from models import Dir
 from reg import reg_object1
 
 
-def proceed_dir(dirname, options, ROOT=None):
+def proceed_dir(dirname, options, session, ROOT=None):
     dir_dict = dict(name=dirname)
-    DIR = reg_object1(Dir, dir_dict, ROOT, style='B')
+    DIR = reg_object1(session, Dir, dir_dict, ROOT, style='B')
 
     return DIR

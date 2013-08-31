@@ -18,7 +18,7 @@ def initDb(db_uri=None, session=None, base=None):
 
     engine = create_engine(db_uri)
 
-    if engine.name == 'sqlite':
+    if engine.name == "sqlite":
         filename = engine.url.database
         if filename:
             dirname = os.path.dirname(filename)
@@ -29,6 +29,7 @@ def initDb(db_uri=None, session=None, base=None):
                 return
 
     session.configure(bind=engine)
+
     if base:
         base.metadata.create_all(engine)
 
@@ -36,11 +37,21 @@ def initDb(db_uri=None, session=None, base=None):
 
 
 def getDefaultDb():
-    dbname = "index"
-    home = os.path.expanduser("~")
-    db_path = os.path.join(os.path.expanduser("~"), "{0}.sqlite".format(dbname))
-    db_uri = 'sqlite:///{0}'.format(db_path)
-#   db_uri = 'mysql+oursql://root:54321@localhost/{0}'.format(dbname)
+    dbtype = "sqlite"
+    dbname = "default"
+    path   = os.path.expanduser("~")
+    
+#     dbtype   = "mysql"
+#     dbname   = "default"
+#     host     = "localhost"
+#     user     = "root"
+#     passwd   = "54321"
+
+    if dbtype == "sqlite":
+        db_path = os.path.join(path, "{0}.sqlite".format(dbname))
+        db_uri = "{0}:///{1}".format(dbtype, db_path)
+    elif dbtype == "mysql":
+        db_uri = "{0}://{1}:{2}@{3}/{4}".format(dbtype, user, passwd, host, dbname)
 
     return db_uri
 
@@ -50,7 +61,7 @@ def cleanDb(engine):
 
 
 def archiveDb(engine):
-    if engine.name == 'sqlite':
+    if engine.name == "sqlite":
         filename = engine.url.database
         archivefile(filename)
     else:

@@ -14,11 +14,11 @@ from reg import reg_object1
 from reg.result import reg_warning, reg_error, reg_exception
 
 
-def proceed_file(filename, options, DIR):
+def proceed_file(filename, options, session, DIR):
     basename = os.path.basename(filename)
 
     file_dict = dict(_dir=DIR, name=basename)
-    FILE = reg_object1(File, file_dict, DIR)
+    FILE = reg_object1(session, File, file_dict, DIR)
 
     handler_options = options.get('handler')
     if handler_options:

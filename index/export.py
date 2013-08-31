@@ -7,7 +7,7 @@ from __future__ import ( division, absolute_import,
 
 import sys, os, logging
 
-from models             import DBSession, Base
+from models             import Base
 from models.db          import initDb
 from proceed.dir        import proceed_dir
 from proceed.file       import proceed_file
@@ -25,13 +25,9 @@ def ProceedInit(sources, options={}, tree_widget=None, status=None):
     ROOT = set_object(root_dict, tree_widget, brief=options)
     ROOT.tree_item.setSelected(True)
 
-    dbpath = options.get('dbpath', '.')
-    dbname = options.get('dbname', "default.sqlite")
-    db_path = os.path.join(dbpath, dbname)
-    db_uri_default = "sqlite:///{0}".format(db_path)
-    db_uri = options.get('db_uri', db_uri_default)
+    db_uri = options.get('db_uri')
     try:
-        initDb(db_uri, DBSession, Base)
+        session = initDb(db_uri, base=Base)
     except Exception as e:
         reg_exception(ROOT, e)
         return
@@ -42,10 +38,10 @@ def ProceedInit(sources, options={}, tree_widget=None, status=None):
 
     sources = get_list(sources)
     for source in sources:
-        Proceed(source, options, ROOT, status)
+        Proceed(source, options, session, ROOT, status)
 
 
-def Proceed(source, options=None, ROOT=None, status=None):
+def Proceed(source, options={}, session=None, ROOT=None, status=None):
     filename = os.path.abspath(source)
 #   filename = filename.replace('\\', '/')    # приводим к стилю Qt
 
@@ -57,7 +53,7 @@ def Proceed(source, options=None, ROOT=None, status=None):
 
         # Dir
         for root, dirs, files in os.walk(filename):
-            DIR = proceed_dir(root, options, ROOT)
+            DIR = proceed_dir(root, options, session, ROOT)
             if isinstance(status, dict):
                 status['dirs'] += 1
 
@@ -73,7 +69,7 @@ def Proceed(source, options=None, ROOT=None, status=None):
                 if filename in files_filtered:
                     # File
                     filename = os.path.join(root, filename)
-                    proceed_file(filename, options, DIR)
+                    proceed_file(filename, options, session, DIR)
                 else:
                     set_object(filename, DIR, style='D', brief="Этот файл не индексируется!")
                 if isinstance(status, dict):
@@ -87,13 +83,13 @@ def Proceed(source, options=None, ROOT=None, status=None):
         DIR = proceed_dir(dirname, options, ROOT)
 
         # File
-        proceed_file(filename, options, DIR)
+        proceed_file(filename, options, session, DIR)
 
     else:
         logging.warning("Не найден файл/директория '{0}'!".format(filename))
 
     try:
-        DBSession.commit()
+        session.commit()
     except Exception as e:    # StatementError
         reg_exception(ROOT, e)
 

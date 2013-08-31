@@ -11,10 +11,9 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker, backref, relationship
+from sqlalchemy.orm import backref, relationship
 
 
-DBSession = scoped_session(sessionmaker())
 Base = declarative_base()
 
 

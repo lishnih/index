@@ -8,7 +8,6 @@ from lib.backwardcompat import *
 
 import xlrd
 
-from models import DBSession
 from models.links import link_objects
 from reg import reg_object, reg_object1
 from reg.result import reg_warning, reg_error, reg_exception
@@ -86,9 +85,9 @@ def parse_doc(sh, options, SHEET):
     if doc_dict:
         ROWS = []
         for doc_object in doc_objects:
-            ROWS.append(reg_object(doc_object, doc_dict, SHEET, brief=test))
+            ROWS.append(reg_object(session, doc_object, doc_dict, SHEET, brief=test))
         for doc_object in doc_objects1:
-            ROWS.append(reg_object1(doc_object, doc_dict, SHEET, brief=test))
+            ROWS.append(reg_object1(session, doc_object, doc_dict, SHEET, brief=test))
 
         link_objects(SHEET, *ROWS)
 
@@ -195,18 +194,13 @@ def parse_table_iter(sh, options, SHEET):
             if row_dict:
                 ROWS = []
                 for row_object in row_objects:
-                    obj = reg_object(row_object, row_dict, SHEET, brief=test)
+                    obj = reg_object(session, row_object, row_dict, SHEET, brief=test)
                     obj._row = row_dict
                     ROWS.append(obj)
                 for row_object in row_objects1:
-                    obj = reg_object1(row_object, row_dict, SHEET, brief=test)
+                    obj = reg_object1(session, row_object, row_dict, SHEET, brief=test)
                     obj._row = row_dict
                     ROWS.append(obj)
-
-#                 try:
-#                     DBSession.commit()
-#                 except Exception as e:
-#                     reg_exception(SHEET, e, name, source)
 
                 link_objects(SHEET, *ROWS)
 

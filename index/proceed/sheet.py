@@ -21,7 +21,7 @@ def proceed_sheet(sh, options, FILE, i=None):
         sh = sh,
         seq = i,
     )
-    SHEET = reg_object(Sheet, sheet_dict, PARENT=FILE)
+    SHEET = reg_object(session, Sheet, sheet_dict, PARENT=FILE)
 
     sheet_test = options.get('sheet_test')
     groups = ()
