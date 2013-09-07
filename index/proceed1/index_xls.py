@@ -8,16 +8,27 @@ from __future__ import ( division, absolute_import,
 import os
 import xlrd
 
-from .sheet import proceed_sheet
-
-from models import File
-from reg import reg_object, set_object
-from reg.result import reg_warning, reg_error, reg_exception
+from . import sheet
+from models import Handler
+from reg import reg_object1
+from reg.result import reg_warning
 
 from lib.data_funcs import filter_match, filter_list
 
 
-def proceed(filename, options, FILE):
+handler_name = __name__.rsplit('.', 1)[1]
+
+
+def reg_handler(handlername, options, session, FILE):
+    handler_dict = dict(name=handlername)
+    HANDLER = reg_object1(session, Handler, handler_dict, FILE)
+
+    return HANDLER
+
+
+def proceed(filename, options, session, FILE):
+    HANDLER = reg_handler(handler_name, options, session, FILE)
+
     basename = os.path.basename(filename)
     root, ext = os.path.splitext(basename)
     ext = ext.lower()
@@ -39,13 +50,12 @@ def proceed(filename, options, FILE):
         if ext == '.xlsx':
             reg_warning(FILE, "'formatting_info=True' not yet implemented!")
 
-        nsheets = book.nsheets
-        FILE.nsheets = nsheets
+        FILE.nsheets = book.nsheets
 
         for name in sheets_list:
             sh = book.sheet_by_name(name)
             i = sheets.index(name)
-            proceed_sheet(sh, options, FILE, i)
+            sheet.proceed_sheet(sh, options, session, FILE, HANDLER, i)
             book.unload_sheet(name)
 
-        return
+        HANDLER.tree_item.setOk()

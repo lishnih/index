@@ -12,7 +12,7 @@ functions = dict()
 
 
 modulepath = os.path.dirname(__file__)
-modulename = os.path.basename(modulepath)
+modulename = __name__
 
 
 modulesnames = []

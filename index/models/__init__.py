@@ -4,7 +4,6 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
-from lib.backwardcompat import *
 
 import os
 from datetime import datetime
@@ -15,6 +14,26 @@ from sqlalchemy.orm import backref, relationship
 
 
 Base = declarative_base()
+class aStr():
+    def __str__(self):
+        return self.__unicode__()
+
+
+class Handler(Base, aStr):                      # rev. 20130730
+    __tablename__ = 'handlers'
+    id = Column(Integer, primary_key=True)
+
+    name      = Column(String)                  # Имя обработчика
+    status    = Column(Integer)                 # Состояние
+    created   = Column(Integer, default=datetime.utcnow)  # Время создания
+    updated   = Column(Integer, onupdate=datetime.utcnow) # Время обновления
+    options   = Column(String)                  # для пакета index
+
+#   def __init__(self, **kargs):
+#       Base.__init__(self, **kargs)
+
+    def __unicode__(self):
+        return "<Обработчик '{0}' ({1})>".format(self.name, self.id)
 
 
 class Dir(Base, aStr):                          # rev. 20130730
@@ -57,23 +76,6 @@ class File(Base, aStr):                         # rev. 20130730
         return "<Файл '{0}' ({1})>".format(self.name, self.id)
 
 
-class Handler(Base, aStr):                      # rev. 20130730
-    __tablename__ = 'handlers'
-    id = Column(Integer, primary_key=True)
-
-    name      = Column(String)                  # Имя обработчика
-    status    = Column(Integer)                 # Состояние
-    created   = Column(Integer, default=datetime.utcnow)  # Время создания
-    updated   = Column(Integer, onupdate=datetime.utcnow) # Время обновления
-    options   = Column(String)                  # для пакета index
-
-#   def __init__(self, **kargs):
-#       Base.__init__(self, **kargs)
-
-    def __unicode__(self):
-        return "<Обработчик '{0}' ({1})>".format(self.name, self.id)
-
-
 class Sheet(Base, aStr):                        # rev. 20120913
     __tablename__ = 'sheets'
     id = Column(Integer, primary_key=True)
@@ -85,26 +87,21 @@ class Sheet(Base, aStr):                        # rev. 20120913
     ncols     = Column(Integer)                 # Кол-во колонок в листе
     nrows     = Column(Integer)                 # Кол-во строк в листе
     visible   = Column(Integer)                 # Видимость листа
-    sh        = Column(String)                  # Аттрибут для возможности передать переменную sh
 
-    def __init__(self, **kargs):
-        Base.__init__(self, **kargs)
-        if self.sh:
-            self.name  = self.sh.name
-            self.ncols = self.sh.ncols
-            self.nrows = self.sh.nrows
-            self.visible = self.sh.visibility
-            self.sh = None
+#   def __init__(self, **kargs):
+#       Base.__init__(self, **kargs)
 
     def __unicode__(self):
         return "<Таблица '{0}' ({1})>".format(self.name, self.id)
 
 
-class Doc(Base, aStr):                          # rev. 20121020
+class Doc(Base, aStr):                          # rev. 20130907
     __tablename__ = 'docs'
     id = Column(Integer, primary_key=True)
     _handlers_id = Column(Integer, ForeignKey('handlers.id', onupdate="CASCADE", ondelete="CASCADE"))
     _handler = relationship(Handler, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
+    _sheets_id = Column(Integer, ForeignKey('sheets.id', onupdate="CASCADE", ondelete="CASCADE"))
+    _sheet = relationship(Sheet, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
 
     name       = Column(String)                 # Номер документа
     doc_pre    = Column(String)
@@ -127,56 +124,18 @@ class Doc(Base, aStr):                          # rev. 20121020
         return "<Документ '{0}' ({1})>".format(self.name, self.id)
 
 
-class Piece(Base, aStr):                        # rev. 20121020
-    __tablename__ = 'pieces'
+class Unit(Base, aStr):                         # rev. 20130907
+    __tablename__ = 'units'
     id = Column(Integer, primary_key=True)
 
     name       = Column(String)                 # Наименование изделия
-    piece_type = Column(String)
-    piece_name = Column(String)
-    piece_scheme = Column(String)
+    extra      = Column(String)
 
-    def __init__(self, **kargs):
-        Base.__init__(self, **kargs)
-        if not self.name:
-            name_list = filter(lambda x: x, [self.piece_type, self.piece_name, self.piece_scheme])
-            name_list = map(unicode, name_list)
-            self.name = " ".join(name_list)
+#   def __init__(self, **kargs):
+#       Base.__init__(self, **kargs)
 
     def __unicode__(self):
         return "<Изделие '{0}' ({1})>".format(self.name, self.id)
-
-
-class Piece_entry(Base, aStr):                  # rev. 20121020
-    __tablename__ = 'piece_entries'
-    id = Column(Integer, primary_key=True)
-    _sheets_id = Column(Integer, ForeignKey('sheets.id', onupdate='CASCADE', ondelete='CASCADE'))
-    _sheet = relationship(Sheet, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
-    _docs_id = Column(Integer, ForeignKey('docs.id', onupdate='CASCADE', ondelete='CASCADE'))
-    _doc = relationship(Doc, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
-    _pieces_id = Column(Integer, ForeignKey('pieces.id', onupdate='CASCADE', ondelete='CASCADE'))
-    _piece = relationship(Piece, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
-
-    name       = Column(String)                 # Наименование
-    piece      = Column(String)
-    object     = Column(String)                 # Объект
-    scheme     = Column(String)                 # Схема
-    mfr        = Column(String)                 # Производитель
-    order      = Column(Integer)                # Заказ
-    qnt        = Column(Float)                  # Кол-во
-    meas       = Column(String)
-    invoice    = Column(Integer)                # Т/н
-    cert_type  = Column(String)                 # Сертификат
-    cert       = Column(Integer)
-    y          = Column(Integer)                # y
-
-    def __init__(self, **kargs):
-        Base.__init__(self, **kargs)
-        if not self.name:
-            self.name = "{0} [{1}]".format(self.piece, self.y)
-
-    def __unicode__(self):
-        return "<Запись изделия '{0}' ({1})>".format(self.name, self.id)
 
 
 class Joint(Base, aStr):                        # rev. 20121015
@@ -207,33 +166,41 @@ class Joint(Base, aStr):                        # rev. 20121015
         return "<Стык '{0}' ({1})>".format(self.name, self.id)
 
 
-class Joint_entry(Base, aStr):                  # rev. 20121020
-    __tablename__ = 'joint_entries'
-
+class Entry(Base, aStr):                        # rev. 20130907
+    __tablename__ = 'entries'
     id = Column(Integer, primary_key=True)
-    _sheets_id = Column(Integer, ForeignKey('sheets.id', onupdate='CASCADE', ondelete='CASCADE'))
-    _sheet = relationship(Sheet, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
+    _docs_id = Column(Integer, ForeignKey('docs.id', onupdate='CASCADE', ondelete='CASCADE'))
+    _doc = relationship(Doc, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
+    _unites_id = Column(Integer, ForeignKey('units.id', onupdate='CASCADE', ondelete='CASCADE'))
+    _unit = relationship(Unit, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
+
+    name       = Column(String)                 # Наименование
+    y          = Column(Integer)                # y
+
+    def __init__(self, **kargs):
+        Base.__init__(self, **kargs)
+        if not self.name:
+            self.name = "{0} / {1} [{2}]".format(self._unit.name, self._doc.name, self.y)
+
+    def __unicode__(self):
+        return "<Запись в листе '{0}' ({1})>".format(self.name, self.id)
+
+
+class Joint_entry(Base, aStr):                  # rev. 20130907
+    __tablename__ = 'joint_entries'
+    id = Column(Integer, primary_key=True)
     _docs_id = Column(Integer, ForeignKey('docs.id', onupdate='CASCADE', ondelete='CASCADE'))
     _doc = relationship(Doc, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
     _joints_id = Column(Integer, ForeignKey('joints.id', onupdate='CASCADE', ondelete='CASCADE'))
     _joint = relationship(Joint, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
 
-    name        = Column(String)                # Номер записи
-    joint       = Column(String)
-    welders     = Column(String(length=255))
-    method      = Column(String(length=255))
-    d_w_th      = Column(String(length=255))
-    defects     = Column(String(length=255))
-    report      = Column(String(length=255))
-    date        = Column(Integer)
-    date_str    = Column(String(length=255))
-    decision    = Column(String(length=255))
-    y           = Column(Integer)
+    name       = Column(String)                 # Наименование
+    y          = Column(Integer)                # y
 
-    def __init__(self, **kargs):
-        Base.__init__(self, **kargs)
-        if not self.name:
-            self.name = "{0} [{1}]".format(self.joint, self.y)
+#     def __init__(self, **kargs):
+#         Base.__init__(self, **kargs)
+#         if not self.name:
+#             self.name = "{0} / {1} [{2}]".format(self._joint.name, self._doc.name, self.y)
 
     def __unicode__(self):
-        return "<Запись стыка '{0}' ({1})>".format(self.name, self.id)
+        return "<Запись в листе '{0}' ({1})>".format(self.name, self.id)

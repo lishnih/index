@@ -10,12 +10,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
-def initDb(db_uri=None, session=None, base=None):
-    if not db_uri:
-        db_uri = getDefaultDb()
-    if not session:
-        session = scoped_session(sessionmaker())
-
+def initDb(config=None, session=None, base=None):
+    db_uri = getDbUri(config)
     engine = create_engine(db_uri)
 
     if engine.name == "sqlite":
@@ -28,6 +24,8 @@ def initDb(db_uri=None, session=None, base=None):
                 logging.error("Невозможно создать директорию '{0}'".format(dirname))
                 return
 
+    if not session:
+        session = scoped_session(sessionmaker())
     session.configure(bind=engine)
 
     if base:
@@ -36,22 +34,22 @@ def initDb(db_uri=None, session=None, base=None):
     return session
 
 
-def getDefaultDb():
-    dbtype = "sqlite"
-    dbname = "default"
-    path   = os.path.expanduser("~")
+def getDbUri(config={}):
+    db_uri = config.get("db_uri")
+    if not db_uri:
+        dbtype = config.get("dbtype", "sqlite")
     
-#     dbtype   = "mysql"
-#     dbname   = "default"
-#     host     = "localhost"
-#     user     = "root"
-#     passwd   = "54321"
-
-    if dbtype == "sqlite":
-        db_path = os.path.join(path, "{0}.sqlite".format(dbname))
-        db_uri = "{0}:///{1}".format(dbtype, db_path)
-    elif dbtype == "mysql":
-        db_uri = "{0}://{1}:{2}@{3}/{4}".format(dbtype, user, passwd, host, dbname)
+        if dbtype == "sqlite":
+            dbname = config.get("dbname", os.path.expanduser("~/default.sqlite"))
+            db_uri = "{0}:///{1}".format(dbtype, dbname)
+    
+        elif dbtype == "mysql":
+            dbtype = config.get("dbtype", "mysql")
+            dbname = config.get("dbname", "default")
+            host   = config.get("host",   "localhost")
+            user   = config.get("user",   "root")
+            passwd = config.get("passwd", "54321")
+            db_uri = "{0}://{1}:{2}@{3}/{4}".format(dbtype, user, passwd, host, dbname)
 
     return db_uri
 

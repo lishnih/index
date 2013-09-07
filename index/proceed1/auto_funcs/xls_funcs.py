@@ -8,7 +8,7 @@ from lib.backwardcompat import *
 
 import re
 
-from lib.sheet_funcs import get_date
+from ..lib.sheet_funcs import get_date
 
 
 def prepare_str(_dict, item, remarks):

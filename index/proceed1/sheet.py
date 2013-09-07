@@ -8,20 +8,23 @@ from __future__ import ( division, absolute_import,
 import re
 
 from models import Sheet
-from reg import reg_object
+from reg import reg_object1
 from reg.result import reg_debug, reg_warning
 
-from lib.sheet_funcs import get_str
-from lib.sheet_parse import parse_doc, parse_table
+from .lib.sheet_funcs import get_str
+from .lib.sheet_parse import parse_doc, parse_table
 
 
-def proceed_sheet(sh, options, FILE, i=None):
+def proceed_sheet(sh, options, session, FILE, HANDLER, i=None):
     sheet_dict = dict(
-        _file = FILE,
-        sh = sh,
-        seq = i,
+        _file   = FILE,
+        name    = sh.name,
+        seq     = i,
+        ncols   = sh.ncols,
+        nrows   = sh.nrows,
+        visible = sh.visibility,
     )
-    SHEET = reg_object(session, Sheet, sheet_dict, PARENT=FILE)
+    SHEET = reg_object1(session, Sheet, sheet_dict, HANDLER)
 
     sheet_test = options.get('sheet_test')
     groups = ()
@@ -37,8 +40,8 @@ def proceed_sheet(sh, options, FILE, i=None):
             msg = "В ({0},{1}) ожидается: '{2}', найдено: '{3}'".format(row, col, test_pattern, test_cell)
             reg_warning(SHEET, msg)
 
-        TASK = FILE._dir._source._task
-        reg_debug(TASK, test_cell)
+        DIR = FILE._dir
+        reg_debug(DIR, test_cell)
 
     depth = options
     section = ["<options>"]
@@ -55,9 +58,9 @@ def proceed_sheet(sh, options, FILE, i=None):
     doc_options = depth.get('doc')
     if doc_options:
         SHEET.doc_options = doc_options
-        parse_doc(sh, doc_options, SHEET)
+        parse_doc(sh, doc_options, session, SHEET, HANDLER)
 
     table_options = depth.get('table')
     if table_options:
         SHEET.table_options = table_options
-        parse_table(sh, table_options, SHEET)
+        parse_table(sh, table_options, session, SHEET, HANDLER)

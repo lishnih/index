@@ -9,10 +9,10 @@ from lib.backwardcompat import *
 import logging
 from PySide import QtGui
 
-from .result import reg_warning, reg_error, reg_exception
+from .result import reg_error, reg_exception
 
 import models
-from lib.items import DirItem, FileItem
+from lib.items import FileItem
 
 
 def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
@@ -21,7 +21,7 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
             Object = getattr(models, Object)
         except:
             OBJECT = set_object(object_dict, PARENT, style, brief)
-            reg_error(OBJECT, "Объект не найден: '{0}'!".format(Object), Object, object_dict)
+            reg_error(OBJECT, "Модель не найдена: '{0}'!".format(Object), Object, object_dict)
             return OBJECT
 
     object_reg = {}
@@ -50,16 +50,23 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
 def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None):
     if isinstance(Object, string_types):
         try:
-            Object = models.__getattribute__(Object)
+            Object = getattr(models, Object)
         except:
             OBJECT = set_object(object_dict, PARENT, style, brief)
-            reg_error(OBJECT, "Объект не найден: '{0}'!".format(Object), Object, object_dict)
+            reg_error(OBJECT, "Модель не найдена: '{0}'!".format(Object), Object, object_dict)
             return OBJECT
 
-    object_find = {}
+    object_reg = {}
+    object_debug = {}
     for i in object_dict:
-        if i[0] != '_' and i in dir(Object):
-            object_find[i] = object_dict[i]
+        if i in dir(Object):
+            object_reg[i] = object_dict[i]
+        else:
+            object_debug[i] = object_dict[i]
+
+    object_find = {}
+    for i in object_reg:
+        object_find[i] = object_dict[i]
 
     try:
         rows = session.query(Object).filter_by(**object_find).all()
@@ -69,14 +76,24 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None)
             OBJECT = rows[0]
             l = len(rows)
             if l > 1:
-#               cond_output = [unicode(i) for i in cond]
                 reg_error(PARENT, "Найдено несколько одинаковых записей ({0})!".format(l), Object, object_find)
             show_object(OBJECT, PARENT, style=style, brief=brief)
             return OBJECT
+
     except Exception as e:
         reg_exception(PARENT, e, Object, object_find)
 
-    OBJECT = reg_object(session, Object, object_dict, PARENT=PARENT, style=style, brief=brief)
+    OBJECT = Object(**object_reg)
+
+    # Графика
+    if style != None:
+        show_object(OBJECT, PARENT, style=style, brief=brief)
+
+        for key, val in object_debug.items():
+            key = "_debug_{0}".format(key)
+            setattr(OBJECT, key, val)
+
+    session.add(OBJECT)
 
     return OBJECT
 
@@ -93,6 +110,8 @@ def set_object(OBJECT, PARENT, style='', brief=None):
 
 
 def set_object1(OBJECT, PARENT, style='', brief=None):
+    if isinstance(OBJECT, string_types):
+        OBJECT = dict(name=OBJECT)
     if isinstance(OBJECT, dict):
         OBJECT = aObject(**OBJECT)
 
@@ -113,6 +132,7 @@ def set_object1(OBJECT, PARENT, style='', brief=None):
     return OBJECT
 
 
+# Не использовать вне этого модуля
 def show_object(OBJECT, PARENT, style='', brief=None):
     if isinstance(PARENT, QtGui.QTreeWidget):
         tree_item = PARENT

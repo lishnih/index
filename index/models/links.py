@@ -33,10 +33,13 @@ def initlinks(Base):
                 except:
                     pass
 
+    logging.debug(foreign_keys)
+    logging.debug(foreign_keys_c)
+
 
 def link_objects(*args):
-    classes = [i._sa_class_manager.class_ for i in args]
-    tablenames = [i.__table__.name for i in args]
+    classes = [i._sa_class_manager.class_ for i in args if i]
+    tablenames = [i.__table__.name for i in args if i]
 
     im = 0
     for model in classes:
@@ -55,15 +58,20 @@ def main():
     from __init__ import Base
     from db import initDb
 
-    db_uri = "sqlite://"
-    initDb(db_uri, base=Base)
+    dbconfig = dict(db_uri = "sqlite://")
+    initDb(dbconfig, base=Base)
     initlinks(Base)
 
-    logging.info(foreign_keys)
-    logging.info(foreign_keys_c)
+    print("foreign_keys:")
+    for key, value in foreign_keys.items():
+        print(key, value)
+
+    print("foreign_keys_c:")
+    for key, value in foreign_keys_c.items():
+        print(key, value)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     main()

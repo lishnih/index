@@ -246,8 +246,8 @@ class MainFrame(QtGui.QMainWindow):
             th.start(ProceedInit, selected_file, options, tree_widget=self.ui.tree)
 
 
-    def set_method(self, method=""):
-        self.default_method = method
+    def set_method(self, method=None):
+        self.current_method = method
         if method:
             self.set_status("Current method: {0}".format(method))
 
@@ -269,9 +269,11 @@ class MainFrame(QtGui.QMainWindow):
         self.set_method()   # Устанавливаем по умолчанию
 
 
-    def get_profile(self, name=None):
+    def get_profile(self):
+        name = self.current_method
+
         if not name:
-            name = self.default_method
+            return {}
 
         if name == 'Default':
             return {}
