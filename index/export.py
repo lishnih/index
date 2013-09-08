@@ -13,21 +13,35 @@ from reg            import set_object
 from reg.result     import reg_error, reg_exception
 
 
-def ProceedInit(sources, options={}, tree_widget=None, status=None):
+def Proceed(sources, options={}, tree_widget=None, status=None):
     root_dict = dict(name="Root")
     ROOT = set_object(root_dict, tree_widget, brief=options)
-    ROOT.tree_item.setSelected(True)
+    if hasattr(ROOT, 'tree_item'):
+        ROOT.tree_item.setSelected(True)
 
     # Загружаем обработчик
     handler = options.get('handler', "proceed_default")
     handler_path = options.get('handler_path')
 
+    # Добавляем handler_path в sys.path
+    if handler_path:
+        if not os.path.isdir(handler_path):
+            reg_error(ROOT, "handler_path not exists: '{0}'".format(handler_path))
+            return
+
+        sys.path.append(handler_path)
+
+    # Загружаем необходимые модули
     try:
         handler_module = importlib.import_module(handler)
         models_module  = importlib.import_module('.models', handler)
     except Exception as e:
         reg_exception(ROOT, e)
         return
+
+    # Извлекаем handler_path из sys.path
+    if handler_path:
+        sys.path.pop()
 
     if not hasattr(handler_module, 'proceed'):
         reg_error(ROOT, "No 'proceed' function in handler '{0}'".format(handler))
@@ -38,7 +52,8 @@ def ProceedInit(sources, options={}, tree_widget=None, status=None):
     try:
         session = initDb(dbconfig, base=models_module.Base)
         initlinks(models_module.Base)
-        ROOT.tree_item.appendBrief([session, foreign_keys, foreign_keys_c])
+        if hasattr(ROOT, 'tree_item'):
+            ROOT.tree_item.appendBrief([session, foreign_keys, foreign_keys_c])
     except Exception as e:
         reg_exception(ROOT, e)
         return
@@ -62,7 +77,7 @@ def ProceedInit(sources, options={}, tree_widget=None, status=None):
 
 def main(args):
     if args.files:
-        ProceedInit(args.files, method=args.method)
+        Proceed(args.files)
     else:
         logging.warning("Файлы не заданы!")
 

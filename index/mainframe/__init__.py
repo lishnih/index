@@ -13,7 +13,7 @@ from .mainframe_ui import Ui_MainWindow
 from .thread1 import th                 # Поток (уже созданный)
 # from .view_db import view_db
 
-from export import ProceedInit          # Модуль обработки
+from export import Proceed              # Модуль обработки
 
 from lib.info import __description__, __version__
 from lib.settings import Settings
@@ -42,7 +42,7 @@ class MainFrame(QtGui.QMainWindow):
         self.s = Settings()
         self.s.saveEnv()
 
-        # Переменная для ProceedInit
+        # Переменная для Proceed
         self.proceed_status = {}
 
         # Назначаем потоку callback-функции
@@ -113,7 +113,7 @@ class MainFrame(QtGui.QMainWindow):
 
             # Запускаем обработку
             options = self.get_profile()
-            th.start(ProceedInit, selected_dir, options, tree_widget=self.ui.tree, status=self.proceed_status)
+            th.start(Proceed, selected_dir, options, tree_widget=self.ui.tree, status=self.proceed_status)
 
 
     def OnTaskFile(self):
@@ -135,7 +135,7 @@ class MainFrame(QtGui.QMainWindow):
 
             # Запускаем обработку
             options = self.get_profile()
-            th.start(ProceedInit, selected_file, options, tree_widget=self.ui.tree)
+            th.start(Proceed, selected_file, options, tree_widget=self.ui.tree)
 
 
     def OnClose(self):
@@ -238,12 +238,12 @@ class MainFrame(QtGui.QMainWindow):
             # Запускаем обработку
             args = dict(args._get_kwargs())
 
-            method   = args.get("method", "Default")
-            filename = os.path.join(self.datadir, "{0}.pickle".format(method))
+            selected_files = args['files']
 
-            selected_file = args['files']
+            method = args.get("method", "Default")
+            self.set_method(method)
             options = self.get_profile()
-            th.start(ProceedInit, selected_file, options, tree_widget=self.ui.tree)
+            th.start(Proceed, selected_files, options, tree_widget=self.ui.tree)
 
 
     def set_method(self, method=None):

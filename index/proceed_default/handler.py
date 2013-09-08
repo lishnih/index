@@ -21,4 +21,5 @@ def proceed(filename, options, session, FILE):
 
     logging.debug("Возможная обработка файла {0}".format(filename))
 
-    FILE.tree_item.setOk()
+    if hasattr(FILE, 'tree_item'):
+        FILE.tree_item.setOk()

@@ -32,7 +32,7 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     import argparse
     from lib.argparse_funcs import readable_file_or_dir_list

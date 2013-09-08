@@ -26,23 +26,25 @@ def proceed(source, options={}, session=None, ROOT=None, status=None):
         # Dir
         for dirname, dirs, files in os.walk(filename):
             if filter_match(dirname, dirs_filter):
-                DIR = reg_dir(dirname, options, session, ROOT)
-
                 files_filtered = filter_list(files, files_filter)
+                if files_filtered:
+                    DIR = reg_dir(dirname, options, session, ROOT)
 
-                for filename in files:
-                    if filename in files_filtered:
-                        # File
-                        filename = os.path.join(dirname, filename)
-                        proceed_file(filename, options, session, DIR)
-                    else:
-                        set_object(filename, DIR, style='D', brief="Этот файл не индексируется!")
+                    for filename in files:
+                        if filename in files_filtered:
+                            # File
+                            filename = os.path.join(dirname, filename)
+                            proceed_file(filename, options, session, DIR)
+                        else:
+                            set_object(filename, DIR, style='D', brief="Файл не индексируется!")
 
-                    if isinstance(status, dict):
-                        status['files'] += 1
+                        if isinstance(status, dict):
+                            status['files'] += 1
+                else:
+                    set_object(dirname, ROOT, style='D', brief="Директория без индексных файлов!")
 
             else:
-                set_object(dirname, ROOT, style='D', brief="Эта директория не индексируется!")
+                set_object(dirname, ROOT, style='D', brief="Директория не индексируется!")
 
             if isinstance(status, dict):
                 status['dirs'] += 1
@@ -62,5 +64,5 @@ def proceed(source, options={}, session=None, ROOT=None, status=None):
 
     try:
         session.commit()
-    except Exception as e:    # StatementError
+    except Exception as e:
         reg_exception(ROOT, e)
