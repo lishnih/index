@@ -10,6 +10,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
+foreign_keys = {}
+foreign_keys_c = {}
+
+
 def initDb(config=None, session=None, base=None):
     db_uri = getDbUri(config)
     engine = create_engine(db_uri)
@@ -38,11 +42,11 @@ def getDbUri(config={}):
     db_uri = config.get("db_uri")
     if not db_uri:
         dbtype = config.get("dbtype", "sqlite")
-    
+
         if dbtype == "sqlite":
             dbname = config.get("dbname", os.path.expanduser("~/default.sqlite"))
             db_uri = "{0}:///{1}".format(dbtype, dbname)
-    
+
         elif dbtype == "mysql":
             dbtype = config.get("dbtype", "mysql")
             dbname = config.get("dbname", "default")
@@ -80,3 +84,69 @@ def archiveFile(filename):
             os.makedirs(dirname_new)
         filename_new = os.path.join(dirname_new, basename_new)
         shutil.copy(filename, filename_new)
+
+
+def initlinks(Base):
+    global foreign_keys, foreign_keys_c
+
+    for modelname, model in Base._decl_class_registry.items():
+        for i in dir(model):
+            if i[0:1] == '_' and i[0:2] != '__':
+                attr = getattr(model, i)
+                try:
+                    pairs = attr.property.synchronize_pairs
+                    if type(pairs) == list:
+                        for primary_c, foreign_c in pairs:
+                            primary_tablename = primary_c.table.name
+                            foreign_tablename = foreign_c.table.name
+                            if foreign_tablename not in foreign_keys:
+                                foreign_keys[foreign_tablename] = {}
+                                foreign_keys_c[model] = {}
+                            foreign_keys[foreign_tablename][primary_tablename] = i
+                            foreign_keys_c[model][primary_tablename] = i
+                except:
+                    pass
+
+    logging.debug(foreign_keys)
+    logging.debug(foreign_keys_c)
+
+
+def link_objects(*args):
+    classes = [i._sa_class_manager.class_ for i in args if i]
+    tablenames = [i.__table__.name for i in args if i]
+
+    im = 0
+    for model in classes:
+        if model in foreign_keys_c:
+            for primary_tablename in foreign_keys_c[model]:
+                if primary_tablename in tablenames:
+                    obj = args[im]
+                    ip = tablenames.index(primary_tablename)
+                    pobj = args[ip]
+                    foreign_key = foreign_keys_c[model][primary_tablename]
+                    setattr(obj, foreign_key, pobj)
+        im += 1
+
+
+
+def main():
+    from __init__ import Base
+    from db import initDb
+
+    dbconfig = dict(db_uri = "sqlite://")
+    initDb(dbconfig, base=Base)
+    initlinks(Base)
+
+    print("foreign_keys:")
+    for key, value in foreign_keys.items():
+        print(key, value)
+
+    print("foreign_keys_c:")
+    for key, value in foreign_keys_c.items():
+        print(key, value)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+
+    main()

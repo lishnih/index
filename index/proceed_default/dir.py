@@ -5,7 +5,7 @@
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
-from models import Dir
+from .models import Dir
 from reg import reg_object1
 
 

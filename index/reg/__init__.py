@@ -11,19 +11,10 @@ from PySide import QtGui
 
 from .result import reg_error, reg_exception
 
-import models
 from lib.items import FileItem
 
 
 def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
-    if isinstance(Object, string_types):
-        try:
-            Object = getattr(models, Object)
-        except:
-            OBJECT = set_object(object_dict, PARENT, style, brief)
-            reg_error(OBJECT, "Модель не найдена: '{0}'!".format(Object), Object, object_dict)
-            return OBJECT
-
     object_reg = {}
     object_debug = {}
     for i in object_dict:
@@ -48,14 +39,6 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
 
 
 def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None):
-    if isinstance(Object, string_types):
-        try:
-            Object = getattr(models, Object)
-        except:
-            OBJECT = set_object(object_dict, PARENT, style, brief)
-            reg_error(OBJECT, "Модель не найдена: '{0}'!".format(Object), Object, object_dict)
-            return OBJECT
-
     object_reg = {}
     object_debug = {}
     for i in object_dict:

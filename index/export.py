@@ -8,9 +8,7 @@ from __future__ import ( division, absolute_import,
 import sys, os, importlib, logging
 
 from lib.data_funcs import get_list
-from models         import Base
-from models.db      import initDb
-from models.links   import initlinks, foreign_keys, foreign_keys_c
+from db             import initDb, initlinks, foreign_keys, foreign_keys_c
 from reg            import set_object
 from reg.result     import reg_error, reg_exception
 
@@ -20,10 +18,26 @@ def ProceedInit(sources, options={}, tree_widget=None, status=None):
     ROOT = set_object(root_dict, tree_widget, brief=options)
     ROOT.tree_item.setSelected(True)
 
+    # Загружаем обработчик
+    handler = options.get('handler', "proceed_default")
+    handler_path = options.get('handler_path')
+
+    try:
+        handler_module = importlib.import_module(handler)
+        models_module  = importlib.import_module('.models', handler)
+    except Exception as e:
+        reg_exception(ROOT, e)
+        return
+
+    if not hasattr(handler_module, 'proceed'):
+        reg_error(ROOT, "No 'proceed' function in handler '{0}'".format(handler))
+        return
+
+    # Инициализируем БД
     dbconfig = options.get('db', {})
     try:
-        session = initDb(dbconfig, base=Base)
-        initlinks(Base)
+        session = initDb(dbconfig, base=models_module.Base)
+        initlinks(models_module.Base)
         ROOT.tree_item.appendBrief([session, foreign_keys, foreign_keys_c])
     except Exception as e:
         reg_exception(ROOT, e)
@@ -33,27 +47,12 @@ def ProceedInit(sources, options={}, tree_widget=None, status=None):
         status['dirs']  = 0
         status['files'] = 0
 
-    Proceed(sources, options, session, ROOT, status)
-
-
-def Proceed(sources, options={}, session=None, ROOT=None, status=None):
-    ver = options.get('ver', 1)
-    proceed_name = "proceed{0}".format(ver)
-
-    try:
-        proceed_module = importlib.import_module(proceed_name)
-    except Exception as e:
-        reg_exception(ROOT, e)
-        return
-
-    if not hasattr(proceed_module, 'proceed'):
-        reg_error(ROOT, "No 'proceed' function in module '{0}'".format(proceed_name))
-        return
-
+    # Производим обработку
     sources = get_list(sources)
     for source in sources:
-        proceed_module.proceed(source, options, session, ROOT, status)
+        handler_module.proceed(source, options, session, ROOT, status)
 
+    # Завершаем транзакции
     try:
         session.commit()
     except Exception as e:
