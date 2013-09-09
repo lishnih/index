@@ -20,6 +20,3 @@ def proceed(filename, options, session, FILE):
     ext = ext.lower()
 
     logging.debug("Возможная обработка файла {0}".format(filename))
-
-    if hasattr(FILE, 'tree_item'):
-        FILE.tree_item.setOk()

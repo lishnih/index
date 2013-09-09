@@ -30,7 +30,7 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
         show_object(OBJECT, PARENT, style=style, brief=brief)
 
         for key, val in object_debug.items():
-            key = "_debug_{0}".format(key)
+#           key = "_debug_{0}".format(key)
             setattr(OBJECT, key, val)
 
     session.add(OBJECT)
@@ -73,7 +73,7 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None)
         show_object(OBJECT, PARENT, style=style, brief=brief)
 
         for key, val in object_debug.items():
-            key = "_debug_{0}".format(key)
+#           key = "_debug_{0}".format(key)
             setattr(OBJECT, key, val)
 
     session.add(OBJECT)

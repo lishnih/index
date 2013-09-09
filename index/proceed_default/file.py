@@ -30,3 +30,7 @@ def proceed_file(filename, options, session, DIR):
         proceed(filename, options, session, FILE)
     except Exception as e:
         reg_exception(FILE, e)
+        return
+
+    if hasattr(FILE, 'tree_item'):
+        FILE.tree_item.setOk()
