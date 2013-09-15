@@ -235,7 +235,14 @@ Package: {4}
                 for i in dir(module):
                     if i[0] != '_':
                         value = getattr(module, i)
-                        if isinstance(value, all_types):
+
+                        # Словари объединяем
+                        if isinstance(value, dict) and isinstance(BRANCH.get(i), dict):
+                            value1 = BRANCH.get(i)
+                            value1.update(value)
+                            BRANCH.set(i, value1)
+
+                        elif isinstance(value, all_types):
                             BRANCH.set(i, value)
 
                 self.showInfo()

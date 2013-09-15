@@ -12,12 +12,10 @@ from PySide import QtCore, QtGui, __version__
 from .mainframe_ui import Ui_MainWindow
 from .thread1 import th                 # Поток (уже созданный)
 # from .view_db import view_db
-
-from export import Proceed              # Модуль обработки
-
 from lib.info import __description__, __version__
 from lib.settings import Settings
 from lib.dump_html import html_val, html
+from export import Proceed              # Модуль обработки
 
 
 # Настройки: [HKCU\Software\lishnih@gmail.com\<app_section>]
@@ -50,6 +48,9 @@ class MainFrame(QtGui.QMainWindow):
 
         # Загружаем список настроек
         self.load_profiles()
+
+        # Инициализируем метод
+        self.set_method()
 
         # Обрабатываем параметры
         self.proceed_args(args)
@@ -209,7 +210,7 @@ class MainFrame(QtGui.QMainWindow):
     def closeEvent(self, event):
         if th.isRunning():
 #           th.terminate()
-            print("running...")
+            self.proceed_status['break'] = True
             event.ignore()
             return
 
@@ -230,33 +231,10 @@ class MainFrame(QtGui.QMainWindow):
         self.ui.statusbar.showMessage(self.sb_message)
 
 
-    def proceed_args(self, args):
-        if args.files:
-            # Отображаем путь в Статусбаре
-            self.set_status(args.files)
-
-            # Запускаем обработку
-            args = dict(args._get_kwargs())
-
-            selected_files = args['files']
-
-            method = args.get("method", "Default")
-            self.set_method(method)
-            options = self.get_profile()
-            th.start(Proceed, selected_files, options, tree_widget=self.ui.tree)
-
-
-    def set_method(self, method=None):
-        self.current_method = method
-        if method:
-            self.set_status("Current method: {0}".format(method))
-
-
     def load_profiles(self):
         self.profiles = self.s.get_group('profiles')
 
         alignmentGroup = QtGui.QActionGroup(self)
-        alignmentGroup.addAction(self.ui.actionAuto)
         alignmentGroup.addAction(self.ui.actionDefault)
 
         for key, val in self.profiles:
@@ -264,21 +242,41 @@ class MainFrame(QtGui.QMainWindow):
             self.ui.menuTask.addAction(action)
             alignmentGroup.addAction(action)
 
-        self.ui.actionAuto.setChecked(True)
+        self.ui.actionDefault.setChecked(True)
 
-        self.set_method()   # Устанавливаем по умолчанию
+
+    def set_method(self, method="Default"):
+        self.current_method = method
+        if method:
+            self.set_status("Current method: {0}".format(method))
+
+
+    def proceed_args(self, args):
+        if args.files:
+            if args.method:
+                if self.profiles.contains(args.method, dict):
+                    self.ui.actionDefault.setChecked(False)
+                    self.set_method(args.method)
+                    self.set_status(args.files)
+
+                    options = self.get_profile()
+                else:
+                    text = "Required method not exists: '{0}'!".format(args.method)
+                    QtGui.QErrorMessage(self).showMessage(text)
+#                   msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Warning", text)
+#                   msgBox.exec_()
+                    return
+
+            else:
+                options = {}
+
+            th.start(Proceed, args.files, options, tree_widget=self.ui.tree, status=self.proceed_status)
 
 
     def get_profile(self):
         name = self.current_method
 
-        if not name:
-            return {}
-
-        if name == 'Default':
-            return {}
-
-        if name == 'Auto':
+        if name == "Default":
             return {}
 
         profile = self.profiles.get_group(name)

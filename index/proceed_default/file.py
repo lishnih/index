@@ -5,15 +5,15 @@
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
-import os, logging
+import os
 
 from .models import File
 from .handler import proceed
 from reg import reg_object1
-from reg.result import reg_error, reg_exception
+from reg.result import reg_exception
 
 
-def reg_file(filename, options, session, DIR):
+def reg_file(filename, options, session, DIR=None):
     basename = os.path.basename(filename)
 
     file_dict = dict(_dir=DIR, name=basename)
@@ -22,8 +22,7 @@ def reg_file(filename, options, session, DIR):
     return FILE
 
 
-def proceed_file(filename, options, session, DIR):
-    logging.debug("Processing file: {0}".format(filename))
+def proceed_file(filename, options, session, DIR=None):
     FILE = reg_file(filename, options, session, DIR)
 
     try:
@@ -31,6 +30,3 @@ def proceed_file(filename, options, session, DIR):
     except Exception as e:
         reg_exception(FILE, e)
         return
-
-    if hasattr(FILE, 'tree_item'):
-        FILE.tree_item.setOk()

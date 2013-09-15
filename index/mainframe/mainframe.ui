@@ -51,7 +51,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>373</height>
+          <height>393</height>
          </rect>
         </property>
         <attribute name="label">
@@ -93,7 +93,7 @@
           <x>0</x>
           <y>0</y>
           <width>98</width>
-          <height>87</height>
+          <height>71</height>
          </rect>
         </property>
         <attribute name="label">
@@ -171,7 +171,7 @@
      <x>0</x>
      <y>0</y>
      <width>700</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -188,7 +188,6 @@
     <property name="title">
      <string>Task</string>
     </property>
-    <addaction name="actionAuto"/>
     <addaction name="actionDefault"/>
     <addaction name="separator"/>
    </widget>
@@ -263,14 +262,6 @@
    </property>
    <property name="text">
     <string>Default</string>
-   </property>
-  </action>
-  <action name="actionAuto">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Auto</string>
    </property>
   </action>
  </widget>

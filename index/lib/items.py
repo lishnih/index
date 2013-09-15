@@ -21,15 +21,20 @@ class Item(QtGui.QTreeWidgetItem):
 
 
     def setBrief(self, brief=None):
-        self.setData(0, QtCore.Qt.UserRole, [brief])
+        self.setData(0, QtCore.Qt.UserRole, brief)
 
 
     def appendBrief(self, brief, once=False):
         if brief:
             brief_list = self.data(0, QtCore.Qt.UserRole)
+
+            if not isinstance(brief_list, list):
+                brief_list = [brief_list]
+
             if not(once and brief in brief_list):
                 brief_list.append(brief)
-            self.setData(0, QtCore.Qt.UserRole, brief_list)
+
+            self.setBrief(brief_list)
 
 
     def setSummary(self, summary=None):

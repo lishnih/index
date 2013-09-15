@@ -7,11 +7,10 @@ from __future__ import ( division, absolute_import,
 
 import os, logging
 
-from .dir import reg_dir
+from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
-from lib.data_funcs import get_list, filter_match, filter_list
-from reg            import set_object
-from reg.result     import reg_exception
+from reg import set_object
+from reg.result import reg_exception
 
 
 def proceed(source, options={}, session=None, ROOT=None, status=None):
@@ -20,41 +19,22 @@ def proceed(source, options={}, session=None, ROOT=None, status=None):
     if os.path.isdir(filename):
         logging.info("Обработка директории '{0}'".format(filename))
 
-        dirs_filter = options.get('dirs_filter')
-        files_filter = options.get('files_filter')
-
+        treeview = options.get('treeview')
         # Dir
-        for dirname, dirs, files in os.walk(filename):
-            if filter_match(dirname, dirs_filter):
-                files_filtered = filter_list(files, files_filter)
-                if files_filtered:
-                    DIR = reg_dir(dirname, options, session, ROOT)
-
-                    for filename in files:
-                        if filename in files_filtered:
-                            # File
-                            filename = os.path.join(dirname, filename)
-                            proceed_file(filename, options, session, DIR)
-                        else:
-                            set_object(filename, DIR, style='D', brief="Файл не индексируется!")
-
-                        if isinstance(status, dict):
-                            status['files'] += 1
-                else:
-                    set_object(dirname, ROOT, style='D', brief="Директория без индексных файлов!")
-
-            else:
-                set_object(dirname, ROOT, style='D', brief="Директория не индексируется!")
-
+        if treeview == 'tree':
+            proceed_dir_tree(filename, options, session, ROOT, status)
             if isinstance(status, dict):
                 status['dirs'] += 1
+
+        else:
+            proceed_dir(filename, options, session, ROOT, status)
 
     elif os.path.isfile(filename):
         logging.info("Обработка файла '{0}'".format(filename))
 
         # Dir
         dirname = os.path.dirname(filename)
-        DIR = reg_dir(dirname, options, ROOT)
+        DIR = reg_dir(dirname, options, session, ROOT)
 
         # File
         proceed_file(filename, options, session, DIR)

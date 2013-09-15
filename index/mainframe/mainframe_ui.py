@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainframe.ui'
 #
-# Created: Mon Aug 05 22:07:51 2013
-#      by: pyside-uic 0.2.14 running on PySide 1.2.0
+# Created: Sat Sep 14 10:22:41 2013
+#      by: pyside-uic 0.2.14 running on PySide 1.1.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -35,7 +35,7 @@ class Ui_MainWindow(object):
         self.toolBox.setMinimumSize(QtCore.QSize(0, 0))
         self.toolBox.setObjectName("toolBox")
         self.page1 = QtGui.QWidget()
-        self.page1.setGeometry(QtCore.QRect(0, 0, 256, 373))
+        self.page1.setGeometry(QtCore.QRect(0, 0, 256, 393))
         self.page1.setObjectName("page1")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.page1)
         self.verticalLayout_3.setSpacing(3)
@@ -52,7 +52,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.tree)
         self.toolBox.addItem(self.page1, "")
         self.page2 = QtGui.QWidget()
-        self.page2.setGeometry(QtCore.QRect(0, 0, 98, 87))
+        self.page2.setGeometry(QtCore.QRect(0, 0, 98, 71))
         self.page2.setObjectName("page2")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.page2)
         self.verticalLayout_4.setSpacing(3)
@@ -92,14 +92,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 700, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 700, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        self.menuHelp = QtGui.QMenu(self.menubar)
-        self.menuHelp.setObjectName("menuHelp")
         self.menuTask = QtGui.QMenu(self.menubar)
         self.menuTask.setObjectName("menuTask")
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName("menuHelp")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -122,19 +122,15 @@ class Ui_MainWindow(object):
         self.actionDefault = QtGui.QAction(MainWindow)
         self.actionDefault.setCheckable(True)
         self.actionDefault.setObjectName("actionDefault")
-        self.actionAuto = QtGui.QAction(MainWindow)
-        self.actionAuto.setCheckable(True)
-        self.actionAuto.setObjectName("actionAuto")
         self.menuFile.addAction(self.actionTaskDir)
         self.menuFile.addAction(self.actionTaskFile)
         self.menuFile.addAction(self.actionClose)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
-        self.menuHelp.addAction(self.actionAbout)
-        self.menuHelp.addAction(self.actionAbout_Qt)
-        self.menuTask.addAction(self.actionAuto)
         self.menuTask.addAction(self.actionDefault)
         self.menuTask.addSeparator()
+        self.menuHelp.addAction(self.actionAbout)
+        self.menuHelp.addAction(self.actionAbout_Qt)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuTask.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -164,8 +160,8 @@ class Ui_MainWindow(object):
         self.tab.setTabText(self.tab.indexOf(self.tab1), QtGui.QApplication.translate("MainWindow", "Brief", None, QtGui.QApplication.UnicodeUTF8))
         self.tab.setTabText(self.tab.indexOf(self.tab2), QtGui.QApplication.translate("MainWindow", "Tracing", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuTask.setTitle(QtGui.QApplication.translate("MainWindow", "Task", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTaskDir.setText(QtGui.QApplication.translate("MainWindow", "Task Dir", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTaskDir.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+D", None, QtGui.QApplication.UnicodeUTF8))
@@ -178,5 +174,4 @@ class Ui_MainWindow(object):
         self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_Qt.setText(QtGui.QApplication.translate("MainWindow", "About Qt", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDefault.setText(QtGui.QApplication.translate("MainWindow", "Default", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionAuto.setText(QtGui.QApplication.translate("MainWindow", "Auto", None, QtGui.QApplication.UnicodeUTF8))
 

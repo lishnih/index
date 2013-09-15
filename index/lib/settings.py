@@ -94,8 +94,13 @@ class SettingsGroup(object):
 # Работа с ключами
 
 
-    def contains(self, key):
-        return key in self.settings
+    def contains(self, key, required_type=None):
+        contains = key in self.settings
+        if contains:
+            if required_type and not isinstance(self.settings[key], required_type):
+                return False
+
+        return contains
 
 
     def get(self, key, default=None, parse=True):

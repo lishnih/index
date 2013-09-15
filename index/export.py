@@ -7,15 +7,15 @@ from __future__ import ( division, absolute_import,
 
 import sys, os, importlib, logging
 
+from lib.settings import Settings
 from lib.data_funcs import get_list
-from db             import initDb, initlinks, foreign_keys, foreign_keys_c
-from reg            import set_object
-from reg.result     import reg_error, reg_exception
+from db import initDb, initlinks, foreign_keys, foreign_keys_c
+from reg import set_object
+from reg.result import reg_error, reg_exception
 
 
 def Proceed(sources, options={}, tree_widget=None, status=None):
-    root_dict = dict(name="Root")
-    ROOT = set_object(root_dict, tree_widget, brief=options)
+    ROOT = set_object("/", tree_widget, brief=options)
     if hasattr(ROOT, 'tree_item'):
         ROOT.tree_item.setSelected(True)
 
@@ -52,8 +52,10 @@ def Proceed(sources, options={}, tree_widget=None, status=None):
     try:
         session = initDb(dbconfig, base=models_module.Base)
         initlinks(models_module.Base)
-        if hasattr(ROOT, 'tree_item'):
-            ROOT.tree_item.appendBrief([session, foreign_keys, foreign_keys_c])
+
+        set_object("session", tree_widget, brief=session)
+#       set_object("foreign_keys", tree_widget, brief=foreign_keys)
+#       set_object("foreign_keys_c", tree_widget, brief=foreign_keys_c)
     except Exception as e:
         reg_exception(ROOT, e)
         return
@@ -67,6 +69,9 @@ def Proceed(sources, options={}, tree_widget=None, status=None):
     for source in sources:
         handler_module.proceed(source, options, session, ROOT, status)
 
+    if isinstance(status, dict) and 'break' in status:
+        status.pop('break')
+
     # Завершаем транзакции
     try:
         session.commit()
@@ -77,9 +82,24 @@ def Proceed(sources, options={}, tree_widget=None, status=None):
 
 def main(args):
     if args.files:
-        Proceed(args.files)
+        if args.method:
+            s = Settings()
+            profiles = s.get_group('profiles')
+            if profiles.contains(args.method, dict):
+                options = profiles.get_group(args.method).get_dict()
+
+            else:
+                text = "Required method not exists: '{0}'!".format(args.method)
+                logging.warning(text)
+                return
+
+        else:
+            options = {}
+
+        Proceed(args.files, options)
+
     else:
-        logging.warning("Файлы не заданы!")
+        logging.warning("Files not specified!")
 
 
 if __name__ == '__main__':
@@ -91,6 +111,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Indexing files and directories.")
     parser.add_argument('files', action=readable_file_or_dir_list, nargs='*',
                         help="files and directories to proceed")
+    parser.add_argument('-m', '--method',
+                        help='specify the method name')
 
     if sys.version_info >= (3,):
         argv = sys.argv
