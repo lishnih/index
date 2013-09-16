@@ -9,6 +9,7 @@ import sys
 
 console_encoding = sys.__stdout__.encoding
 
+
 if sys.version_info >= (3,):
     from urllib.error import URLError, HTTPError
     from queue import Queue, Empty
@@ -60,6 +61,7 @@ if sys.version_info >= (3,):
     collections_types = list, tuple, set, frozenset
     all_types = (int, float, complex, str, bytearray,
                  list, tuple, set, frozenset, dict)
+
 
 else:
     from urllib2 import URLError, HTTPError

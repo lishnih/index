@@ -5,10 +5,7 @@
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
-try:
-    from .dump import *
-except:
-    from dump import *
+from .dump import *
 
 
 class base_cls(object):

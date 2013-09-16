@@ -5,8 +5,7 @@
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
-try:    from .backwardcompat import *
-except: from backwardcompat import *
+from .backwardcompat import *
 
 
 """ Отладочный вывод переменных

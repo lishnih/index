@@ -7,11 +7,8 @@ from __future__ import ( division, absolute_import,
 
 import sys, os, re, time, pickle, logging
 
-try:
-    try:    from .info import __version__
-    except: from info import __version__
-except:
-    __version__ = '<undefined>'
+try:    from .info import __version__
+except: __version__ = '<undefined>'
 
 
 if sys.version_info >= (3,):

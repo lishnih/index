@@ -8,9 +8,9 @@ from __future__ import ( division, absolute_import,
 import os, logging
 import xlrd
 
-from lib.data_funcs import filter_match, filter_list
-from reg import reg_object1
-from reg.result import reg_warning
+from ..lib.data_funcs import filter_match, filter_list
+from ..reg import reg_object1
+from ..reg.result import reg_warning
 
 
 def proceed(filename, options, session, FILE):

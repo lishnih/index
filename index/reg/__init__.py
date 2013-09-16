@@ -4,13 +4,13 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
-from lib.backwardcompat import *
 
 import logging
 from PySide import QtGui
 
+from ..lib.backwardcompat import *
+from ..lib.items import FileItem
 from .result import reg_error, reg_exception
-from lib.items import FileItem
 
 
 def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
@@ -30,7 +30,7 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None)
 
     try:
         rows = session.query(Object).filter_by(**object_find).all()
-#       cond = [getattr(Object, i) == value for key, value in object_find.iteritems()]
+#       cond = [getattr(Object, key) == value for key, value in object_find.iteritems()]
 #       rows = session.query(Object).filter(*cond).all()
         if rows:
             OBJECT = rows[0]

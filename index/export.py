@@ -7,11 +7,11 @@ from __future__ import ( division, absolute_import,
 
 import sys, os, importlib, logging
 
-from lib.settings import Settings
-from lib.data_funcs import get_list
-from db import initDb, initlinks, foreign_keys, foreign_keys_c
-from reg import set_object
-from reg.result import reg_error, reg_exception
+from .lib.settings import Settings
+from .lib.data_funcs import get_list
+from .lib.db import initDb, initlinks, foreign_keys, foreign_keys_c
+from .reg import set_object
+from .reg.result import reg_error, reg_exception
 
 
 def Proceed(sources, options={}, tree_widget=None, status=None):
@@ -23,25 +23,14 @@ def Proceed(sources, options={}, tree_widget=None, status=None):
     handler = options.get('handler', "proceed_default")
     handler_path = options.get('handler_path')
 
-    # Добавляем handler_path в sys.path
-    if handler_path:
-        if not os.path.isdir(handler_path):
-            reg_error(ROOT, "handler_path not exists: '{0}'".format(handler_path))
-            return
-
-        sys.path.append(handler_path)
-
     # Загружаем необходимые модули
     try:
-        handler_module = importlib.import_module(handler)
-        models_module  = importlib.import_module('.models', handler)
+        current = __package__+'.'+handler
+        handler_module = importlib.import_module(current)
+        models_module = importlib.import_module('.models', current)
     except Exception as e:
         reg_exception(ROOT, e)
         return
-
-    # Извлекаем handler_path из sys.path
-    if handler_path:
-        sys.path.pop()
 
     if not hasattr(handler_module, 'proceed'):
         reg_error(ROOT, "No 'proceed' function in handler '{0}'".format(handler))
@@ -79,9 +68,8 @@ def Proceed(sources, options={}, tree_widget=None, status=None):
         reg_exception(ROOT, e)
 
 
-
-def main(args):
-    if args.files:
+def main(args=None):
+    if args and args.files:
         if args.method:
             s = Settings()
             profiles = s.get_group('profiles')
@@ -100,26 +88,3 @@ def main(args):
 
     else:
         logging.warning("Files not specified!")
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-
-    import argparse
-    from lib.argparse_funcs import readable_file_or_dir_list
-
-    parser = argparse.ArgumentParser(description="Indexing files and directories.")
-    parser.add_argument('files', action=readable_file_or_dir_list, nargs='*',
-                        help="files and directories to proceed")
-    parser.add_argument('-m', '--method',
-                        help='specify the method name')
-
-    if sys.version_info >= (3,):
-        argv = sys.argv
-    else:
-        fse = sys.getfilesystemencoding()
-        argv = [i.decode(fse) for i in sys.argv]
-
-    args = parser.parse_args(argv[1:])
-
-    sys.exit(main(args))

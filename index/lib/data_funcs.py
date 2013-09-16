@@ -4,9 +4,10 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
-from lib.backwardcompat import *
 
 import re, logging
+
+from .backwardcompat import *
 
 
 def get_list(val):

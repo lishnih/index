@@ -7,10 +7,10 @@ from __future__ import ( division, absolute_import,
 
 import os, logging
 
+from ..reg import set_object
+from ..reg.result import reg_exception
 from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
-from reg import set_object
-from reg.result import reg_exception
 
 
 def proceed(source, options={}, session=None, ROOT=None, status=None):

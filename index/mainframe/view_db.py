@@ -8,7 +8,7 @@ from __future__ import ( division, absolute_import,
 import sys, os, logging
 from sqlalchemy import MetaData, distinct
 
-from lib.items import DirItem, FileItem, DisabledItem
+from ..lib.items import DirItem, FileItem, DisabledItem
 
 
 def view_db(tree_widget):

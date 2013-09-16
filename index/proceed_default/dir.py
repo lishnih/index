@@ -7,10 +7,10 @@ from __future__ import ( division, absolute_import,
 
 import os
 
+from ..lib.data_funcs import filter_match, filter_list
+from ..reg import reg_object1, set_object
 from .models import Dir
 from .file import proceed_file
-from lib.data_funcs import filter_match, filter_list
-from reg import reg_object1, set_object
 
 
 def reg_dir(dirname, options, session, ROOT=None):

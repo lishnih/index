@@ -26,6 +26,7 @@ else:
 
 class Dir(Base, aStr):                          # rev. 20130730
     __tablename__ = 'dirs'
+
     id = Column(Integer, primary_key=True)
 
     name      = Column(String)                  # Имя директории
@@ -41,6 +42,7 @@ class Dir(Base, aStr):                          # rev. 20130730
 
 class File(Base, aStr):                         # rev. 20130730
     __tablename__ = 'files'
+
     id = Column(Integer, primary_key=True)
     _dirs_id = Column(Integer, ForeignKey('dirs.id', onupdate='CASCADE', ondelete='CASCADE'))
     _dir = relationship(Dir, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
@@ -50,15 +52,8 @@ class File(Base, aStr):                         # rev. 20130730
     mtime     = Column(Integer)                 # Время модификации
     status    = Column(Integer)                 # Состояние
 
-    def __init__(self, **kargs):
-        Base.__init__(self, **kargs)
-        if os.path.isfile(self.name):
-            statinfo   = os.stat(self.name)
-            self.size  = statinfo.st_size
-            self.mtime = statinfo.st_mtime
-
-            if self._dir:
-                self.name = os.path.basename(self.name)
+#   def __init__(self, **kargs):
+#       Base.__init__(self, **kargs)
 
     def __unicode__(self):
         return "<Файл '{0}' ({1})>".format(self.name, self.id)

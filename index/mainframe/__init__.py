@@ -4,18 +4,18 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
-from lib.backwardcompat import *
 
 import sys, os, re, fnmatch
 from PySide import QtCore, QtGui, __version__
 
+from ..lib.backwardcompat import *
+from ..lib.info import __pkgname__, __description__, __version__
+from ..lib.settings import Settings
+from ..lib.dump_html import html_val, html
 from .mainframe_ui import Ui_MainWindow
-from .thread1 import th                 # Поток (уже созданный)
+from .thread1 import th                     # Поток (уже созданный)
 # from .view_db import view_db
-from lib.info import __description__, __version__
-from lib.settings import Settings
-from lib.dump_html import html_val, html
-from export import Proceed              # Модуль обработки
+from ..export import Proceed                # Модуль обработки
 
 
 # Настройки: [HKCU\Software\lishnih@gmail.com\<app_section>]
@@ -252,7 +252,7 @@ class MainFrame(QtGui.QMainWindow):
 
 
     def proceed_args(self, args):
-        if args.files:
+        if args and args.files:
             if args.method:
                 if self.profiles.contains(args.method, dict):
                     self.ui.actionDefault.setChecked(False)

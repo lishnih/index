@@ -4,11 +4,12 @@
 
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
-from lib.backwardcompat import *
 
 import logging
 from inspect import ismethod
 from xml.sax.saxutils import escape, prepare_input_source
+
+from .backwardcompat import *
 
 
 """ Отладочный вывод переменных различных типов

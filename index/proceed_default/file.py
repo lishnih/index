@@ -7,16 +7,19 @@ from __future__ import ( division, absolute_import,
 
 import os
 
+from ..reg import reg_object1
+from ..reg.result import reg_exception
 from .models import File
 from .handler import proceed
-from reg import reg_object1
-from reg.result import reg_exception
 
 
 def reg_file(filename, options, session, DIR=None):
     basename = os.path.basename(filename)
+    statinfo = os.stat(filename)
+    size  = statinfo.st_size
+    mtime = statinfo.st_mtime
 
-    file_dict = dict(_dir=DIR, name=basename)
+    file_dict = dict(_dir=DIR, name=basename, size=size, mtime=mtime)
     FILE = reg_object1(session, File, file_dict, DIR)
 
     return FILE
