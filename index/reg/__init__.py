@@ -33,12 +33,12 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None)
 #       cond = [getattr(Object, key) == value for key, value in object_find.iteritems()]
 #       rows = session.query(Object).filter(*cond).all()
         if rows:
-            OBJECT = rows[0]
-#           setattr(OBJECT, '_found_at', rows)
-
             l = len(rows)
             if l > 1:
                 reg_error(PARENT, "Найдено несколько одинаковых записей ({0})!".format(l), Object, object_find)
+
+            OBJECT = rows[0]
+            setattr(OBJECT, '_records', l)
 
     except Exception as e:
         reg_exception(PARENT, e, Object, object_dict)

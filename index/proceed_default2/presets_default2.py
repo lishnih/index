@@ -7,12 +7,14 @@ from __future__ import ( division, absolute_import,
 import os
 
 
-# Rev. 20130913
+# Rev. 20130916
 
 
 handler_default = os.path.basename(os.path.dirname(__file__))
 handler_path_default = None
 # handler_path_default = os.path.expanduser("~")
+
+unique_keys = []
 
 
 db_default = dict(
@@ -32,7 +34,7 @@ db_default = dict(
 profiles = dict()
 
 
-profiles["Example (list)"] = {
+profiles["Example 2 (list)"] = {
     # Обработчик
     'handler':      handler_default,
     'handler_path': handler_path_default,
@@ -47,6 +49,17 @@ profiles["Example (list)"] = {
     # БД
     'db': db_default,
 
+    # По умолчанию, обработчики различаются между собой переменными
+    # 'handler' и 'handler_path'
+    # Плюс, в одном обработчике обработка файла будет повторяться
+    # при разных настройках базы данных
+    # Во всех остальных случаях обработка не будет выполняться повторно.
+
+    # Но, обработчик может иметь несколько профилей
+    # Чтобы различать эти профили введена переменная '__all__'
+    # которая содержит перечень ключей
+    '__all__': unique_keys,
+
     # handler options:
 
     # ...
@@ -54,7 +67,7 @@ profiles["Example (list)"] = {
 }
 
 
-profiles["Example (tree)"] = {
+profiles["Example 2 (tree)"] = {
     # Обработчик
     'handler':      handler_default,
     'handler_path': handler_path_default,
@@ -68,6 +81,9 @@ profiles["Example (tree)"] = {
 
     # БД
     'db': db_default,
+
+    # Список уникальных ключей
+    '__all__': unique_keys,
 
     # handler options:
 

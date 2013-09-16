@@ -10,7 +10,7 @@ import os
 from ..reg import reg_object1
 from ..reg.result import reg_exception
 from .models import File
-from .handler import proceed
+from .process import proceed
 
 
 def reg_file(filename, options, session, DIR=None):
