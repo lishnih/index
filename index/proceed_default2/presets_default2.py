@@ -10,34 +10,33 @@ import os
 # Rev. 20130916
 
 
-handler_default = os.path.basename(os.path.dirname(__file__))
-handler_path_default = None
-# handler_path_default = os.path.expanduser("~")
+handler = os.path.basename(os.path.dirname(__file__))
+handler_path = None
 
 unique_keys = []
 
 
-db_default = dict(
+db_default = {
     # Sqlite
-    dbtype = "sqlite",
-    dbname = os.path.expanduser("~/default.sqlite"),
+    'dbtype': "sqlite",
+    'dbname': os.path.expanduser("~/default.sqlite"),
 
     # Mysql
-#   dbtype = "mysql",
-#   dbname = "default",
-#   host   = "localhost",
-#   user   = "root",
-#   passwd = ""
-)
+#     'dbtype': "mysql",
+#     'dbname': "default",
+#     'host':   "localhost",
+#     'user':   "root",
+#     'passwd': "",
+}
 
 
 profiles = dict()
 
 
-profiles["Example 2 (list)"] = {
+profiles["Example list ({0})".format(handler)] = {
     # Обработчик
-    'handler':      handler_default,
-    'handler_path': handler_path_default,
+    'handler':      handler,
+    'handler_path': handler_path,
 
     # Фильтры для директорий и файлов
 #   'dirs_filter':  None,
@@ -67,10 +66,10 @@ profiles["Example 2 (list)"] = {
 }
 
 
-profiles["Example 2 (tree)"] = {
+profiles["Example tree ({0})".format(handler)] = {
     # Обработчик
-    'handler':      handler_default,
-    'handler_path': handler_path_default,
+    'handler':      handler,
+    'handler_path': handler_path,
 
     # Фильтры для директорий и файлов
 #   'dirs_filter':  None,

@@ -66,7 +66,6 @@ class Handler(Base, aStr):                      # rev. 20130916
 
     name      = Column(String)                  # Имя обработчика
     path      = Column(String)                  # Путь обработчика
-    db        = Column(PickleType)              # Настройки БД
     extras    = Column(PickleType)              # Настройки
 
 #   def __init__(self, **kargs):
