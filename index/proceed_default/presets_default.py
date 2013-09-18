@@ -7,7 +7,7 @@ from __future__ import ( division, absolute_import,
 import os
 
 
-# Rev. 20130913
+__rev__ = 20130918
 
 
 handler = os.path.basename(os.path.dirname(__file__))
@@ -33,8 +33,8 @@ profiles = dict()
 
 profiles["Example list ({0})".format(handler)] = {
     # Обработчик
-    'handler':      handler,
-    'handler_path': handler_path,
+    'handler': handler,
+    'rev':     __rev__,
 
     # Фильтры для директорий и файлов
 #   'dirs_filter':  None,
