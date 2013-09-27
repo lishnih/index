@@ -15,13 +15,12 @@ from .reg.result import reg_error, reg_exception
 
 
 def Proceed(sources, options={}, tree_widget=None, status=None):
-    ROOT = set_object("/", tree_widget, brief=options)
+    ROOT = set_object("Root", tree_widget, brief=options)
     if hasattr(ROOT, 'tree_item'):
         ROOT.tree_item.setSelected(True)
 
     # Загружаем обработчик
     handler = options.get('handler', "proceed_default")
-    handler_path = options.get('handler_path')
 
     # Загружаем необходимые модули
     try:

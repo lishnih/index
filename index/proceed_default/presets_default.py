@@ -55,8 +55,8 @@ profiles["Example list ({0})".format(handler)] = {
 
 profiles["Example tree ({0})".format(handler)] = {
     # Обработчик
-    'handler':      handler,
-    'handler_path': handler_path,
+    'handler': handler,
+    'rev':     __rev__,
 
     # Фильтры для директорий и файлов
 #   'dirs_filter':  None,

@@ -112,11 +112,13 @@ def initlinks(Base):
 
 
 def link_objects(*args):
+    args = [i for i in args if i and hasattr(i, '_sa_class_manager')]
+
     if len(args) < 2:
         return
 
-    classes = [i._sa_class_manager.class_ for i in args if i]
-    tablenames = [i.__table__.name for i in args if i]
+    classes = [i._sa_class_manager.class_ for i in args]
+    tablenames = [i.__table__.name for i in args]
 
     im = 0
     for model in classes:

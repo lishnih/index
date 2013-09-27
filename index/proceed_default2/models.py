@@ -78,7 +78,7 @@ class Handler(Base, aStr):                      # rev. 20130918
         return "<Обработчик '{0}' ({1})>".format(self.name, self.id)
 
 
-class FileProcessing(Base, aStr):               # rev. 20130916
+class FileProcessing(Base, aStr):               # rev. 20130924
     __tablename__ = 'fileprocessings'
 
     id = Column(Integer, primary_key=True)
@@ -86,6 +86,9 @@ class FileProcessing(Base, aStr):               # rev. 20130916
     _file = relationship(File, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
     _handlers_id = Column(Integer, ForeignKey('handlers.id', onupdate='CASCADE', ondelete='CASCADE'))
     _handler = relationship(Handler, backref=backref(__tablename__, cascade='all, delete, delete-orphan'))
+
+    size      = Column(Integer)                 # Размер файла при обработке
+    mtime     = Column(Integer)                 # Время модификации при обработке
 
 #   def __init__(self, **kargs):
 #       Base.__init__(self, **kargs)

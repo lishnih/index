@@ -13,7 +13,17 @@ from ..lib.items import FileItem
 from .result import reg_error, reg_exception
 
 
-def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
+def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, required=None):
+    if required:
+        isrecord = True
+        for i in required:
+            if object_dict[i] is None:
+                isrecord = False
+
+        if not isrecord:
+            OBJECT = set_object(object_dict, PARENT, style=style, brief="Объект не сохранён - требуемые поля пусты!")
+            return OBJECT
+
     OBJECT = Object(**object_dict)
     session.add(OBJECT)
 
@@ -24,7 +34,17 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None):
     return OBJECT
 
 
-def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None, keys=None):
+def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None, required=None, keys=None):
+    if required:
+        isrecord = True
+        for i in required:
+            if object_dict[i] is None:
+                isrecord = False
+
+        if not isrecord:
+            OBJECT = set_object(object_dict, PARENT, style=style, brief="Объект не сохранён - требуемые поля пусты!")
+            return OBJECT
+
     OBJECT = None
 
     if keys:
@@ -70,7 +90,7 @@ def set_object(OBJECT, PARENT, style='', brief=None):
     if isinstance(OBJECT, dict):
         OBJECT = aObject(**OBJECT)
 
-    show_object(OBJECT, PARENT, style=style, brief=brief)
+    show_object(OBJECT, PARENT, style=style+'I', brief=brief)
 
     return OBJECT
 
@@ -81,9 +101,9 @@ def show_object(OBJECT, PARENT, style='', brief=None):
         style = 'BIE'
     elif PARENT and hasattr(PARENT, 'tree_item'):
         tree_item = PARENT.tree_item
-    elif PARENT:
-        logging.warning("PARENT не имеет отображения: {0!r}".format(PARENT))
-        tree_item = None
+#     elif PARENT:
+#         logging.warning("PARENT не имеет отображения: {0!r}".format(PARENT))
+#         tree_item = None
     else:
         tree_item = None
 

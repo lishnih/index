@@ -20,11 +20,10 @@ def reg_file_processing(filename, options, session, DIR=None, HANDLER=None):
     mtime = statinfo.st_mtime
 
     # Проверяем, обрабатывался ли файл данным обработчиком
-    # с заданными настройками
     FILE = None
     PROCESSING = None
 
-    file_dict = dict(_dir=DIR, name=basename, size=size, mtime=mtime)
+    file_dict = dict(_dir=DIR, name=basename)
     rows = session.query(File).filter_by(**file_dict).all()
     if rows:
         l = len(rows)
@@ -35,7 +34,7 @@ def reg_file_processing(filename, options, session, DIR=None, HANDLER=None):
             FILE = set_object(i, DIR)
             setattr(FILE, '_records', l)
 
-            processing_dict = dict(_file=FILE, _handler=HANDLER)
+            processing_dict = dict(_file=FILE, _handler=HANDLER, size=size, mtime=mtime)
             rows2 = session.query(FileProcessing).filter_by(**processing_dict).all()
             if rows2:
                 l2 = len(rows2)
@@ -49,8 +48,11 @@ def reg_file_processing(filename, options, session, DIR=None, HANDLER=None):
     if not FILE:
         FILE = reg_object(session, File, file_dict, DIR)
 
+    FILE.size = size
+    FILE.mtime = mtime
+
     if not PROCESSING:
-        processing_dict = dict(_file=FILE, _handler=HANDLER)
+        processing_dict = dict(_file=FILE, _handler=HANDLER, size=size, mtime=mtime)
         PROCESSING = reg_object(session, FileProcessing, processing_dict, FILE)
 
     return FILE, PROCESSING
@@ -66,7 +68,8 @@ def proceed_file(filename, options, session, DIR=None, HANDLER=None):
         return
 
     try:
-        proceed(filename, options, session, FILE)
+        # Параметр 4: FILE или PROCESSING
+        proceed(filename, options, session, PROCESSING)
     except Exception as e:
         reg_exception(FILE, e)
         return
