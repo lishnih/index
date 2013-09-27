@@ -56,11 +56,11 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
                 i1, i2 = i
                 object_find[i1] = object_dict[i2]
     else:
-        object_find = dict((key, value) for key, value in object_dict.iteritems() if hasattr(Object, key))
+        object_find = dict((key, value) for key, value in object_dict.items() if hasattr(Object, key))
 
     try:
         rows = session.query(Object).filter_by(**object_find).all()
-#       cond = [getattr(Object, key) == value for key, value in object_find.iteritems()]
+#       cond = [getattr(Object, key) == value for key, value in object_find.items()]
 #       rows = session.query(Object).filter(*cond).all()
         if rows:
             l = len(rows)

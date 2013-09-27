@@ -15,7 +15,7 @@ else:
 
 here = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 try:
-    README = open(os.path.join(here, 'README.md')).read()
+    README = open(os.path.join(here, 'README.rst')).read()
     CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 except IOError:
     README = CHANGES = ''
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         name = __pkgname__,
         description = __description__,
         version = __version__,
-        long_description = __doc__,
+        long_description = README,
 
         author = 'Stan',
         author_email = 'lishnih@gmail.com',
@@ -44,6 +44,8 @@ if __name__ == '__main__':
         scripts = [
         ],
         install_requires = [
+            'PySide',
+            'sqlalchemy',
         ],
 
         classifiers = [

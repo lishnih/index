@@ -28,4 +28,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args(argv[1:])
 
-    sys.exit(main(args))
+    sys.exit(main(args.files, args.method))

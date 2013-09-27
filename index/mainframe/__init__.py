@@ -24,7 +24,7 @@ app_section = re.sub(r'\W', '_', os.path.dirname(os.path.dirname(__file__)))
 
 
 class MainFrame(QtGui.QMainWindow):
-    def __init__(self, args=None):
+    def __init__(self, files=None, method=None):
         super(MainFrame, self).__init__()
 
         # Загружаем элементы окна
@@ -53,7 +53,7 @@ class MainFrame(QtGui.QMainWindow):
         self.set_method()
 
         # Обрабатываем параметры
-        self.proceed_args(args)
+        self.proceed_args(files, method)
 
 
 # Callback-функции для Таймера
@@ -251,17 +251,17 @@ class MainFrame(QtGui.QMainWindow):
             self.set_status("Current method: {0}".format(method))
 
 
-    def proceed_args(self, args):
-        if args and args.files:
-            if args.method:
-                if self.profiles.contains(args.method, dict):
+    def proceed_args(self, files=None, method=None):
+        if files:
+            if method:
+                if self.profiles.contains(method, dict):
                     self.ui.actionDefault.setChecked(False)
-                    self.set_method(args.method)
-                    self.set_status(args.files)
+                    self.set_method(method)
+                    self.set_status(files)
 
                     options = self.get_profile()
                 else:
-                    text = "Required method not exists: '{0}'!".format(args.method)
+                    text = "Required method not exists: '{0}'!".format(method)
                     QtGui.QErrorMessage(self).showMessage(text)
 #                   msgBox = QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Warning", text)
 #                   msgBox.exec_()
@@ -270,7 +270,7 @@ class MainFrame(QtGui.QMainWindow):
             else:
                 options = {}
 
-            th.start(Proceed, args.files, options, tree_widget=self.ui.tree, status=self.proceed_status)
+            th.start(Proceed, files, options, tree_widget=self.ui.tree, status=self.proceed_status)
 
 
     def get_profile(self):

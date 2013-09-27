@@ -7,9 +7,6 @@
 import sys
 
 
-console_encoding = sys.__stdout__.encoding
-
-
 if sys.version_info >= (3,):
     from urllib.error import URLError, HTTPError
     from queue import Queue, Empty
@@ -37,17 +34,13 @@ if sys.version_info >= (3,):
     def cmp(a, b):
         return (a > b) - (a < b)
 
+#   range = xrange
+
     def b(s):
         return s.encode('utf-8')
 
     def u(s):
         return s.decode('utf-8')
-
-    def console_to_str(s):
-        try:
-            return s.decode(console_encoding)
-        except UnicodeDecodeError:
-            return s.decode('utf_8')
 
     def fwrite(f, s):
         f.buffer.write(b(s))
@@ -88,15 +81,13 @@ else:
             return self.__unicode__().encode('utf-8')
 
 #   cmp = cmp
+
     range = xrange
 
     def b(s):
         return s
 
     def u(s):
-        return s
-
-    def console_to_str(s):
         return s
 
     def fwrite(f, s):

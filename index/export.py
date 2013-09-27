@@ -67,23 +67,23 @@ def Proceed(sources, options={}, tree_widget=None, status=None):
         reg_exception(ROOT, e)
 
 
-def main(args=None):
-    if args and args.files:
-        if args.method:
+def main(files=None, method=None):
+    if files:
+        if method:
             s = Settings()
             profiles = s.get_group('profiles')
-            if profiles.contains(args.method, dict):
-                options = profiles.get_group(args.method).get_dict()
+            if profiles.contains(method, dict):
+                options = profiles.get_group(method).get_dict()
 
             else:
-                text = "Required method not exists: '{0}'!".format(args.method)
+                text = "Required method not exists: '{0}'!".format(method)
                 logging.warning(text)
                 return
 
         else:
             options = {}
 
-        Proceed(args.files, options)
+        Proceed(files, options)
 
     else:
         logging.warning("Files not specified!")
