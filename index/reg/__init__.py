@@ -17,7 +17,7 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, 
     if required:
         isrecord = True
         for i in required:
-            if object_dict[i] is None:
+            if i not in object_dict or object_dict[i] is None:
                 isrecord = False
 
         if not isrecord:
@@ -29,7 +29,9 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, 
 
     # Графика
     if style != None:
-        show_object(OBJECT, PARENT, style=style, brief=brief)
+        tree_item = show_object(OBJECT, PARENT, style=style, brief=brief)
+        if tree_item:
+            OBJECT._dict = object_dict
 
     return OBJECT
 
@@ -38,7 +40,7 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
     if required:
         isrecord = True
         for i in required:
-            if object_dict[i] is None:
+            if i not in object_dict or object_dict[i] is None:
                 isrecord = False
 
         if not isrecord:
@@ -68,7 +70,7 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
                 reg_error(PARENT, "Найдено несколько одинаковых записей ({0})!".format(l), Object, object_find)
 
             OBJECT = rows[0]
-            setattr(OBJECT, '_records', l)
+            OBJECT._records = l
 
     except Exception as e:
         reg_exception(PARENT, e, Object, object_dict)
@@ -79,7 +81,9 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
 
     # Графика
     if style != None:
-        show_object(OBJECT, PARENT, style=style, brief=brief)
+        tree_item = show_object(OBJECT, PARENT, style=style, brief=brief)
+        if tree_item:
+            OBJECT._dict = object_dict
 
     return OBJECT
 
@@ -101,9 +105,9 @@ def show_object(OBJECT, PARENT, style='', brief=None):
         style = 'BIE'
     elif PARENT and hasattr(PARENT, 'tree_item'):
         tree_item = PARENT.tree_item
-#     elif PARENT:
-#         logging.warning("PARENT не имеет отображения: {0!r}".format(PARENT))
-#         tree_item = None
+#   elif PARENT:
+#       logging.warning("PARENT не имеет отображения: {0!r}".format(PARENT))
+#       tree_item = None
     else:
         tree_item = None
 
@@ -115,6 +119,8 @@ def show_object(OBJECT, PARENT, style='', brief=None):
 
         if style:
             OBJECT.tree_item.set_style(style)
+
+    return tree_item
 
 
 class aObject(aStr):

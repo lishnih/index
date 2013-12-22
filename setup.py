@@ -49,8 +49,12 @@ if __name__ == '__main__':
         ],
 
         classifiers = [
-            'Development Status :: 3 - Alpha',
-            'Environment :: Web Environment',
+            'Development Status :: 4 - Beta',
+            'Environment :: Console',
+            'Environment :: Win32 (MS Windows)',
+            'Environment :: X11 Applications :: Qt',
+            'License :: OSI Approved :: MIT License',
+            'Natural Language :: Russian',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
             'Programming Language :: Python :: 2.7',

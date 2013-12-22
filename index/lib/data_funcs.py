@@ -23,11 +23,17 @@ def get_list(val):
 
 def get_str_sequence(sequence_str):
     str_sequence = []
-    sequence_list = sequence_str.split(',')
-    for i in sequence_list:
-        if i:
-            i = i.strip()
-            str_sequence.append(i)
+
+#   sequence_list = sequence_str.split(',')
+#   for i in sequence_list:
+#       if i:
+#           i = i.strip()
+#           str_sequence.append(i)
+
+    sequence_list = re.findall('(")?(?(1)(.*?)|([^",]+))((?(1)"))[, ]*', sequence_str)
+    for q1, i1, i2, q2 in sequence_list:
+        i = i2.strip() if i2 else i1
+        str_sequence.append(i)
 
     return str_sequence
 
@@ -114,7 +120,7 @@ def filter_list(from_list, filter):
                 if name in from_list:
                     new_list.append(name)
                 else:
-                    logging.warning("Недопустимое значение: {0}".format(name))
+                    logging.warning("Значение отсутствует в списке: {0}".format(name))
 
         # Строка вида "/patt/" - как шаблон
         res = re.match('^/(.*)/$', filter)
@@ -136,7 +142,7 @@ def filter_list(from_list, filter):
             if name in from_list:
                 new_list.append(name)
             else:
-                logging.warning("Недопустимое значение: {0}".format(name))
+                logging.warning("Значение отсутствует в списке: {0}".format(name))
 
     return new_list
 
