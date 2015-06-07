@@ -24,6 +24,7 @@ class Status(QObject):
         self.last_dir = ''
         self.break_required = None
         self.message = text
+        self.error = ''
 
 
     @property

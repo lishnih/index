@@ -6,13 +6,12 @@ from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
 import os, logging
-import xlrd
 
-from ..lib.data_funcs import filter_match, filter_list
-from ..reg.result import reg_warning
+from ...lib.data_funcs import filter_match, filter_list
+from ...reg.result import reg_warning
 
 
-def proceed(filename, options, session, FILE):
+def proceed(filename, options, session, model, FILE):
     logging.debug("Обработка файла {0}".format(filename))
 
     basename = os.path.basename(filename)

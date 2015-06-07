@@ -7,13 +7,12 @@ from __future__ import ( division, absolute_import,
 
 import os
 
-from ..reg import reg_object, set_object
-from ..reg.result import reg_debug, reg_warning, reg_exception
-from .models import File, FileProcessing
+from ...reg import reg_object, set_object
+from ...reg.result import reg_debug, reg_warning, reg_exception
 from .process import proceed
 
 
-def reg_file_processing(filename, options, session, DIR=None, HANDLER=None):
+def reg_file_processing(filename, options, session, model, DIR=None, HANDLER=None):
     basename = os.path.basename(filename)
     statinfo = os.stat(filename)
     size  = statinfo.st_size
@@ -24,7 +23,7 @@ def reg_file_processing(filename, options, session, DIR=None, HANDLER=None):
     PROCESSING = None
 
     file_dict = dict(_dir=DIR, name=basename)
-    rows = session.query(File).filter_by(**file_dict).all()
+    rows = session.query(model.File).filter_by(**file_dict).all()
     if rows:
         l = len(rows)
         if l > 1:
@@ -35,7 +34,7 @@ def reg_file_processing(filename, options, session, DIR=None, HANDLER=None):
             setattr(FILE, '_records', l)
 
             processing_dict = dict(_file=FILE, _handler=HANDLER, size=size, mtime=mtime)
-            rows2 = session.query(FileProcessing).filter_by(**processing_dict).all()
+            rows2 = session.query(modek.FileProcessing).filter_by(**processing_dict).all()
             if rows2:
                 l2 = len(rows2)
                 if l2 > 1:
@@ -46,19 +45,19 @@ def reg_file_processing(filename, options, session, DIR=None, HANDLER=None):
                 break
 
     if not FILE:
-        FILE = reg_object(session, File, file_dict, DIR)
+        FILE = reg_object(session, model.File, file_dict, DIR)
 
     FILE.size = size
     FILE.mtime = mtime
 
     if not PROCESSING:
         processing_dict = dict(_file=FILE, _handler=HANDLER, size=size, mtime=mtime)
-        PROCESSING = reg_object(session, FileProcessing, processing_dict, FILE)
+        PROCESSING = reg_object(session, model.FileProcessing, processing_dict, FILE)
 
     return FILE, PROCESSING
 
 
-def proceed_file(filename, options, session, DIR=None, HANDLER=None):
+def proceed_file(filename, options, session, model, DIR=None, HANDLER=None):
     FILE, PROCESSING = reg_file_processing(filename, options, session, DIR, HANDLER)
 
     if hasattr(PROCESSING, '_records'):
@@ -69,7 +68,7 @@ def proceed_file(filename, options, session, DIR=None, HANDLER=None):
 
     try:
         # Параметр 4: FILE или PROCESSING
-        proceed(filename, options, session, PROCESSING)
+        proceed(filename, options, session, model, PROCESSING)
     except Exception as e:
         reg_exception(FILE, e)
         return

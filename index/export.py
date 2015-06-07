@@ -6,9 +6,12 @@ from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
 import sys, os, importlib, logging
+import yaml
 
+from .lib.backwardcompat import *
 from .lib.settings import Settings
 from .lib.data_funcs import get_list
+from .lib.source_funcs import get_source_data
 from .lib.db import initDb, initlinks, foreign_keys, foreign_keys_c
 from .reg import set_object
 from .reg.result import reg_error, reg_exception
@@ -18,14 +21,13 @@ def Proceed(sources, tree_widget=None, status=None):
     if isinstance(sources, tuple):
         as_source, files = sources
     else:
-        as_source = files = sources
+        as_source = None
+        files = sources
 
-    brief = dict(
-                Source_type = as_source,
-                Files = files,
-            )
-
-    options = {}
+    brief = {
+                "Input files": files,
+                "As source": as_source,
+            }
     ROOT = set_object("Root", tree_widget, brief=brief)
     if hasattr(ROOT, 'tree_item'):
         ROOT.tree_item.setSelected(True)
@@ -34,39 +36,81 @@ def Proceed(sources, tree_widget=None, status=None):
     if status:
         status.reset(sources)
 
-    # Загружаем обработчик
-    handler = options.get('handler', "proceed_default")
+    if isinstance(files, collections_types):
+        for i in files:
+            Proceed1(i, as_source if as_source else i, ROOT, status)
+    else:
+        Proceed1(files, as_source if as_source else files, ROOT, status)
 
-    # Загружаем необходимые модули
+
+def Proceed1(files, as_source, ROOT=None, status=None):
+    brief = {
+                "File": files,
+                "Source": as_source,
+            }
+    if hasattr(ROOT, 'tree_item'):
+        ROOT.tree_item.appendBrief(brief)
+
+    s = Settings()
+    source_data = get_source_data(as_source, s)
+    if not source_data:
+        reg_error(ROOT, "No such source '{0}'".format(as_source))
+        status.error = "No such source '{0}'".format(as_source)
+        return
+
+    source, handler, specification, database, model = source_data[:5]
+    if hasattr(ROOT, 'tree_item'):
+        ROOT.tree_item.appendBrief(dict(
+            source_data = (source, handler, specification, database, model)
+        ))
+
+    # Загружаем модули (model, handler)
     try:
-        current = __package__+'.'+handler
+        current = __package__ + '.models.' + model
+        model_module = importlib.import_module(current)
+        current = __package__ + '.handlers.' + handler
         handler_module = importlib.import_module(current)
-        models_module = importlib.import_module('.models', current)
     except Exception as e:
         reg_exception(ROOT, e)
+        status.error = "Error in module '{0}'".format(current)
         return
 
     if not hasattr(handler_module, 'proceed'):
         reg_error(ROOT, "No 'proceed' function in handler '{0}'".format(handler))
+        status.error = "No 'proceed' function in handler '{0}'".format(handler)
         return
 
-    # Инициализируем БД
-    dbconfig = options.get('db', {})
+    # Загружаем модули (specification, database)
+    home = os.path.dirname(__file__)
     try:
-        session = initDb(dbconfig, base=models_module.Base)
-        initlinks(models_module.Base)
+        current = os.path.join(home, 'specifications', '{0}.yaml'.format(specification))
+        with open(current, 'r') as f:
+            spec_data = yaml.load(f)
+        current = os.path.join(home, 'databases', '{0}.yaml'.format(database))
+        with open(current, 'r') as f:
+            dbconfig = yaml.load(f)
+    except Exception as e:
+        reg_exception(ROOT, e)
+        status.error = "Error in yaml file '{0}'".format(current)
+        return
 
-        set_object("session", tree_widget, brief=session)
-#       set_object("foreign_keys", tree_widget, brief=foreign_keys)
-#       set_object("foreign_keys_c", tree_widget, brief=foreign_keys_c)
+    if not spec_data:
+        spec_data = dict()
+
+    # Инициализируем БД
+    try:
+        session = initDb(dbconfig, base=model_module.Base)
+        initlinks(model_module.Base)
+
+        set_object("session", ROOT, brief=session)
+#       set_object("foreign_keys", ROOT, brief=foreign_keys)
+#       set_object("foreign_keys_c", ROOT, brief=foreign_keys_c)
     except Exception as e:
         reg_exception(ROOT, e)
         return
 
     # Производим обработку
-    sources = get_list(sources)
-    for source in sources:
-        handler_module.proceed(source, options, session, ROOT, status)
+    handler_module.proceed(files, spec_data, session, model_module, ROOT, status)
 
     # Завершаем транзакции
     try:

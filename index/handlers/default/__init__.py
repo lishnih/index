@@ -7,14 +7,15 @@ from __future__ import ( division, absolute_import,
 
 import os, logging
 
-from ..reg import set_object
-from ..reg.result import reg_exception
+from ...reg import set_object
+from ...reg.result import reg_exception
 from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
 
 
-def proceed(source, options={}, session=None, ROOT=None, status=None):
+def proceed(source, options, session, model, ROOT=None, status=None):
     filename = os.path.abspath(source)
+    filename = filename.replace('\\', '/')
 
     if os.path.isdir(filename):
         logging.info("Обработка директории '{0}'".format(filename))
@@ -22,22 +23,22 @@ def proceed(source, options={}, session=None, ROOT=None, status=None):
         treeview = options.get('treeview')
         # Dir
         if treeview == 'tree':
-            proceed_dir_tree(filename, options, session, ROOT, status)
+            proceed_dir_tree(filename, options, session, model, ROOT, status)
             if isinstance(status, dict):
                 status['dirs'] += 1
 
         else:
-            proceed_dir(filename, options, session, ROOT, status)
+            proceed_dir(filename, options, session, model, ROOT, status)
 
     elif os.path.isfile(filename):
         logging.info("Обработка файла '{0}'".format(filename))
 
         # Dir
         dirname = os.path.dirname(filename)
-        DIR = reg_dir(dirname, options, session, ROOT)
+        DIR = reg_dir(dirname, options, session, model, ROOT)
 
         # File
-        proceed_file(filename, options, session, DIR)
+        proceed_file(filename, options, session, model, DIR)
 
     else:
         logging.warning("Не найден файл/директория '{0}'!".format(filename))
