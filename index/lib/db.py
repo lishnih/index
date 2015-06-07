@@ -10,8 +10,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
-foreign_keys = {}
-foreign_keys_c = {}
+foreign_keys = dict()
+foreign_keys_c = dict()
 
 
 def initDb(config=None, session=None, base=None):
@@ -38,7 +38,7 @@ def initDb(config=None, session=None, base=None):
     return session
 
 
-def getDbUri(config={}):
+def getDbUri(config=dict()):
     db_uri = config.get("db_uri")
     if not db_uri:
         dbtype = config.get("dbtype", "sqlite")
@@ -100,8 +100,8 @@ def initlinks(Base):
                             primary_tablename = primary_c.table.name
                             foreign_tablename = foreign_c.table.name
                             if foreign_tablename not in foreign_keys:
-                                foreign_keys[foreign_tablename] = {}
-                                foreign_keys_c[model] = {}
+                                foreign_keys[foreign_tablename] = dict()
+                                foreign_keys_c[model] = dict()
                             foreign_keys[foreign_tablename][primary_tablename] = i
                             foreign_keys_c[model][primary_tablename] = i
                 except:

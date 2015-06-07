@@ -208,6 +208,8 @@ Package: {4}
         propertyDialog(self.s.get_dict())
 
     def onSaveTestData(self, event):
+#       answer = YesNoDialog(self.s.get_dict(), "Would you like append new data?")
+
         self.s.saveEnv()
         self.s.set_path('test_instance', '$')
         self.s.set_path('test_home',     '~')
@@ -238,9 +240,10 @@ Package: {4}
 
                         # Словари объединяем
                         if isinstance(value, dict) and isinstance(BRANCH.get(i), dict):
-                            value1 = BRANCH.get(i)
-                            value1.update(value)
-                            BRANCH.set(i, value1)
+#                           value1 = BRANCH.get(i)
+#                           value1.update(value)
+#                           BRANCH.set(i, value1)
+                            BRANCH.update(value)
 
                         elif isinstance(value, all_types):
                             BRANCH.set(i, value)

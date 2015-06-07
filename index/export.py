@@ -14,10 +14,25 @@ from .reg import set_object
 from .reg.result import reg_error, reg_exception
 
 
-def Proceed(sources, options={}, tree_widget=None, status=None):
-    ROOT = set_object("Root", tree_widget, brief=options)
+def Proceed(sources, tree_widget=None, status=None):
+    if isinstance(sources, tuple):
+        as_source, files = sources
+    else:
+        as_source = files = sources
+
+    brief = dict(
+                Source_type = as_source,
+                Files = files,
+            )
+
+    options = {}
+    ROOT = set_object("Root", tree_widget, brief=brief)
     if hasattr(ROOT, 'tree_item'):
         ROOT.tree_item.setSelected(True)
+
+    # Сбрасываем данные статуса и устанавливаем сообщение
+    if status:
+        status.reset(sources)
 
     # Загружаем обработчик
     handler = options.get('handler', "proceed_default")
@@ -48,17 +63,10 @@ def Proceed(sources, options={}, tree_widget=None, status=None):
         reg_exception(ROOT, e)
         return
 
-    if isinstance(status, dict):
-        status['dirs']  = 0
-        status['files'] = 0
-
     # Производим обработку
     sources = get_list(sources)
     for source in sources:
         handler_module.proceed(source, options, session, ROOT, status)
-
-    if isinstance(status, dict) and 'break' in status:
-        status.pop('break')
 
     # Завершаем транзакции
     try:
@@ -67,23 +75,11 @@ def Proceed(sources, options={}, tree_widget=None, status=None):
         reg_exception(ROOT, e)
 
 
-def main(files=None, method=None):
+def main(files=None, source=None):
     if files:
-        if method:
-            s = Settings()
-            profiles = s.get_group('profiles')
-            if profiles.contains(method, dict):
-                options = profiles.get_group(method).get_dict()
+        if source:
+            files = (source, files)
 
-            else:
-                text = "Required method not exists: '{0}'!".format(method)
-                logging.warning(text)
-                return
-
-        else:
-            options = {}
-
-        Proceed(files, options)
-
+        Proceed(files)
     else:
         logging.warning("Files not specified!")

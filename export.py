@@ -17,8 +17,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Indexing files and directories.")
     parser.add_argument('files', action=readable_file_or_dir_list, nargs='*',
                         help="files and directories to proceed")
-    parser.add_argument('-m', '--method',
-                        help='specify the method name')
+    parser.add_argument('-s', '--source',
+                        help='specify the source parameters')
 
     if sys.version_info >= (3,):
         argv = sys.argv
@@ -28,4 +28,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args(argv[1:])
 
-    sys.exit(main(args.files, args.method))
+    sys.exit(main(args.files, args.source))

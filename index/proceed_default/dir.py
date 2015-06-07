@@ -36,32 +36,26 @@ def proceed_dir(dirname, options, session, ROOT=None, status=None):
                         filename = os.path.join(dirname, basename)
                         if os.path.isfile(filename):
                             if basename in files_filtered:
-                                # Перед обработкой файла проверяем требование выйти
-                                if isinstance(status, dict) and status.get('break') == True:
-                                    return
-
                                 # File
                                 proceed_file(filename, options, session, DIR)
+
+                                # Считаем и проверяем требование выйти
+                                if status:
+                                    status.file = filename
+                                    if status.break_required == True:
+                                        return
                             else:
                                 set_object(basename, DIR, style='D', brief="Файл не индексируется!")
-
-                            if isinstance(status, dict):
-                                status['files'] += 1
-
                         else:
                             set_object(filename, ROOT, style='D', brief="Файл не найден!")
 
+                    # Считаем директорию
+                    if status:
+                        status.dir = dirname
                 else:
-#                   status['files'] += len(files)
                     set_object(dirname, ROOT, style='D', brief="Директория без индексных файлов!")
-
             else:
-#               status['files'] += len(files)
                 set_object(dirname, ROOT, style='D', brief="Директория не индексируется!")
-
-            if isinstance(status, dict):
-                status['dirs'] += 1
-
         else:
             set_object(dirname, ROOT, style='D', brief="Директория не найдена!")
 
@@ -85,28 +79,27 @@ def proceed_dir_tree(dirname, options, session, ROOT=None, status=None):
         if os.path.isdir(filename):
             if filter_match(basename, dirs_filter):
                 proceed_dir_tree(filename, options, session, DIR, status)
-
             else:
                 set_object(filename, DIR, style='D', brief="Директория не индексируется!")
-
-            if isinstance(status, dict):
-                status['dirs'] += 1
 
     for basename in sorted(ldir):
         filename = os.path.join(dirname, basename)
         if os.path.isfile(filename):
             if filter_match(basename, files_filter):
-                # Перед обработкой файла проверяем требование выйти
-                if isinstance(status, dict) and status.get('break') == True:
-                    return
-
                 # File
                 proceed_file(filename, options, session, DIR)
 
+                # Считаем и проверяем требование выйти
+                if status:
+                    status.file = filename
+                    if status.break_required == True:
+                        return
             else:
                 set_object(basename, DIR, style='D', brief="Файл не индексируется!")
+        else:
+            set_object(filename, ROOT, style='D', brief="Файл не найден!")
 
-            if isinstance(status, dict):
-                status['files'] += 1
+    if status:
+        status.dir = dirname
 
     return DIR

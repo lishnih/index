@@ -5,7 +5,6 @@
 from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
-import sys, os, logging
 from sqlalchemy import MetaData, distinct
 
 from ..lib.backwardcompat import *

@@ -9,8 +9,7 @@ import logging
 from PySide import QtCore
 
 
-# Функции обработки запускаем отдельным процессом
-# (чтобы не замораживать Gui)
+# Функции обработки запускаем отдельным процессом (чтобы не замораживать Gui)
 class Thread(QtCore.QThread):
     def __init__(self):
         super(Thread, self).__init__()

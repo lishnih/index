@@ -124,7 +124,7 @@ class SettingsGroup(object):
 
 
     def clean(self):
-        self.settings = {}
+        self.settings = dict()
         self.system.flush()
 
 

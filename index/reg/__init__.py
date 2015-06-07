@@ -50,7 +50,7 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
     OBJECT = None
 
     if keys:
-        object_find = {}
+        object_find = dict()
         for i in keys:
             if isinstance(i, string_types):
                 object_find[i] = object_dict[i]
