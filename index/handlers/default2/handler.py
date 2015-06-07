@@ -10,7 +10,7 @@ import os
 from ...reg import reg_object1
 
 
-def reg_handler(options, session, model, ROOT):
+def reg_handler(options, session, Handler, ROOT):
     handler = options.get('handler', "proceed_default")
     rev = options.get('rev', 0)
 
@@ -18,6 +18,6 @@ def reg_handler(options, session, model, ROOT):
     unique_options = dict((key, options[key]) for key in unique_keys if key in options)
 
     handler_dict = dict(name=handler, rev=rev, extras=unique_options)
-    HANDLER = reg_object1(session, model.Handler, handler_dict, ROOT)
+    HANDLER = reg_object1(session, Handler, handler_dict, ROOT)
 
     return HANDLER

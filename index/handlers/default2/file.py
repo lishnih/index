@@ -12,6 +12,7 @@ from ...reg.result import reg_debug, reg_warning, reg_exception
 from .process import proceed
 
 
+# В отличии от других функция reg_*, здесь передаётся вся модель model
 def reg_file_processing(filename, options, session, model, DIR=None, HANDLER=None):
     basename = os.path.basename(filename)
     statinfo = os.stat(filename)
@@ -34,7 +35,7 @@ def reg_file_processing(filename, options, session, model, DIR=None, HANDLER=Non
             setattr(FILE, '_records', l)
 
             processing_dict = dict(_file=FILE, _handler=HANDLER, size=size, mtime=mtime)
-            rows2 = session.query(modek.FileProcessing).filter_by(**processing_dict).all()
+            rows2 = session.query(model.FileProcessing).filter_by(**processing_dict).all()
             if rows2:
                 l2 = len(rows2)
                 if l2 > 1:
@@ -58,7 +59,7 @@ def reg_file_processing(filename, options, session, model, DIR=None, HANDLER=Non
 
 
 def proceed_file(filename, options, session, model, DIR=None, HANDLER=None):
-    FILE, PROCESSING = reg_file_processing(filename, options, session, DIR, HANDLER)
+    FILE, PROCESSING = reg_file_processing(filename, options, session, model, DIR, HANDLER)
 
     if hasattr(PROCESSING, '_records'):
         reg_debug(FILE, "Файл уже обработам, пропускаем!")

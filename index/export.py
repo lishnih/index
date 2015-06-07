@@ -11,7 +11,7 @@ import yaml
 from .lib.backwardcompat import *
 from .lib.settings import Settings
 from .lib.data_funcs import get_list
-from .lib.source_funcs import get_source_data
+from .lib.source_funcs import get_source_data, get_sha256_module
 from .lib.db import initDb, initlinks, foreign_keys, foreign_keys_c
 from .reg import set_object
 from .reg.result import reg_error, reg_exception
@@ -27,10 +27,9 @@ def Proceed(sources, tree_widget=None, status=None):
     brief = {
                 "Input files": files,
                 "As source": as_source,
+                "===": "===================="
             }
     ROOT = set_object("Root", tree_widget, brief=brief)
-    if hasattr(ROOT, 'tree_item'):
-        ROOT.tree_item.setSelected(True)
 
     # Сбрасываем данные статуса и устанавливаем сообщение
     if status:
@@ -42,11 +41,15 @@ def Proceed(sources, tree_widget=None, status=None):
     else:
         Proceed1(files, as_source if as_source else files, ROOT, status)
 
+    if hasattr(ROOT, 'tree_item'):
+        ROOT.tree_item.setSelected(True)
+
 
 def Proceed1(files, as_source, ROOT=None, status=None):
     brief = {
                 "File": files,
                 "Source": as_source,
+                "===": "===================="
             }
     if hasattr(ROOT, 'tree_item'):
         ROOT.tree_item.appendBrief(brief)
@@ -54,8 +57,8 @@ def Proceed1(files, as_source, ROOT=None, status=None):
     s = Settings()
     source_data = get_source_data(as_source, s)
     if not source_data:
-        reg_error(ROOT, "No such source '{0}'".format(as_source))
-        status.error = "No such source '{0}'".format(as_source)
+        reg_error(ROOT, "No such source '{0}'!".format(as_source))
+        status.error = "No such source '{0}'!".format(as_source)
         return
 
     source, handler, specification, database, model = source_data[:5]
@@ -72,13 +75,23 @@ def Proceed1(files, as_source, ROOT=None, status=None):
         handler_module = importlib.import_module(current)
     except Exception as e:
         reg_exception(ROOT, e)
-        status.error = "Error in module '{0}'".format(current)
+        status.error = "Error in module '{0}'!".format(current)
         return
 
+    # Обработчик имеет точку входа 'proceed'
     if not hasattr(handler_module, 'proceed'):
-        reg_error(ROOT, "No 'proceed' function in handler '{0}'".format(handler))
-        status.error = "No 'proceed' function in handler '{0}'".format(handler)
+        reg_error(ROOT, "No 'proceed' function in handler '{0}'!".format(handler))
+        status.error = "No 'proceed' function in handler '{0}'!".format(handler)
         return
+
+    # Вычисляем данные модулей (model, handler)
+    h_sha256 = get_sha256_module(handler_module)
+    h_name = handler_module.__name__
+    print(h_name, h_sha256)
+
+    m_sha256 = get_sha256_module(model_module)
+    m_name = model_module.__name__
+    print(m_name, m_sha256)
 
     # Загружаем модули (specification, database)
     home = os.path.dirname(__file__)
@@ -91,7 +104,7 @@ def Proceed1(files, as_source, ROOT=None, status=None):
             dbconfig = yaml.load(f)
     except Exception as e:
         reg_exception(ROOT, e)
-        status.error = "Error in yaml file '{0}'".format(current)
+        status.error = "Error in yaml file '{0}'!".format(current)
         return
 
     if not spec_data:
@@ -107,16 +120,17 @@ def Proceed1(files, as_source, ROOT=None, status=None):
 #       set_object("foreign_keys_c", ROOT, brief=foreign_keys_c)
     except Exception as e:
         reg_exception(ROOT, e)
+        status.error = "Error during db init!"
         return
 
     # Производим обработку
-    handler_module.proceed(files, spec_data, session, model_module, ROOT, status)
-
-    # Завершаем транзакции
     try:
+        handler_module.proceed(files, spec_data, session, model_module, ROOT, status)
         session.commit()
     except Exception as e:
         reg_exception(ROOT, e)
+        status.error = "Error during proceed!"
+        session.rollback()
 
 
 def main(files=None, source=None):

@@ -40,15 +40,10 @@ def proceed(source, options, session, model, ROOT=None, status=None):
 
         # Dir
         dirname = os.path.dirname(filename)
-        DIR = reg_dir(dirname, options, session, model, ROOT)
+        DIR = reg_dir(dirname, options, session, model.Dir, ROOT)
 
         # File
         proceed_file(filename, options, session, model, DIR, HANDLER)
 
     else:
         logging.warning("Не найден файл/директория '{0}'!".format(filename))
-
-    try:
-        session.commit()
-    except Exception as e:
-        reg_exception(ROOT, e)

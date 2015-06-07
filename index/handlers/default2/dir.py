@@ -12,9 +12,9 @@ from ...reg import reg_object1, set_object
 from .file import proceed_file
 
 
-def reg_dir(dirname, options, session, model, ROOT=None):
+def reg_dir(dirname, options, session, Dir, ROOT=None):
     dir_dict = dict(name=dirname)
-    DIR = reg_object1(session, model.Dir, dir_dict, ROOT, style='B')
+    DIR = reg_object1(session, Dir, dir_dict, ROOT, style='B')
 
     return DIR
 
@@ -29,7 +29,7 @@ def proceed_dir(dirname, options, session, model, ROOT=None, HANDLER=None, statu
                 files_filtered = filter_list(files, files_filter)
                 if dirs or files_filtered:
                     # Dir
-                    DIR = reg_dir(dirname, options, session, model, ROOT)
+                    DIR = reg_dir(dirname, options, session, model.Dir, ROOT)
 
                     for basename in files:
                         filename = os.path.join(dirname, basename)
@@ -61,7 +61,7 @@ def proceed_dir(dirname, options, session, model, ROOT=None, HANDLER=None, statu
 
 def proceed_dir_tree(dirname, options, session, ROOT=None, HANDLER=None, status=None):
     # Dir
-    DIR = reg_dir(dirname, options, session, model, ROOT)
+    DIR = reg_dir(dirname, options, session, model.Dir, ROOT)
 
     # Пролистываем содержимое директории
     try:

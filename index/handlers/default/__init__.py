@@ -42,8 +42,3 @@ def proceed(source, options, session, model, ROOT=None, status=None):
 
     else:
         logging.warning("Не найден файл/директория '{0}'!".format(filename))
-
-    try:
-        session.commit()
-    except Exception as e:
-        reg_exception(ROOT, e)
