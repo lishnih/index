@@ -6,12 +6,13 @@ from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
 import sys, os, importlib, logging
+from PySide import QtCore
 import yaml
 
 from .lib.backwardcompat import *
 from .lib.settings import Settings
 from .lib.data_funcs import get_list
-from .lib.source_funcs import get_source_data, get_sha256_module
+from .lib.source_funcs import get_source_data
 from .lib.db import initDb, initlinks, foreign_keys, foreign_keys_c
 from .reg import set_object
 from .reg.result import reg_error, reg_exception
@@ -43,11 +44,16 @@ def Proceed(sources, tree_widget=None, status=None):
 
     if hasattr(ROOT, 'tree_item'):
         ROOT.tree_item.setSelected(True)
+#       tree_widget.emit(QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)"), ROOT.tree_item)
+#       tree_widget.window().OnTreeItemSelected(ROOT.tree_item)
 
 
-def Proceed1(files, as_source, ROOT=None, status=None):
+def Proceed1(file1, as_source, ROOT=None, status=None):
+    file1 = os.path.abspath(file1)
+    as_source = os.path.abspath(as_source)
+    as_source = as_source.replace('\\', '/')
     brief = {
-                "File": files,
+                "File": file1,
                 "Source": as_source,
                 "===": "===================="
             }
@@ -84,15 +90,6 @@ def Proceed1(files, as_source, ROOT=None, status=None):
         status.error = "No 'proceed' function in handler '{0}'!".format(handler)
         return
 
-    # Вычисляем данные модулей (model, handler)
-    h_sha256 = get_sha256_module(handler_module)
-    h_name = handler_module.__name__
-    print(h_name, h_sha256)
-
-    m_sha256 = get_sha256_module(model_module)
-    m_name = model_module.__name__
-    print(m_name, m_sha256)
-
     # Загружаем модули (specification, database)
     home = os.path.dirname(__file__)
     try:
@@ -114,18 +111,36 @@ def Proceed1(files, as_source, ROOT=None, status=None):
     try:
         session = initDb(dbconfig, base=model_module.Base)
         initlinks(model_module.Base)
-
-        set_object("session", ROOT, brief=session)
-#       set_object("foreign_keys", ROOT, brief=foreign_keys)
-#       set_object("foreign_keys_c", ROOT, brief=foreign_keys_c)
     except Exception as e:
         reg_exception(ROOT, e)
         status.error = "Error during db init!"
         return
 
+    runtime = dict(
+        handler = handler,
+        h_module = handler_module,
+
+        model = model,
+        m_module = model_module,
+
+        specification = specification,
+        options = spec_data,
+
+        database = database,
+        session = session
+    )
+
+    if hasattr(ROOT, 'tree_item'):
+        set_object("runtime", ROOT, brief=dict(
+            handler       = (handler, handler_module),
+            model         = (model, model_module),
+            specification = (specification, spec_data),
+            database      = (database, session, foreign_keys, foreign_keys_c),
+        ))
+
     # Производим обработку
     try:
-        handler_module.proceed(files, spec_data, session, model_module, ROOT, status)
+        handler_module.proceed(file1, runtime, ROOT, status)
         session.commit()
     except Exception as e:
         reg_exception(ROOT, e)

@@ -14,36 +14,33 @@ from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
 
 
-def proceed(source, options, session, model, ROOT=None, status=None):
-    # Регистрируем обработчик
-    HANDLER = reg_handler(options, session, model.Handler, ROOT)
+def proceed(filename, runtime, ROOT=None, status=None):
+    HANDLER = reg_handler(runtime, ROOT)
 
     # Начинаем обработку
-    filename = os.path.abspath(source)
-    filename = filename.replace('\\', '/')
-
     if os.path.isdir(filename):
         logging.info("Обработка директории '{0}'".format(filename))
 
-        treeview = options.get('treeview')
+#       treeview = options.get('treeview', 'list')
+        treeview = 'list'
         # Dir
         if treeview == 'tree':
-            proceed_dir_tree(filename, options, session, model, ROOT, HANDLER, status)
+            proceed_dir_tree(filename, runtime, ROOT, HANDLER, status)
             if isinstance(status, dict):
                 status['dirs'] += 1
 
         else:
-            proceed_dir(filename, options, session, model, ROOT, HANDLER, status)
+            proceed_dir(filename, runtime, ROOT, HANDLER, status)
 
     elif os.path.isfile(filename):
         logging.info("Обработка файла '{0}'".format(filename))
 
         # Dir
         dirname = os.path.dirname(filename)
-        DIR = reg_dir(dirname, options, session, model.Dir, ROOT)
+        DIR = reg_dir(dirname, runtime, ROOT)
 
         # File
-        proceed_file(filename, options, session, model, DIR, HANDLER)
+        proceed_file(filename, runtime, DIR, HANDLER)
 
     else:
         logging.warning("Не найден файл/директория '{0}'!".format(filename))

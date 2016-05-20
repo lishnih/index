@@ -9,26 +9,29 @@ import os, logging
 
 from ...reg import set_object
 from ...reg.result import reg_exception
+from .handler import reg_handler
 from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
 
 
 def proceed(filename, runtime, ROOT=None, status=None):
-    options = runtime.get('options', {})
+    HANDLER = reg_handler(runtime, ROOT)
 
     # Начинаем обработку
     if os.path.isdir(filename):
         logging.info("Обработка директории '{0}'".format(filename))
 
-        treeview = options.get('treeview', 'list')
+#       treeview = options.get('treeview', 'list')
+        treeview = 'list'
         # Dir
         if treeview == 'tree':
-            proceed_dir_tree(filename, runtime, ROOT, status)
-            if isinstance(status, dict):
-                status['dirs'] += 1
+            proceed_dir_tree(filename, runtime, ROOT, HANDLER, status)
 
         else:
-            proceed_dir(filename, runtime, ROOT, status)
+            proceed_dir(filename, runtime, ROOT, HANDLER, status)
+
+        if status:
+            status.dir = filename
 
     elif os.path.isfile(filename):
         logging.info("Обработка файла '{0}'".format(filename))
@@ -38,7 +41,7 @@ def proceed(filename, runtime, ROOT=None, status=None):
         DIR = reg_dir(dirname, runtime, ROOT)
 
         # File
-        proceed_file(filename, runtime, DIR)
+        proceed_file(filename, runtime, DIR, HANDLER)
 
     else:
         logging.warning("Не найден файл/директория '{0}'!".format(filename))

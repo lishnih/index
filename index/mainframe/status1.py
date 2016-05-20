@@ -50,7 +50,7 @@ class Status(QObject):
     @dir.setter
     def dir(self, filename):
         self.last_dir = filename
-        self.ndirs = self.ndirs + 1
+        self.ndirs += 1
 
 
     @property
@@ -59,7 +59,7 @@ class Status(QObject):
 
     @file.setter
     def file(self, filename):
-        self.nfiles = self.nfiles + 1
+        self.nfiles += 1
 
 
     @property

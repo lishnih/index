@@ -31,6 +31,6 @@ def reg_handler(runtime, ROOT):
                         extras=options,
                        )
 
-    HANDLER = reg_object1(session, model.Handler, handler_dict, ROOT)
+    HANDLER = reg_object1(session, model.Handler, handler_dict, ROOT, brief=handler_dict)
 
     return HANDLER

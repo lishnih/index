@@ -59,17 +59,18 @@ class File(Base, aStr):                         # rev. 20130730
         return "<Файл '{0}' ({1})>".format(self.name, self.id)
 
 
-class Handler(Base, aStr):                      # rev. 20130918
+class Handler(Base, aStr):                      # rev. 20150608
     __tablename__ = 'handlers'
 
     id = Column(Integer, primary_key=True)
 
     name      = Column(String)                  # Имя обработчика
     rev       = Column(Integer)                 # Ревизия
+    hash      = Column(String)                  # Hash
     disabled  = Column(Integer)                 # Состояние
     created   = Column(Integer, default=datetime.utcnow)  # Время создания
     updated   = Column(Integer, onupdate=datetime.utcnow) # Время обновления
-    extras    = Column(PickleType)              # Настройки
+    extras    = Column(PickleType)              # Параметры
 
 #   def __init__(self, **kargs):
 #       Base.__init__(self, **kargs)

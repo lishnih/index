@@ -11,8 +11,12 @@ from ...lib.data_funcs import filter_match, filter_list
 from ...reg.result import reg_warning
 
 
-def proceed(filename, options, session, model, FILE):
+def proceed(filename, runtime, FILE):
     logging.debug("Обработка файла {0}".format(filename))
+
+    model = runtime.get('m_module')
+    options = runtime.get('options', {})
+    session = runtime.get('session')
 
     basename = os.path.basename(filename)
     root, ext = os.path.splitext(basename)

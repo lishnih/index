@@ -1,0 +1,5 @@
+dbtype: mysql
+dbname: index
+url: localhost
+user: root
+pass: 54321

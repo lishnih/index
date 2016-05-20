@@ -14,7 +14,6 @@ from .process import proceed
 
 def reg_file_processing(filename, runtime, DIR=None, HANDLER=None):
     model = runtime.get('m_module')
-    options = runtime.get('options', {})
     session = runtime.get('session')
 
     basename = os.path.basename(filename)
@@ -35,7 +34,6 @@ def reg_file_processing(filename, runtime, DIR=None, HANDLER=None):
     
         for i in rows:
             FILE = set_object(i, DIR)
-            setattr(FILE, '_records', l)
 
             processing_dict = dict(_file=FILE, _handler=HANDLER, size=size, mtime=mtime)
             rows2 = session.query(model.FileProcessing).filter_by(**processing_dict).all()
@@ -44,13 +42,13 @@ def reg_file_processing(filename, runtime, DIR=None, HANDLER=None):
                 if l2 > 1:
                     reg_warning(FILE, "Найдено несколько одинаковых обработок файла ({0})!".format(l2))
             
-                PROCESSING = set_object(rows2[0], FILE)
-                setattr(PROCESSING, '_records', l2)
-                break
+                for i in rows2:
+                    PROCESSING = set_object(i, FILE)
 
     if not FILE:
         FILE = reg_object(session, model.File, file_dict, DIR)
 
+    # Обновляем время модификации и размер файла
     FILE.size = size
     FILE.mtime = mtime
 
@@ -64,7 +62,7 @@ def reg_file_processing(filename, runtime, DIR=None, HANDLER=None):
 def proceed_file(filename, runtime, DIR=None, HANDLER=None):
     FILE, PROCESSING = reg_file_processing(filename, runtime, DIR, HANDLER)
 
-    if hasattr(PROCESSING, '_records'):
+    if PROCESSING.status > 0:
         reg_debug(FILE, "Файл уже обработам, пропускаем!")
         if hasattr(FILE, 'tree_item'):
             FILE.tree_item.set_quiet()
@@ -73,6 +71,8 @@ def proceed_file(filename, runtime, DIR=None, HANDLER=None):
     try:
         # Параметр 3: FILE или PROCESSING
         proceed(filename, runtime, PROCESSING)
+        PROCESSING.status = 1
     except Exception as e:
         reg_exception(FILE, e)
+        PROCESSING.status = -1
         return

@@ -1,0 +1,118 @@
+# dirs_filter
+# files_filter
+
+sheets_filter: Таблица
+
+# sheet_test
+# default_group
+
+# marks:
+# - [key, needle]
+# - [key, y, x]
+# - [key, needle, y1, x1, y2, x2]
+
+# doc:
+#   doc_plains
+#   doc_values
+#   doc_funcs
+#   doc_objects
+#   doc_objects1
+#   object_required
+#   object_keys
+
+# docs:
+#   doc_plains
+#   doc_values
+#   doc_funcs
+#   doc_objects
+#   doc_objects1
+#   object_required
+#   object_keys
+
+table:
+    table_objects1: [Doc, Joint, Unit]
+    table_objects:  [Joint_entry, Entry]
+
+    object_required:          # Обязательные поля
+        Doc:   [doc]
+        Unit:  [unit]
+        Joint: [joint]
+
+    object_plains:            # Предопределённые значения
+        Doc:
+          - [kind, Act]
+          - [type, VT]
+        Unit:
+          - [kind, МК]
+          - [type, Свая]
+
+    object_override:          # Переопределённые поля
+        Doc:
+          - [name, doc]
+          - [kind, doc_kind]
+          - [type, doc_type]
+        Unit:
+          - [name, unit]
+          - [kind, unit_kind]
+          - [type, unit_type]
+        Joint:
+          - [name, joint]
+
+    object_keys:              # Ключи (по ним определяется уникальность записи)
+        Doc:
+          - [name, doc]
+          - [kind, doc_kind]
+          - [type, doc_type]
+        Unit:
+          - [name, unit]
+          - [kind, unit_kind]
+          - [type, unit_type]
+        Joint:
+          - [name, joint]
+
+#   row_start:      0
+#   row_start_skip: 0
+#   row_stop:       sh.nrows
+#   row_stop_skip:  0
+
+    check_column:   C
+#   check_name:     doc
+
+#   col_mode:       column
+
+    col_names:
+      - doc         # A
+      - date        # B
+      - joint       # C
+      - dt          # D
+      - joint_2     # E
+      - dt_2        # F
+      - joint_3     # G
+      - dt_3        # H
+      - welders     # I
+      - j           # J
+      - k           # K
+      - name_1      # L
+      - name_2      # M
+      - name_3      # N
+      - o           # O
+      - unit        # P
+
+#   col_funcs:
+#     - [seq, proceed_seq]
+
+# tables:
+#   row_plains
+#   row_start
+#   row_start_skip
+#   row_stop
+#   row_stop_skip
+#   col_mode
+#   col_names
+#   col_funcs
+#   check_name
+#   check_column
+#   row_objects
+#   row_objects1
+#   object_required
+#   object_keys

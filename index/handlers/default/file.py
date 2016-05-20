@@ -12,7 +12,11 @@ from ...reg.result import reg_exception
 from .process import proceed
 
 
-def reg_file(filename, options, session, model, DIR=None):
+def reg_file(filename, runtime, DIR=None):
+    model = runtime.get('m_module')
+#   options = runtime.get('options', {})
+    session = runtime.get('session')
+
     basename = os.path.basename(filename)
     statinfo = os.stat(filename)
     size  = statinfo.st_size
@@ -24,11 +28,11 @@ def reg_file(filename, options, session, model, DIR=None):
     return FILE
 
 
-def proceed_file(filename, options, session, model, DIR=None):
-    FILE = reg_file(filename, options, session, model, DIR)
+def proceed_file(filename, runtime, DIR=None):
+    FILE = reg_file(filename, runtime, DIR)
 
     try:
-        proceed(filename, options, session, model, FILE)
+        proceed(filename, runtime, FILE)
     except Exception as e:
         reg_exception(FILE, e)
         return

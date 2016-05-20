@@ -10,10 +10,11 @@ from PySide import QtGui
 
 from ..lib.backwardcompat import *
 from ..lib.items import FileItem
+from ..lib.dump import plain_type
 from .result import reg_error, reg_exception
 
 
-def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, required=None):
+def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, required=[]):
     if required:
         isrecord = True
         for i in required:
@@ -36,16 +37,14 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, 
     return OBJECT
 
 
-def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None, required=None, keys=None):
-    if required:
-        isrecord = True
-        for i in required:
-            if i not in object_dict or object_dict[i] is None:
-                isrecord = False
-
-        if not isrecord:
+def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None, required=[], plains=[], override=None, keys=None):
+    for i in required:
+        if i not in object_dict or object_dict[i] is None:
             OBJECT = set_object(object_dict, PARENT, style=style, brief="Объект не сохранён - требуемые поля пусты!")
             return OBJECT
+
+    new = dict((key, val) for (key, val) in plains)
+    new.update(object_dict)
 
     OBJECT = None
 
@@ -65,12 +64,12 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
 #       cond = [getattr(Object, key) == value for key, value in object_find.items()]
 #       rows = session.query(Object).filter(*cond).all()
         if rows:
+            OBJECT = rows[0]
+
             l = len(rows)
             if l > 1:
                 reg_error(PARENT, "Найдено несколько одинаковых записей ({0})!".format(l), Object, object_find)
-
-            OBJECT = rows[0]
-            OBJECT._records = l
+                OBJECT._thesamerecords = l - 1
 
     except Exception as e:
         reg_exception(PARENT, e, Object, object_dict)
@@ -113,7 +112,7 @@ def show_object(OBJECT, PARENT, style='', brief=None):
 
     if tree_item:
         name = unicode(OBJECT.name) if hasattr(OBJECT, 'name') else \
-               "Unnamed"
+               plain_type(OBJECT)
 
         OBJECT.tree_item = FileItem(tree_item, name, brief=brief, summary=OBJECT)
 

@@ -9,11 +9,8 @@ import os, hashlib
 
 
 def get_source_data(name, s):
-    sources = s.get('sources')
+    sources = s.get('sources', [])
     default = None
-
-    name = os.path.abspath(name)
-    name = name.replace('\\', '/')
 
     for i in sources:
         if i[0] == name:

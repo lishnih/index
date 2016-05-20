@@ -58,10 +58,10 @@ class MainFrame(QtGui.QMainWindow):
         self.tab_list = ('brief', 'tracing', 'sources', 'handlers', 'specifications', 'databases', 'models')
         self.tab_dict = dict(
             sources        = self.ui.table3,
-            handlers       = self.ui.table4,
-            specifications = self.ui.table5,
-            databases      = self.ui.table6,
-            models         = self.ui.table7,
+#             handlers       = self.ui.table4,
+#             specifications = self.ui.table5,
+#             databases      = self.ui.table6,
+#             models         = self.ui.table7,
         )
 
         # Загружаем данные во вкладки
@@ -110,7 +110,7 @@ class MainFrame(QtGui.QMainWindow):
         else:
             st = "Processed"
 
-        status_text = "{0} '{1}'   |   {2}   |   Dirs: {3}, Files: {4}".format(st, status.message, time_str, status.dir, status.file)
+        status_text = "{0}   |   {1}   |   Dirs: {2}, Files: {3}".format(st, time_str, status.dir, status.file)
 
         if status.error:
             status_text += "   |   " + status.error
@@ -181,11 +181,11 @@ class MainFrame(QtGui.QMainWindow):
         box.setEditable(True)
         box.addItems(l)
 
-        if notlisted:
-            pixmap = QtGui.QPixmap(12, 12)
-            pixmap.fill(QtGui.QColor('red'))  # QtGui.QColor.colorNames()
-            icon = QtGui.QIcon(pixmap)
-            box.setItemIcon(0, icon)
+#         if notlisted:
+#             pixmap = QtGui.QPixmap(12, 12)
+#             pixmap.fill(QtGui.QColor('red'))  # QtGui.QColor.colorNames()
+#             icon = QtGui.QIcon(pixmap)
+#             box.setItemIcon(0, icon)
 
         table.setCellWidget(i, j, box)
 
@@ -198,7 +198,7 @@ class MainFrame(QtGui.QMainWindow):
         for i in row_list:
             names.append(i[0])
             self.insertRowTableData(table, row, i)
-            row = row + 1
+            row += 1
         table.resizeColumnsToContents()
 #       table.resizeRowsToContents()
         return names
@@ -210,7 +210,7 @@ class MainFrame(QtGui.QMainWindow):
         for j in t:
             text = QtGui.QTableWidgetItem(unicode(j)) # QLineEdit, QPlainTextEdit
             table.setItem(row, column, text)          # setCellWidget
-            column = column + 1
+            column += 1
             if column >= table.columnCount():
                 break
 
@@ -334,6 +334,11 @@ class MainFrame(QtGui.QMainWindow):
         else:
             for i in self.tab_dict.keys():
                 self.save_table_data(i)
+
+
+    def OnOpenFolder(self):
+        path = self.s.expand_prefix('~~~')
+        os.startfile(path)
 
 
     def OnTreeItemSelected(self, item, prev=None):
