@@ -121,7 +121,7 @@ def html_val(obj, color=""):
     obj = obj.replace('\r',   '<br />')
     obj = obj.replace('\n',   '<br />')
     if color:
-        buf = '<span title="{0}" style="color: {1}">{2}</span>'.format(type_obj, color, obj)
+        buf = '<span title="{0}" style="color: {1};">{2}</span>'.format(type_obj, color, obj)
     else:
         buf = '<span title="{0}">{1}</span>'.format(type_obj, obj)
 
@@ -135,12 +135,12 @@ def html(obj, it=1, root=None, collection=[]):
         collection = []
 
     if root is obj:
-        return '<span style="color: red"><i>on self</i></span>'
+        return '<span style="color: red;"><i>on self</i></span>'
 
     buf = ""
 
     if obj is None:
-        buf = '<span style="color: Gray"><i>is None</i></span>'
+        buf = '<span style="color: gray;"><i>is None</i></span>'
     elif isinstance(obj, numeric_types):
         buf = html_val(obj, 'blue')
     elif isinstance(obj, simple_types):
@@ -152,7 +152,7 @@ def html(obj, it=1, root=None, collection=[]):
     # Использование "if obj in collection" в некоторых случаях недопустимо!
     for i in collection:
         if i is obj:
-            return html_val(obj, "red")
+            return html_val(obj, "green")
     collection.append(obj)
 
     if isinstance(obj, (list, tuple)):
@@ -171,7 +171,7 @@ def html(obj, it=1, root=None, collection=[]):
 
     # Итерацию проверяем только для объектов
     if not it:
-        return html_val(obj, "Dimgray")
+        return html_val(obj, "dimgray")
     it -= 1
 
     buf = html_r(obj, it, root, collection)
@@ -180,18 +180,22 @@ def html(obj, it=1, root=None, collection=[]):
 
 
 def html_r(obj, it=1, root=None, collection=[]):
-    buf = '<table border="1">\n'
-    buf += '  <tr><th colspan="2" style="background-color: Cornflowerblue">{0}</th></tr>\n'.format(html_val(obj))
+    buf = '<table style="background-color: lightcyan; border: 1px solid black;">\n'
+    buf += '  <tr><th colspan="2" style="background-color: cornflowerblue;">{0}</th></tr>\n'.format(html_val(obj))
 
     # === DIR ===
     dirs_buf = ''
+    number = 0
     for key in dir(obj):
         val = getattr(obj, key)
         if not ismethod(val):
             if key[0:2] != '__':
-                dirs_buf += '  <tr><td style="color: blue"><b>{0}</b></td><td>{1}</td></tr>\n'.format(key, html(val, it, obj, collection))
+                dirs_buf += '  <tr>' if number % 2 == 0 else '  <tr style="background-color: lightblue;">'
+                dirs_buf += '    <td style="color: blue;"><b>{0}</b></td><td>{1}</td>\n'.format(key, html(val, it, obj, collection))
+                dirs_buf += '  </tr>'
+                number += 1
     if dirs_buf:
-#       buf += '  <tr><th colspan="2" style="background-color: yellow">Dirs свойства:</th></tr>\n{0}'.format(dirs_buf)
+#       buf += '  <tr><th colspan="2" style="background-color: yellow;">Dirs свойства:</th></tr>\n{0}'.format(dirs_buf)
         buf += dirs_buf
 
     # === ITER ===
@@ -203,16 +207,16 @@ def html_r(obj, it=1, root=None, collection=[]):
 #         except:
 #             pass
 #         if list_buf:
-#             buf += '  <tr><th colspan="2" style="background-color: yellow">Iter свойства:</th></tr>\n{0}'.format(list_buf)
+#             buf += '  <tr><th colspan="2" style="background-color: yellow;">Iter свойства:</th></tr>\n{0}'.format(list_buf)
 
     # === DICT ===
 #     if hasattr(obj, '__dict__'):
-#         buf += '  <tr><th colspan="2" style="background-color: yellow">Dict свойства:</th></tr>\n'
+#         buf += '  <tr><th colspan="2" style="background-color: yellow;">Dict свойства:</th></tr>\n'
 #         d = obj.__dict__
 #         for key in sorted(d.keys()):
 #             if key[0:2] != '__':
 #                 val = d.get(key)
-#                 buf += '  <tr><td style="color: blue"><b>{0}</b></td><td>{1}</td></tr>\n'.format(key, html(val, it, obj, collection))
+#                 buf += '  <tr><td style="color: blue;"><b>{0}</b></td><td>{1}</td></tr>\n'.format(key, html(val, it, obj, collection))
 
     buf += '</table>\n'
 

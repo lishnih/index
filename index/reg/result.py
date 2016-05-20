@@ -31,7 +31,7 @@ def reg_warning(OBJ, msg=None):
 
 def reg_error(OBJ, msg=None, *args, **kargs):
     msg = """(((((((
-Ошибка '{0}'!
+Ошибка '{0!r}'!
 Были переданый следующие параметры:
 args: {1!r}
 kargs: {2!r}
@@ -47,7 +47,7 @@ def reg_exception(OBJ, e, *args, **kargs):
     tb_msg = traceback.format_exc()
 
     msg = """(((((((
-Ошибка '{0}'!
+Ошибка '{0!r}'!
 Были переданый следующие параметры:
 args: {1!r}
 kargs: {2!r}

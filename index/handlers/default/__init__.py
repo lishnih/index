@@ -8,37 +8,44 @@ from __future__ import ( division, absolute_import,
 import os, logging
 
 from ...reg import set_object
-from ...reg.result import reg_exception
 from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
 
 
-def proceed(source, options, session, model, ROOT=None, status=None):
-    filename = os.path.abspath(source)
-    filename = filename.replace('\\', '/')
+# def prepare(files, profile):
+#     return None
 
+
+def proceed(filename, runtime=None, ROOT=None, status=None):
+    if not runtime:
+        runtime = dict()
+    options = runtime.get('options', {})
+
+    # Начинаем обработку
     if os.path.isdir(filename):
         logging.info("Обработка директории '{0}'".format(filename))
 
-        treeview = options.get('treeview')
+        treeview = options.get('treeview', 'list')
         # Dir
         if treeview == 'tree':
-            proceed_dir_tree(filename, options, session, model, ROOT, status)
-            if isinstance(status, dict):
-                status['dirs'] += 1
+            proceed_dir_tree(filename, runtime, ROOT, status)
 
         else:
-            proceed_dir(filename, options, session, model, ROOT, status)
+            proceed_dir(filename, runtime, ROOT, status)
 
     elif os.path.isfile(filename):
         logging.info("Обработка файла '{0}'".format(filename))
 
         # Dir
         dirname = os.path.dirname(filename)
-        DIR = reg_dir(dirname, options, session, model, ROOT)
+        DIR = reg_dir(dirname, runtime, ROOT)
 
         # File
-        proceed_file(filename, options, session, model, DIR)
+        proceed_file(filename, runtime, DIR, status)
 
     else:
         logging.warning("Не найден файл/директория '{0}'!".format(filename))
+
+
+# def ending(files, profile, runtime):
+#     return None

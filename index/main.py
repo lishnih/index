@@ -20,10 +20,10 @@ from .mainframe import MainFrame            # Основное окно
 app = QtGui.QApplication(sys.argv)          # Приложение
 
 
-def main(files=None, source=None):
+def main(files=None, profile=None):
 #   tray = SysTray()                        # Трей
 
-    frame = MainFrame(files, source)        # Инициализируем
+    frame = MainFrame(files, profile)       # Инициализируем
     frame.show()                            # Отображаем
 
     res = app.exec_()                       # Цикл

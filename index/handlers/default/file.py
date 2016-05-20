@@ -7,28 +7,28 @@ from __future__ import ( division, absolute_import,
 
 import os
 
-from ...reg import reg_object1
-from ...reg.result import reg_exception
-from .process import proceed
+from ...reg import set_object
 
 
-def reg_file(filename, options, session, model, DIR=None):
+def reg_file(filename, runtime, DIR=None):
     basename = os.path.basename(filename)
     statinfo = os.stat(filename)
     size  = statinfo.st_size
     mtime = statinfo.st_mtime
 
-    file_dict = dict(_dir=DIR, name=basename, size=size, mtime=mtime)
-    FILE = reg_object1(session, model.File, file_dict, DIR)
+    file_dict = dict(
+        _dir = DIR,
+        name = basename,
+        mtime = mtime,
+        size = size,
+        statinfo = statinfo,
+    )
+
+    FILE = set_object(basename, DIR, brief=file_dict)
 
     return FILE
 
 
-def proceed_file(filename, options, session, model, DIR=None):
-    FILE = reg_file(filename, options, session, model, DIR)
-
-    try:
-        proceed(filename, options, session, model, FILE)
-    except Exception as e:
-        reg_exception(FILE, e)
-        return
+def proceed_file(filename, runtime, DIR=None, status=None):
+    FILE = reg_file(filename, runtime, DIR)
+    status.file = filename

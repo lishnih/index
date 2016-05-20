@@ -5,4 +5,4 @@ import os
 
 __pkgname__ = os.path.basename(os.path.dirname(os.path.dirname(__file__)))
 __description__ = "Index System"
-__version__ = "0.2"
+__version__ = "0.3"

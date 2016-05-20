@@ -7,20 +7,18 @@ from __future__ import ( division, absolute_import,
 
 import sys, os, re
 from PySide import QtCore, QtGui, __version__ as pyside_version
-from sqlalchemy import __version__ as sqlalchemy_version
 
 from ..lib.backwardcompat import *
 from ..lib.info import __pkgname__, __description__, __version__
 from ..lib.settings import Settings
 from ..lib.dump_html import html_val, html
 
-from .mainframe_ui import Ui_MainWindow
+from ..export import Proceed                # Модуль обработки
 
+from .mainframe_ui import Ui_MainWindow
 from .thread1 import th                     # Поток (уже созданный)
 from .status1 import status                 # Статус (уже созданный)
-# from .view_db import view_db
-from .view_conf import view_conf
-from ..export import Proceed                # Модуль обработки
+# from .view_conf import view_conf
 
 
 # Настройки: [HKCU\Software\lishnih@gmail.com\<app_section>]
@@ -29,7 +27,7 @@ app_section = re.sub(r'\W', '_', os.path.dirname(os.path.dirname(__file__)))
 
 
 class MainFrame(QtGui.QMainWindow):
-    def __init__(self, files=None, source=None):
+    def __init__(self, files=None, profile=None):
         super(MainFrame, self).__init__()
 
         # Загружаем элементы окна
@@ -55,31 +53,24 @@ class MainFrame(QtGui.QMainWindow):
 #       self.connect(self.ui.tabs, QtCore.SIGNAL("dropped1"), self.filesDropped)
 
         # Список вкладок
-        self.tab_list = ('brief', 'tracing', 'sources', 'handlers', 'specifications', 'databases', 'models')
+        self.tab_list = ('brief', 'tracing', 'profiles')
         self.tab_dict = dict(
-            sources        = self.ui.table3,
-            handlers       = self.ui.table4,
-            specifications = self.ui.table5,
-            databases      = self.ui.table6,
-            models         = self.ui.table7,
+            profiles = self.ui.table3,
         )
 
         # Загружаем данные во вкладки
         self.loadTabsData()
 
-        # Инициализируем меню Save
-        self.initSaveMenu()
-
         # Connect
-        s = self.tab_dict['sources']
+        s = self.tab_dict['profiles']
         header = s.verticalHeader()
         header.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         header.customContextMenuRequested.connect(self.OnTableItemRightClick)
 
-        self.initSourcesCMenu()
+        self.initProfilesCMenu()
 
         # Обрабатываем параметры
-        self.proceed_args(files, source)
+        self.proceed_args(files, profile)
 
 
 # Callback-функции для Таймера
@@ -110,7 +101,7 @@ class MainFrame(QtGui.QMainWindow):
         else:
             st = "Processed"
 
-        status_text = "{0} '{1}'   |   {2}   |   Dirs: {3}, Files: {4}".format(st, status.message, time_str, status.dir, status.file)
+        status_text = "{0}   |   {1}   |   Dirs: {2}, Files: {3}".format(st, time_str, status.dir, status.file)
 
         if status.error:
             status_text += "   |   " + status.error
@@ -121,43 +112,27 @@ class MainFrame(QtGui.QMainWindow):
         self.ui.statusbar.showMessage(status_text)
 
 
-# Save menu
-
-    def initSaveMenu(self):
-        self.ui.actionSources.setData('sources')
-#         self.ui.actionHandlers.setData('handlers')
-#         self.ui.actionSpecifications.setData('specifications')
-#         self.ui.actionDatabases.setData('databases')
-#         self.ui.actionModels.setData('models')
-
-
 # Context menu (tables)
 
-    def initSourcesCMenu(self):
-        self.SourcesCMenu = QtGui.QMenu()
-        self.SourcesCMenu.addAction("Proceed", self.OnSourcesProceed)
-        self.SourcesCMenu.addAction("Delete", self.OnSourcesDelete)
+    def initProfilesCMenu(self):
+        self.ProfilesCMenu = QtGui.QMenu()
+        self.ProfilesCMenu.addAction("Proceed", self.OnProfilesProceed)
+        self.ProfilesCMenu.addAction("Delete", self.OnProfilesDelete)
 
 
 # Tabs data
 
     def loadTabsData(self):
-#         handler_names       = self.loadTableData('handlers',       self.tab_dict['handlers'])
-#         specification_names = self.loadTableData('specifications', self.tab_dict['specifications'])
-#         database_names      = self.loadTableData('databases',      self.tab_dict['databases'])
-#         model_names         = self.loadTableData('models',         self.tab_dict['models'])
-        handler_names = specification_names = database_names = model_names = []
+#       handler_names = self.loadTableData('handlers', self.tab_dict['handlers'])
+#       handler_names = []
 
-        self.sources_names = self.loadTableData('sources', self.tab_dict['sources'])
-        self.setAllComboDatas(self.tab_dict['sources'], handler_names, specification_names, database_names, model_names)
+        self.profiles_names = self.loadTableData('profiles', self.tab_dict['profiles'])
+        self.setAllComboDatas(self.tab_dict['profiles'], self.profiles_names)
 
 
-    def setAllComboDatas(self, table, handler_names, specification_names, database_names, model_names):
+    def setAllComboDatas(self, table, profiles_names):
         for i in range(table.rowCount()):
-            self.setComboData(table, i, 1, handler_names)
-            self.setComboData(table, i, 2, specification_names)
-            self.setComboData(table, i, 3, database_names)
-            self.setComboData(table, i, 4, model_names)
+            self.setComboData(table, i, 1, profiles_names)
 
         table.resizeColumnsToContents()
 
@@ -181,11 +156,11 @@ class MainFrame(QtGui.QMainWindow):
         box.setEditable(True)
         box.addItems(l)
 
-        if notlisted:
-            pixmap = QtGui.QPixmap(12, 12)
-            pixmap.fill(QtGui.QColor('red'))  # QtGui.QColor.colorNames()
-            icon = QtGui.QIcon(pixmap)
-            box.setItemIcon(0, icon)
+#       if notlisted:
+#           pixmap = QtGui.QPixmap(12, 12)
+#           pixmap.fill(QtGui.QColor('red'))  # QtGui.QColor.colorNames()
+#           icon = QtGui.QIcon(pixmap)
+#           box.setItemIcon(0, icon)
 
         table.setCellWidget(i, j, box)
 
@@ -198,7 +173,7 @@ class MainFrame(QtGui.QMainWindow):
         for i in row_list:
             names.append(i[0])
             self.insertRowTableData(table, row, i)
-            row = row + 1
+            row += 1
         table.resizeColumnsToContents()
 #       table.resizeRowsToContents()
         return names
@@ -210,7 +185,7 @@ class MainFrame(QtGui.QMainWindow):
         for j in t:
             text = QtGui.QTableWidgetItem(unicode(j)) # QLineEdit, QPlainTextEdit
             table.setItem(row, column, text)          # setCellWidget
-            column = column + 1
+            column += 1
             if column >= table.columnCount():
                 break
 
@@ -253,31 +228,31 @@ class MainFrame(QtGui.QMainWindow):
 
 
     def filesDropped(self, files):
-        if self.tab_list[self.ui.tabs.currentIndex()] == 'sources':
+        if self.tab_list[self.ui.tabs.currentIndex()] == 'profiles':
             for i in files:
-                if i not in self.sources_names:
-                    self.insertRowTableData(self.tab_dict['sources'], 0, (i,))
-                    self.sources_names.append(i)
+                if i not in self.profiles_names:
+                    self.insertRowTableData(self.tab_dict['profiles'], 0, (i,))
+                    self.profiles_names.append(i)
 
 
 # Context menu events
 
 
-    def OnSourcesProceed(self):
+    def OnProfilesProceed(self):
         if th.isRunning():
             print("running...")
             return
 
-        sources = self.tab_dict['sources']
-        t = self.get_row_data(sources, self.current_row)
-        source = t[0]
+        profiles = self.tab_dict['profiles']
+        t = self.get_row_data(profiles, self.current_row)
+        profile = t[0]
 
         # Запускаем обработку
         self.ui.tree.clear()
-        th.start(Proceed, source, tree_widget=self.ui.tree, status=status)
+        th.start(Proceed, profile, profile, tree_widget=self.ui.tree, status=status)    # !!!
 
 
-    def OnSourcesDelete(self):
+    def OnProfilesDelete(self):
         print(self.current_row)
 
 
@@ -299,7 +274,7 @@ class MainFrame(QtGui.QMainWindow):
 
             # Запускаем обработку
             self.ui.tree.clear()
-            th.start(Proceed, selected_dir, tree_widget=self.ui.tree, status=status)
+            th.start(Proceed, selected_dir, None, tree_widget=self.ui.tree, status=status)
 
 
     def OnTaskFile(self):
@@ -316,7 +291,7 @@ class MainFrame(QtGui.QMainWindow):
 
             # Запускаем обработку
             self.ui.tree.clear()
-            th.start(Proceed, selected_file, tree_widget=self.ui.tree)
+            th.start(Proceed, selected_file, None, tree_widget=self.ui.tree)
 
 
     def OnClose(self):
@@ -334,6 +309,11 @@ class MainFrame(QtGui.QMainWindow):
         else:
             for i in self.tab_dict.keys():
                 self.save_table_data(i)
+
+
+    def OnOpenFolder(self):
+        path = self.s.expand_prefix('~~~')
+        os.startfile(path)
 
 
     def OnTreeItemSelected(self, item, prev=None):
@@ -371,11 +351,8 @@ class MainFrame(QtGui.QMainWindow):
 
     def OnToolBoxChanged(self, current):
         if current == 1:
-            self.ui.db_tree.clear()
-#           view_db(self.ui.db_tree, session)
-        if current == 2:
             self.ui.conf_tree.clear()
-            view_conf(self.ui.conf_tree, self.s)
+#           view_conf(self.ui.conf_tree, self.s)
 
 
     def OnTabChanged(self, current):
@@ -383,32 +360,11 @@ class MainFrame(QtGui.QMainWindow):
 
 
     def OnTableItemRightClick(self, pos):
-        sources = self.tab_dict['sources']
-        header = sources.verticalHeader()
+        profiles = self.tab_dict['profiles']
+        header = profiles.verticalHeader()
         self.current_row = header.logicalIndexAt(pos)
-#       self.SourcesCMenu.exec_(QtGui.QCursor.pos())
-        self.SourcesCMenu.popup(QtGui.QCursor.pos())
-
-
-#     def mousePressEvent(self, event):
-#         if event.button() == QtCore.Qt.MouseButton.LeftButton:
-#             self.mousePressEvent_Left(event)
-#         elif event.button() == QtCore.Qt.MouseButton.RightButton:
-#             self.mousePressEvent_Right(event)
-#
-#
-#     def mousePressEvent_Left(self, event):
-#         child = self.childAt(event.pos())
-#         print(2, child)
-#         if not child:
-#             return
-#
-#
-#     def mousePressEvent_Right(self, event):
-#         child = self.childAt(event.pos())
-#         print(3, child)
-#         if not child:
-#             return
+#       self.ProfilesCMenu.exec_(QtGui.QCursor.pos())
+        self.ProfilesCMenu.popup(QtGui.QCursor.pos())
 
 
     def OnAbout(self):
@@ -419,7 +375,6 @@ class MainFrame(QtGui.QMainWindow):
         msg += "License: MIT\n\n"
 
         msg += "Python: {0}\n".format(sys.version)
-        msg += "SQLAlchemy: {0}\n".format(sqlalchemy_version)
         msg += "PySide: {0}\n".format(pyside_version)
         msg += "Qt: {0}\n".format(QtCore.__version__)
         QtGui.QMessageBox.about(None, "About", msg)
@@ -475,12 +430,7 @@ class MainFrame(QtGui.QMainWindow):
         return tuple(l)
 
 
-    def proceed_args(self, files=None, source=None):
-        # Следует отметить, что из командной строки передаётся массив файлов
+    def proceed_args(self, files=None, profile=None):
         if files:
-            if source:
-                # Если задан source, то обрабатываем файлы с настройками для source
-                files = (source, files)
-
             # Запускаем обработку
-            th.start(Proceed, files, tree_widget=self.ui.tree, status=status)
+            th.start(Proceed, files, profile, tree_widget=self.ui.tree, status=status)
