@@ -7,12 +7,21 @@ from __future__ import ( division, absolute_import,
 
 import os
 
-from ...reg import set_object
+from ...reg import set_object, reg_object1
 from .file import proceed_file
+
+from .lib.data_funcs import filter_match
+from .lib.models import Dir
 
 
 def reg_dir(dirname, runtime, ROOT=None):
-    DIR = set_object(dirname, ROOT, style='B')
+    dir_dict = dict(name=dirname)
+
+    session = runtime.get('session')
+    if session:    
+        DIR = reg_object1(session, Dir, dir_dict, ROOT, style='B')
+    else:
+        DIR = set_object(dirname, ROOT, style='B', brief=dir_dict)            
 
     return DIR
 
@@ -21,6 +30,10 @@ def proceed_dir(dirname, runtime, ROOT=None, status=None):
     # Проверяем требование выйти
     if status.break_required == True:
         return
+
+    options = runtime.get('options', {})
+    dirs_filter = options.get('dirs_filter')
+    files_filter = options.get('files_filter')
 
     for dirname, dirs, files in os.walk(dirname):
         if os.path.isdir(dirname):
@@ -31,11 +44,19 @@ def proceed_dir(dirname, runtime, ROOT=None, status=None):
             if hasattr(DIR, 'tree_item'):
                 DIR.tree_item.setExpanded(True)
 
+            basename = os.path.basename(dirname)
+            significant = filter_match(basename, dirs_filter)
+            DIR.significant = significant
+
             for basename in files:
                 filename = os.path.join(dirname, basename)
                 if os.path.isfile(filename):
-                    # File
-                    proceed_file(filename, runtime, DIR, status)
+                    if significant and filter_match(basename, files_filter):
+                        # File
+                        proceed_file(filename, runtime, DIR, status)
+
+                    else:
+                        set_object(basename, DIR, style='D', brief="Файл не обрабатывается!")
 
                 else:
                     set_object(basename, DIR, style='D', brief="Файл не найден!")
@@ -49,12 +70,20 @@ def proceed_dir_tree(dirname, runtime, ROOT=None, status=None):
     if status.break_required == True:
         return
 
+    options = runtime.get('options', {})
+    dirs_filter = options.get('dirs_filter')
+    files_filter = options.get('files_filter')
+
     # Dir
     DIR = reg_dir(dirname, runtime, ROOT)
     status.dir = dirname
 
     if hasattr(DIR, 'tree_item'):
         DIR.tree_item.setExpanded(True)
+
+    basename = os.path.basename(dirname)
+    significant = filter_match(basename, dirs_filter)
+    DIR.significant = significant
 
     # Пролистываем содержимое директории
     try:
@@ -71,7 +100,12 @@ def proceed_dir_tree(dirname, runtime, ROOT=None, status=None):
     for basename in sorted(ldir):
         filename = os.path.join(dirname, basename)
         if os.path.isfile(filename):
-            proceed_file(filename, runtime, DIR, status)
+            if significant and filter_match(basename, files_filter):
+                # File
+                proceed_file(filename, runtime, DIR, status)
+
+            else:
+                set_object(basename, DIR, style='D', brief="Файл не обрабатывается!")
 
         else:
             set_object(basename, DIR, style='D', brief="Файл не найден!")

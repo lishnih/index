@@ -7,7 +7,11 @@ from __future__ import ( division, absolute_import,
 
 import os
 
-from ...reg import set_object
+from ...reg import set_object, reg_object
+from ...reg.result import reg_exception
+
+from .lib.models import File
+from .process import proceed
 
 
 def reg_file(filename, runtime, DIR=None):
@@ -21,10 +25,14 @@ def reg_file(filename, runtime, DIR=None):
         name = basename,
         mtime = mtime,
         size = size,
-        statinfo = statinfo,
+#       statinfo = statinfo,
     )
 
-    FILE = set_object(basename, DIR, brief=file_dict)
+    session = runtime.get('session')
+    if session:
+        FILE = reg_object(session, File, file_dict, DIR)
+    else:
+        FILE = set_object(basename, DIR, brief=file_dict)
 
     return FILE
 
@@ -36,3 +44,14 @@ def proceed_file(filename, runtime, DIR=None, status=None):
 
     FILE = reg_file(filename, runtime, DIR)
     status.file = filename
+
+    try:
+        proceed(filename, runtime, FILE)
+        FILE.status = 1
+
+#       if hasattr(FILE, 'tree_item'):
+#           FILE.tree_item.setOk()
+    except Exception as e:
+        reg_exception(FILE, e)
+        FILE.status = -1
+        return

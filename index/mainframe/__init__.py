@@ -27,7 +27,7 @@ app_section = re.sub(r'\W', '_', os.path.dirname(os.path.dirname(__file__)))
 
 
 class MainFrame(QtGui.QMainWindow):
-    def __init__(self, files=None, profile=None):
+    def __init__(self, files=None, profile=None, options=None):
         super(MainFrame, self).__init__()
 
         # Загружаем элементы окна
@@ -70,7 +70,7 @@ class MainFrame(QtGui.QMainWindow):
         self.initProfilesCMenu()
 
         # Обрабатываем параметры
-        self.proceed_args(files, profile)
+        self.proceed_args(files, profile, options)
 
 
 # Callback-функции для Таймера
@@ -249,7 +249,7 @@ class MainFrame(QtGui.QMainWindow):
 
         # Запускаем обработку
         self.ui.tree.clear()
-        th.start(Proceed, profile, profile, tree_widget=self.ui.tree, status=status)    # !!!
+        th.start(Proceed, profile, profile, options, tree_widget=self.ui.tree, status=status)    # !!!
 
 
     def OnProfilesDelete(self):
@@ -274,7 +274,7 @@ class MainFrame(QtGui.QMainWindow):
 
             # Запускаем обработку
             self.ui.tree.clear()
-            th.start(Proceed, selected_dir, None, tree_widget=self.ui.tree, status=status)
+            th.start(Proceed, selected_dir, None, None, tree_widget=self.ui.tree, status=status)
 
 
     def OnTaskFile(self):
@@ -291,7 +291,7 @@ class MainFrame(QtGui.QMainWindow):
 
             # Запускаем обработку
             self.ui.tree.clear()
-            th.start(Proceed, selected_file, None, tree_widget=self.ui.tree)
+            th.start(Proceed, selected_file, None, None, tree_widget=self.ui.tree)
 
 
     def OnClose(self):
@@ -430,7 +430,7 @@ class MainFrame(QtGui.QMainWindow):
         return tuple(l)
 
 
-    def proceed_args(self, files=None, profile=None):
+    def proceed_args(self, files=None, profile=None, options=None):
         if files:
             # Запускаем обработку
-            th.start(Proceed, files, profile, tree_widget=self.ui.tree, status=status)
+            th.start(Proceed, files, profile, options, tree_widget=self.ui.tree, status=status)

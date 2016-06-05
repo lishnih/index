@@ -8,7 +8,7 @@ from __future__ import ( division, absolute_import,
 import sys, argparse, logging
 
 from index.main import main
-from index.lib.argparse_funcs import readable_file_or_dir_list
+from index.lib.argparse_funcs import readable_file_or_dir_list, readable_file
 
 
 if __name__ == '__main__':
@@ -19,6 +19,8 @@ if __name__ == '__main__':
                         help="files and directories to proceed")
     parser.add_argument('-p', '--profile',
                         help='specify the profile')
+    parser.add_argument('-c', '--config', action=readable_file,
+                        help='specify the config file')
 
     if sys.version_info >= (3,):
         argv = sys.argv
@@ -28,4 +30,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args(argv[1:])
 
-    sys.exit(main(args.files, args.profile))
+    options = {}    # !!!
+    sys.exit(main(args.files, args.profile, options))

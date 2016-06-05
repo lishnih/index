@@ -14,7 +14,7 @@ from .reg import set_object
 from .reg.result import reg_debug, reg_warning, reg_error, reg_exception
 
 
-def Proceed(files, profile=None, tree_widget=None, status=None):
+def Proceed(files, profile=None, options=None, tree_widget=None, status=None):
     if not profile:
         profile = 'default'
 
@@ -46,9 +46,9 @@ def Proceed(files, profile=None, tree_widget=None, status=None):
         return
 
     if hasattr(handler_module, 'prepare'):
-        runtime = handler_module.prepare(files, profile)
+        runtime = handler_module.prepare(files, profile, options)
     else:
-        runtime = None
+        runtime = {}
         msg = "Function 'prepare' is missing in the handler '{0}'!".format(profile)
         reg_debug(ROOT, msg)
 
@@ -80,9 +80,9 @@ def Proceed(files, profile=None, tree_widget=None, status=None):
         reg_debug(ROOT, msg)
 
 
-def main(files=None, profile=None):
+def main(files=None, profile=None, options=None):
     if files:
-        Proceed(files, profile)
+        Proceed(files, profile, options)
 
     else:
         logging.warning("Files not specified!")
