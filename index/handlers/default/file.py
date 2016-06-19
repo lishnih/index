@@ -24,7 +24,7 @@ def reg_file(filename, runtime, DIR=None):
         statinfo = statinfo,
     )
 
-    FILE = set_object(basename, DIR, brief=file_dict)
+    FILE = set_object(file_dict, DIR)
 
     return FILE
 

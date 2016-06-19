@@ -15,72 +15,80 @@ from .result import reg_error, reg_exception
 
 
 def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, required=[], plains=[]):
-    for i in required:
-        if i not in object_dict or object_dict[i] is None:
-            OBJECT = set_object(object_dict, PARENT, style=style, brief="Объект не сохранён - требуемые поля пусты!")
-            return OBJECT
+    if session:
+        for i in required:
+            if i not in object_dict or object_dict[i] is None:
+                OBJECT = set_object(object_dict, PARENT, style=style, brief="Объект не сохранён - требуемые поля пусты!")
+                return OBJECT
 
-    new = dict((key, val) for (key, val) in plains)
-    new.update(object_dict)
+        new = dict((key, val) for (key, val) in plains)
+        new.update(object_dict)
 
-    OBJECT = Object(**object_dict)
-    session.add(OBJECT)
+        OBJECT = Object(**object_dict)
+        session.add(OBJECT)
 
-    # Графика
-    if style != None:
-        tree_item = show_object(OBJECT, PARENT, style=style, brief=brief)
-        if tree_item:
-            OBJECT._dict = object_dict
+        # Графика
+        if style != None:
+            tree_item = show_object(OBJECT, PARENT, style=style, brief=brief)
+            if tree_item:
+                OBJECT._dict = object_dict
+
+    else:
+        OBJECT = set_object(object_dict, PARENT, style=style)
 
     return OBJECT
 
 
 def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None, required=[], plains=[], override=None, keys=None):
-    for i in required:
-        if i not in object_dict or object_dict[i] is None:
-            OBJECT = set_object(object_dict, PARENT, style=style, brief="Объект не сохранён - требуемые поля пусты!")
-            return OBJECT
+    if session:
+        for i in required:
+            if i not in object_dict or object_dict[i] is None:
+                OBJECT = set_object(object_dict, PARENT, style=style, brief="Объект не сохранён - требуемые поля пусты!")
+                return OBJECT
 
-    new = dict((key, val) for (key, val) in plains)
-    new.update(object_dict)
+        new = dict((key, val) for (key, val) in plains)
+        new.update(object_dict)
 
-    OBJECT = None
+        OBJECT = None
 
-    if keys:
-        object_find = dict()
-        for i in keys:
-            if isinstance(i, string_types):
-                object_find[i] = object_dict[i]
-            else:
-                i1, i2 = i
-                object_find[i1] = object_dict[i2]
+        if keys:
+            object_find = dict()
+            for i in keys:
+                if isinstance(i, string_types):
+                    object_find[i] = object_dict[i]
+                else:
+                    i1, i2 = i
+                    object_find[i1] = object_dict[i2]
+        else:
+            object_find = dict((key, value) for key, value in object_dict.items() if hasattr(Object, key))
+
+        try:
+            rows = session.query(Object).filter_by(**object_find).all()
+    #       cond = [getattr(Object, key) == value for key, value in object_find.items()]
+    #       rows = session.query(Object).filter(*cond).all()
+            if rows:
+                OBJECT = rows[0]
+
+                l = len(rows)
+                if l > 1:
+                    reg_error(PARENT, "Найдено несколько одинаковых записей ({0})!".format(l), Object, object_find)
+                    OBJECT._thesamerecords = l - 1
+
+        except Exception as e:
+            reg_exception(PARENT, e, Object, object_dict)
+
+        if not OBJECT:
+            OBJECT = Object(**object_dict)
+            session.add(OBJECT)
+
+        # Графика
+        if style != None:
+            tree_item = show_object(OBJECT, PARENT, style=style, brief=brief)
+            if tree_item:
+                OBJECT._dict = object_dict
+
     else:
-        object_find = dict((key, value) for key, value in object_dict.items() if hasattr(Object, key))
-
-    try:
-        rows = session.query(Object).filter_by(**object_find).all()
-#       cond = [getattr(Object, key) == value for key, value in object_find.items()]
-#       rows = session.query(Object).filter(*cond).all()
-        if rows:
-            OBJECT = rows[0]
-
-            l = len(rows)
-            if l > 1:
-                reg_error(PARENT, "Найдено несколько одинаковых записей ({0})!".format(l), Object, object_find)
-                OBJECT._thesamerecords = l - 1
-
-    except Exception as e:
-        reg_exception(PARENT, e, Object, object_dict)
-
-    if not OBJECT:
-        OBJECT = Object(**object_dict)
-        session.add(OBJECT)
-
-    # Графика
-    if style != None:
-        tree_item = show_object(OBJECT, PARENT, style=style, brief=brief)
-        if tree_item:
-            OBJECT._dict = object_dict
+        OBJECT = set_object(object_dict, PARENT, style=style)
 
     return OBJECT
 
@@ -90,6 +98,8 @@ def set_object(OBJECT, PARENT, style='', brief=None):
         OBJECT = dict(name=OBJECT)
     if isinstance(OBJECT, dict):
         OBJECT = aObject(**OBJECT)
+#       if not brief:
+#           brief = OBJECT
 
     show_object(OBJECT, PARENT, style=style+'I', brief=brief)
 

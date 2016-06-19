@@ -42,16 +42,13 @@ def reg_sheet(sh, runtime, i, FILE=None):
     if session:
         SHEET = reg_object1(session, models.Sheet, sheet_dict, FILE)
     else:
-        SHEET = set_object(basename, FILE, brief=sheet_dict)
+        SHEET = set_object(sheet_dict, FILE)
 
     return SHEET, session
 
 
 def proceed_sheet(sh, runtime, i, FILE=None):
     SHEET, session = reg_sheet(sh, runtime, i, FILE)
-
-    if not session:
-        return
 
     options = runtime.get('options', {})
 
