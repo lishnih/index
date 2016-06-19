@@ -11,7 +11,7 @@ import yaml
 
 from .lib.backwardcompat import *
 from .reg import set_object
-from .reg.result import reg_debug, reg_warning, reg_error, reg_exception
+from .reg.result import *
 
 
 def Proceed(files, profile=None, options=None, tree_widget=None, status=None):
@@ -70,8 +70,7 @@ def Proceed(files, profile=None, options=None, tree_widget=None, status=None):
             reg_exception(ROOT, e)
             status.error = "Error during handle file '{0}'!".format(i)
 
-    if hasattr(ROOT, 'tree_item'):
-        ROOT.tree_item.setSelected(True)
+    set_selected(ROOT)
 
     if hasattr(handler_module, 'ending'):
         handler_module.ending(files, profile, runtime)

@@ -7,13 +7,14 @@ from __future__ import ( division, absolute_import,
 
 import os, logging
 
-from ...reg import set_object
 from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
-
-from ...lib.settings import Settings
 from .lib.db import initDb, utilDb
 from .lib.models import Base
+
+from ...lib.settings import Settings
+from ...reg import set_object
+from ...reg.result import *
 
 
 def prepare(files, profile, options=None):
@@ -65,8 +66,7 @@ def proceed(filename, runtime=None, ROOT=None, status=None):
         DIR = reg_dir(dirname, runtime, ROOT)
         status.dir = '-'
 
-        if hasattr(DIR, 'tree_item'):
-            DIR.tree_item.setExpanded(True)
+        set_expanded(DIR)
 
         # File
         proceed_file(filename, runtime, DIR, status)

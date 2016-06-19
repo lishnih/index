@@ -8,7 +8,7 @@ from __future__ import ( division, absolute_import,
 import os
 
 from ...reg import set_object, reg_object
-from ...reg.result import reg_exception
+from ...reg.result import *
 
 from .lib.models import File
 from .process import proceed
@@ -49,8 +49,7 @@ def proceed_file(filename, runtime, DIR=None, status=None):
         proceed(filename, runtime, FILE)
         FILE.status = 1
 
-#       if hasattr(FILE, 'tree_item'):
-#           FILE.tree_item.setOk()
+#       reg_ok(FILE)
     except Exception as e:
         reg_exception(FILE, e)
         FILE.status = -1

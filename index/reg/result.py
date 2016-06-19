@@ -30,7 +30,15 @@ def reg_warning(OBJ, msg=None):
 
 
 def reg_error(OBJ, msg=None, *args, **kargs):
-    msg = """(((((((
+    try:
+        msg = """(((((((
+Ошибка '{0}'!
+Были переданый следующие параметры:
+args: {1!r}
+kargs: {2!r}
+)))))))\n""".format(msg, args, kargs)
+    except:
+        msg = """(((((((
 Ошибка '{0!r}'!
 Были переданый следующие параметры:
 args: {1!r}
@@ -70,3 +78,15 @@ def set_bold(OBJ):
 def set_italic(OBJ):
     if OBJ and hasattr(OBJ, 'tree_item'):
         OBJ.tree_item.set_italic()
+
+def set_selected(OBJ):
+    if OBJ and hasattr(OBJ, 'tree_item'):
+        OBJ.tree_item.setSelected(True)
+
+def set_expanded(OBJ):
+    if OBJ and hasattr(OBJ, 'tree_item'):
+        OBJ.tree_item.setExpanded(True)
+
+def set_quiet(OBJ):
+    if OBJ and hasattr(OBJ, 'tree_item'):
+        OBJ.tree_item.set_quiet()

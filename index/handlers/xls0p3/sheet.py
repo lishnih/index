@@ -9,7 +9,7 @@ import logging
 from sqlalchemy import MetaData
 
 from ...reg import reg_object1
-from ...reg.result import reg_debug, reg_warning, reg_error
+from ...reg.result import *
 from .lib.backwardcompat import *
 from .lib import models
 from .lib.sheet_funcs import get_value, get_index
@@ -21,7 +21,6 @@ def suit_name(colname, column_names):
         i += 1
 
     return "{0}.{1}".format(colname, i)
-
 
 
 def insert_dict(names, bind_dict):
@@ -92,7 +91,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
             colname = get_value(sh, names_row, j)
             if colname:
                 if isinstance(colname, float):
-                    colname = 'ci_{0:0{width}}'.format(colname, width=w)
+                    colname = 'cf_{0}'.format(colname)
 
                 if names and colname not in names:
                     reg_warning(SHEET, "Extra column name '{0}' found in sheet!".format(colname))
@@ -148,8 +147,10 @@ def proceed_sheet(sh, runtime, i, FILE=None):
     sql = 'CREATE TABLE IF NOT EXISTS "{0}" ("{1}");'.format(tablename, '","'.join(column_names))
     session.execute(sql)
 
-    if hasattr(SHEET, 'tree_item'):
-        SHEET.tree_item.appendBrief(column_names)
+    reg_debug(SHEET, column_names)
+
+    # В общем, случается такой баг, что если обрабатываются два файла с одинаковым именем листа,
+    # и во втором листе будет больше колонок, то получим ошибку
 
     if sh.nrows > start_from:
         qmarks = ['?' for i in range(tablecols)]
@@ -175,6 +176,5 @@ def proceed_sheet(sh, runtime, i, FILE=None):
                 bind_params = [FILE._dir.name, FILE.name, SHEET.name, SHEET.id] + bind_params
                 session.bind.execute(sql, bind_params)
 
-    if hasattr(SHEET, 'tree_item'):
-#       SHEET.tree_item.appendBrief(bind_params)
-        SHEET.tree_item.setOk()
+#   reg_debug(SHEET, bind_params)
+    reg_ok(SHEET)

@@ -7,8 +7,10 @@ from __future__ import ( division, absolute_import,
 
 import os
 
-from ...reg import set_object
 from .file import proceed_file
+
+from ...reg import set_object
+from ...reg.result import *
 
 
 def reg_dir(dirname, runtime, ROOT=None):
@@ -28,8 +30,7 @@ def proceed_dir(dirname, runtime, ROOT=None, status=None):
             DIR = reg_dir(dirname, runtime, ROOT)
             status.dir = dirname
 
-            if hasattr(DIR, 'tree_item'):
-                DIR.tree_item.setExpanded(True)
+            set_expanded(DIR)
 
             for basename in files:
                 filename = os.path.join(dirname, basename)
@@ -53,8 +54,7 @@ def proceed_dir_tree(dirname, runtime, ROOT=None, status=None):
     DIR = reg_dir(dirname, runtime, ROOT)
     status.dir = dirname
 
-    if hasattr(DIR, 'tree_item'):
-        DIR.tree_item.setExpanded(True)
+    set_expanded(DIR)
 
     # Пролистываем содержимое директории
     try:

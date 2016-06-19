@@ -14,16 +14,14 @@ from ..lib.dump import plain_type
 from .result import reg_error, reg_exception
 
 
-def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, required=[]):
-    if required:
-        isrecord = True
-        for i in required:
-            if i not in object_dict or object_dict[i] is None:
-                isrecord = False
-
-        if not isrecord:
+def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, required=[], plains=[]):
+    for i in required:
+        if i not in object_dict or object_dict[i] is None:
             OBJECT = set_object(object_dict, PARENT, style=style, brief="Объект не сохранён - требуемые поля пусты!")
             return OBJECT
+
+    new = dict((key, val) for (key, val) in plains)
+    new.update(object_dict)
 
     OBJECT = Object(**object_dict)
     session.add(OBJECT)

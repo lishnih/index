@@ -8,7 +8,7 @@ from __future__ import ( division, absolute_import,
 import os, logging
 import xlrd
 
-from ...reg.result import reg_debug
+from ...reg.result import *
 from .lib.data_funcs import filter_match
 from .sheet import proceed_sheet
 
@@ -33,8 +33,7 @@ def proceed(filename, runtime, FILE):
         sheets_list = [i for i in sheets if filter_match(i, sheets_filter)]
 
         brief = [sheets, '---', sheets_list]
-        if hasattr(FILE, 'tree_item'):
-            FILE.tree_item.setBrief(brief)
+        reg_debug(FILE, brief)
 
         FILE.nsheets = book.nsheets
 

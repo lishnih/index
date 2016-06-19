@@ -7,11 +7,12 @@ from __future__ import ( division, absolute_import,
 
 import os
 
-from ...reg import set_object, reg_object1
 from .file import proceed_file
-
 from .lib.data_funcs import filter_match
 from .lib.models import Dir
+
+from ...reg import set_object, reg_object1
+from ...reg.result import *
 
 
 def reg_dir(dirname, runtime, ROOT=None):
@@ -41,8 +42,7 @@ def proceed_dir(dirname, runtime, ROOT=None, status=None):
             DIR = reg_dir(dirname, runtime, ROOT)
             status.dir = dirname
 
-            if hasattr(DIR, 'tree_item'):
-                DIR.tree_item.setExpanded(True)
+            set_expanded(DIR)
 
             basename = os.path.basename(dirname)
             significant = filter_match(basename, dirs_filter)
@@ -78,8 +78,7 @@ def proceed_dir_tree(dirname, runtime, ROOT=None, status=None):
     DIR = reg_dir(dirname, runtime, ROOT)
     status.dir = dirname
 
-    if hasattr(DIR, 'tree_item'):
-        DIR.tree_item.setExpanded(True)
+    set_expanded(DIR)
 
     basename = os.path.basename(dirname)
     significant = filter_match(basename, dirs_filter)
