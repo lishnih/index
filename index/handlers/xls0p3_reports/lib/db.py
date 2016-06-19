@@ -7,7 +7,7 @@ from __future__ import ( division, absolute_import,
 
 import os, shutil, logging
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, attributes
 
 
 foreign_keys = dict()
@@ -114,22 +114,22 @@ def initlinks(Base):
         for i in dir(model):
             if i[0:1] == '_' and i[0:2] != '__':
                 attr = getattr(model, i)
-                try:
-                    pairs = attr.property.synchronize_pairs
-                    if type(pairs) == list:
-                        for primary_c, foreign_c in pairs:
-                            primary_tablename = primary_c.table.name
-                            foreign_tablename = foreign_c.table.name
-                            if foreign_tablename not in foreign_keys:
-                                foreign_keys[foreign_tablename] = dict()
-                                foreign_keys_c[model] = dict()
-                            foreign_keys[foreign_tablename][primary_tablename] = i
-                            foreign_keys_c[model][primary_tablename] = i
-                except:
-                    pass
+                if isinstance(attr, attributes.InstrumentedAttribute):
+                    if hasattr(attr.property, 'synchronize_pairs'):
+                        pairs = attr.property.synchronize_pairs
+                        if isinstance(pairs, list):
+                            for primary_c, foreign_c in pairs:
+                                primary_tablename = primary_c.table.name
+                                foreign_tablename = foreign_c.table.name
+                                if foreign_tablename not in foreign_keys:
+                                    foreign_keys[foreign_tablename] = dict()
+                                    foreign_keys_c[model] = dict()
+                                foreign_keys[foreign_tablename][primary_tablename] = i
+                                foreign_keys_c[model][primary_tablename] = i
 
-    logging.debug(foreign_keys)
-    logging.debug(foreign_keys_c)
+#   logging.debug(foreign_keys)
+#   logging.debug(foreign_keys_c)
+    return foreign_keys, foreign_keys_c
 
 
 def link_objects(*args):
@@ -156,12 +156,11 @@ def link_objects(*args):
 
 
 def main():
-    from __init__ import Base
-    from db import initDb
+    from models import Base
 
     dbconfig = dict(db_uri = "sqlite://")
     initDb(dbconfig, base=Base)
-    initlinks(Base)
+    foreign_keys, foreign_keys_c = initlinks(Base)
 
     print("foreign_keys:")
     for key, value in foreign_keys.items():
