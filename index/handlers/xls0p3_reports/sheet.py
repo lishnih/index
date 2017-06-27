@@ -109,27 +109,27 @@ def proceed_sheet(sh, runtime, i, FILE=None):
     marks = dict()
     if 'marks' in group_options:
         marks_values = group_options['marks']
-        set_object("Marks (options)", SHEET, brief=marks_values)
+        set_object("> Marks (options)", SHEET, brief=marks_values)
         marks = proceed_marks(sh, marks_values, SHEET)
 
     if 'doc' in group_options:
         doc_options = group_options['doc']
-        set_object("Doc (options)", SHEET, brief=doc_options)
+        set_object("> Doc (options)", SHEET, brief=doc_options)
         parse_doc(sh, doc_options, session, models, marks, SHEET)
 
     if 'docs' in group_options:
         for doc_options in group_options['docs']:
-            set_object("Docs (options)", SHEET, brief=doc_options)
+            set_object(">> Docs (options)", SHEET, brief=doc_options)
             parse_doc(sh, doc_options, session, models, marks, SHEET)
 
     if 'table' in group_options:
         table_options = group_options['table']
-        set_object("Table (options)", SHEET, brief=table_options)
+        set_object("> Table (options)", SHEET, brief=table_options)
         parse_table(sh, table_options, session, models, marks, SHEET)
 
     if 'tables' in group_options:
         for table_options in group_options['tables']:
-            set_object("Tables (options)", SHEET, brief=table_options)
+            set_object(">> Tables (options)", SHEET, brief=table_options)
             parse_table(sh, table_options, session, models, marks, SHEET)
 
     reg_ok(SHEET)

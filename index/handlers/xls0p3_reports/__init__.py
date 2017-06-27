@@ -9,7 +9,7 @@ import os, logging
 
 from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
-from .lib.db import initDb, utilDb
+from .lib.db import initDb, initlinks, utilDb
 from .lib.models import Base
 
 from ...lib.settings import Settings
@@ -27,6 +27,8 @@ def prepare(files, profile, options=None):
     if db_name:
         db_uri = options.get('db_uri', "{0}:///{1}/{2}.sqlite".format('sqlite', s.system.path, db_name))
         session = initDb(dict(db_uri=db_uri), base=Base)
+
+        initlinks(Base)
 
         archive_db = options.get('archive_db')
         clear_db = options.get('archive_db')

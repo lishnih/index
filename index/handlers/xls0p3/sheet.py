@@ -24,7 +24,7 @@ def suit_name(colname, column_names):
 
 
 def insert_dict(names, bind_dict):
-    sql = u"INSERT INTO %s (%s) VALUES (%s)" % (table_name, keys, values)
+    sql = "INSERT INTO %s (%s) VALUES (%s)" % (table_name, keys, values)
 
 
 def reg_sheet(sh, runtime, i, FILE=None):
@@ -62,6 +62,8 @@ def proceed_sheet(sh, runtime, i, FILE=None):
     ncols = options.get('ncols', sh.ncols)
     nrows = options.get('nrows', sh.nrows)
     start_from = options.get('start_from', 0)
+
+    decimal_point = options.get('decimal_point', '.')
 
     if tablename and isolated:
         tablename = '{0}_{1}'.format(tablename, i)
@@ -138,7 +140,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
         column_names0 = sh_column_names
 
     # Добавляем системные колонки
-    column_names = ['dir', 'file', 'sheet', '_sheets_id'] + column_names0
+    column_names = ['sh_dir', 'sh_file', 'sh_sheet', 'sh_sheets_id', 'sh_y'] + column_names0
     tablecols = len(column_names)
 
     sql = 'CREATE TABLE IF NOT EXISTS "{0}" ("{1}");'.format(tablename, '","'.join(column_names))
@@ -157,6 +159,12 @@ def proceed_sheet(sh, runtime, i, FILE=None):
             if needful:
                 sh_values = sh.row_values(i, 0, ncols)
 
+                if decimal_point != '.':
+                    sh_values = map(lambda x: str(x).replace('.', decimal_point) if isinstance(x, float) else x, sh_values)
+#                     for j in range(len(sh_values)):
+#                         if isinstance(sh_values[j], float):
+#                             sh_values[j] = str(sh_values[j]).replace('.', decimal_point)
+
                 if names:
                     bind_params = []
                     for i in column_names0:
@@ -164,13 +172,14 @@ def proceed_sheet(sh, runtime, i, FILE=None):
                             bind_params.append(sh_values[sh_column_names.index(i)])
                         else:
                             bind_params.append(None)
+
                 else:
                     bind_params = sh_values
                     l = len(sh_values)
                     if ncols > l:
                         bind_params = sh_values + [None for i in range(ncols - l)]
 
-                bind_params = [FILE._dir.name, FILE.name, SHEET.name, SHEET.id] + bind_params
+                bind_params = [FILE._dir.name, FILE.name, SHEET.name, SHEET.id, i] + bind_params
                 session.bind.execute(sql, bind_params)
 
 #   reg_debug(SHEET, bind_params)

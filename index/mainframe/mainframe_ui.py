@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainframe.ui'
 #
-# Created: Fri Apr 22 14:27:44 2016
+# Created: Thu Jun 30 17:05:35 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,7 +46,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.addWidget(self.tree)
         self.toolBox.addItem(self.page1, "")
         self.page2 = QtGui.QWidget()
-        self.page2.setGeometry(QtCore.QRect(0, 0, 256, 393))
+        self.page2.setGeometry(QtCore.QRect(0, 0, 98, 71))
         self.page2.setObjectName("page2")
         self.verticalLayout_10 = QtGui.QVBoxLayout(self.page2)
         self.verticalLayout_10.setSpacing(3)
@@ -160,7 +160,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(0)
-        self.tabs.setCurrentIndex(2)
+        self.tabs.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionTaskDir, QtCore.SIGNAL("triggered()"), MainWindow.OnTaskDir)
         QtCore.QObject.connect(self.actionTaskFile, QtCore.SIGNAL("triggered()"), MainWindow.OnTaskFile)
         QtCore.QObject.connect(self.actionClose, QtCore.SIGNAL("triggered()"), MainWindow.OnClose)

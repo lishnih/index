@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+from __future__ import ( division, absolute_import,
+                         print_function, unicode_literals )
+
 import sys, os
 from setuptools import setup, find_packages
 
@@ -55,11 +58,13 @@ if __name__ == '__main__':
             'Environment :: Win32 (MS Windows)',
             'Environment :: X11 Applications :: Qt',
             'License :: OSI Approved :: MIT License',
+            'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)',
             'Natural Language :: Russian',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3.3',
+            'Topic :: Database',
             'Topic :: Utilities',
         ],
     )
