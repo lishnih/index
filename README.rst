@@ -1,27 +1,31 @@
-===========
+*************
 index
-===========
+*************
 
-INSTALLATION
-------------
+**Installation**
+
 ::
 
-   sudo easy_install index
+  $ python -m easy_install <package.egg>
+  $ py -3 -m easy_install <package.egg>
 
-HOW TO USE
-----------
+**After installation**
+
+Now you can run the package from a python environment:
 
 ::
 
   from index import main
   main.main()
 
-or cli
+or cli mode
 
 ::
 
   from index import export
   export.main(files)
+
+::
 
   from index import export
   export.main(files, "Example list (proceed_default)")

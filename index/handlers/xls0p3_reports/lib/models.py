@@ -220,7 +220,7 @@ class Joint(Base, aStr):                        # rev. 20150715
         if not self.name:
             name_list = filter(lambda x: x, [self.joint_pre1, self.joint_pre2, self.joint_seq, self.joint_sign1, self.joint_sign2])
             name_list = map(unicode, name_list)
-            self.name = "-".join(name_list)
+            self.name = " ".join(name_list)
 
     def __unicode__(self):
         return "<Стык '{0}' ({1})>".format(self.name, self.id)

@@ -36,16 +36,19 @@ if __name__ == '__main__':
 
         author = 'Stan',
         author_email = 'lishnih@gmail.com',
-        url = 'http://github.com/lishnih/index',
-        license = 'MIT',
-        platforms = 'any',
-        keywords = ['PySide', 'indexing', 'reports', 'documents'],
+        url = 'https://github.com/lishnih/index',
+        platforms = ['any'],
+        keywords = ['PySide', 'indexing', 'reporting', 'documents'],
 
         packages = find_packages(),
 #       include_package_data=True,
-        package_data = {__pkgname__: []},
+#       zip_safe=False,
+
+#       package_data = {__pkgname__: []},
+
         scripts = [
         ],
+
         install_requires = [
             'PySide',
             'sqlalchemy',

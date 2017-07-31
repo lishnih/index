@@ -61,7 +61,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
 
     ncols = options.get('ncols', sh.ncols)
     nrows = options.get('nrows', sh.nrows)
-    start_from = options.get('start_from', 0)
+    start_from = options.get('start_from', 0 if names_row is None else names_row + 1)
 
     decimal_point = options.get('decimal_point', '.')
 
@@ -69,7 +69,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
         tablename = '{0}_{1}'.format(tablename, i)
 
     if not tablename:
-        tablename = sh.name
+        tablename = '_'.join(sh.name.strip().split())
 
     if flush or isolated:
         session.flush()
@@ -180,7 +180,10 @@ def proceed_sheet(sh, runtime, i, FILE=None):
                         bind_params = sh_values + [None for i in range(ncols - l)]
 
                 bind_params = [FILE._dir.name, FILE.name, SHEET.name, SHEET.id, i] + bind_params
-                session.bind.execute(sql, bind_params)
 
-#   reg_debug(SHEET, bind_params)
-    reg_ok(SHEET)
+                try:                
+                    session.bind.execute(sql, bind_params)
+                    reg_ok(SHEET)
+                except Exception as e:
+                    reg_exception(SHEET, e)
+#                   status.error = "Error during handle sheet '{0}'!".format(SHEET.name)
