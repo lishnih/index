@@ -9,7 +9,7 @@ import os, logging
 import xlrd
 
 from ...reg.result import *
-from .lib.data_funcs import filter_match
+from .stuff.data_funcs import filter_match
 from .sheet import proceed_sheet
 
 

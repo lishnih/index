@@ -10,9 +10,9 @@ from sqlalchemy import MetaData
 
 from ...reg import reg_object1
 from ...reg.result import *
-from .lib.backwardcompat import *
-from .lib import models
-from .lib.sheet_funcs import get_value, get_index
+from .stuff.backwardcompat import *
+from .stuff import models
+from .stuff.sheet_funcs import get_value, get_index
 
 
 def suit_name(colname, column_names):

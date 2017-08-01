@@ -40,7 +40,7 @@ def contain_regexp(sh, row, col, seaching_regexp):
         result = re.search(seaching_regexp, val)
         return result
 
-    return None
+    return
 
 
 # Ищет значение search в листе sh
@@ -61,4 +61,4 @@ def search_regexp(sh, seaching_regexp, y1=None, x1=None, y2=None, x2=None):
             if contain_regexp(sh, j, i, seaching_regexp):
                 return j, i
 
-    return None
+    return

@@ -9,14 +9,14 @@ import os, logging
 
 from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
-from .lib.db import initDb, initlinks, utilDb
-from .lib.models import Base
+from .stuff.db import initDb, utilDb
+from .stuff.models import Base
 
-from ...lib.settings import Settings
+from ...core.settings import Settings
 from ...reg.result import *
 
 
-def prepare(files, profile, options=None):
+def opening(files, profile, options=None):
     s = Settings(profile)
     s.saveEnv()
 
@@ -27,8 +27,6 @@ def prepare(files, profile, options=None):
     if db_name:
         db_uri = options.get('db_uri', "{0}:///{1}/{2}.sqlite".format('sqlite', s.system.path, db_name))
         session = initDb(dict(db_uri=db_uri), base=Base)
-
-        initlinks(Base)
 
         archive_db = options.get('archive_db')
         clear_db = options.get('archive_db')
@@ -53,7 +51,7 @@ def proceed(filename, runtime=None, ROOT=None, status=None):
 
     # Начинаем обработку
     if os.path.isdir(filename):
-        logging.info("Обработка директории '{0}'".format(filename))
+        logging.info(["Processing directory", filename])
 
         treeview = options.get('treeview', 'list')
         # Dir
@@ -64,7 +62,7 @@ def proceed(filename, runtime=None, ROOT=None, status=None):
             proceed_dir(filename, runtime, ROOT, status)
 
     elif os.path.isfile(filename):
-        logging.info("Обработка файла '{0}'".format(filename))
+        logging.info(["Processing file", filename])
 
         # Dir
         dirname = os.path.dirname(filename)
@@ -77,10 +75,10 @@ def proceed(filename, runtime=None, ROOT=None, status=None):
         proceed_file(filename, runtime, DIR, status)
 
     else:
-        logging.warning("Не найден файл/директория '{0}'!".format(filename))
+        logging.warning(["Directory/file not found", filename])
 
 
-def ending(files, profile, runtime):
+def closing(files, profile, runtime):
     session = runtime.get('session')
     if session:
         session.commit()

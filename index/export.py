@@ -9,7 +9,7 @@ import sys, os, importlib, logging
 from PySide import QtCore
 import yaml
 
-from .lib.backwardcompat import *
+from .core.backwardcompat import *
 from .reg import set_object
 from .reg.result import *
 
@@ -45,11 +45,11 @@ def Proceed(files, profile=None, options=None, tree_widget=None, status=None):
         status.error = msg
         return
 
-    if hasattr(handler_module, 'prepare'):
-        runtime = handler_module.prepare(files, profile, options)
+    if hasattr(handler_module, 'opening'):
+        runtime = handler_module.opening(files, profile, options)
     else:
         runtime = {}
-        msg = "Function 'prepare' is missing in the handler '{0}'!".format(profile)
+        msg = "Function 'opening' is missing in the handler '{0}'!".format(profile)
         reg_debug(ROOT, msg)
 
     brief = {
@@ -72,10 +72,10 @@ def Proceed(files, profile=None, options=None, tree_widget=None, status=None):
 
     set_selected(ROOT)
 
-    if hasattr(handler_module, 'ending'):
-        handler_module.ending(files, profile, runtime)
+    if hasattr(handler_module, 'closing'):
+        handler_module.closing(files, profile, runtime)
     else:
-        msg = "Function 'ending' is missing in the handler '{0}'!".format(profile)
+        msg = "Function 'closing' is missing in the handler '{0}'!".format(profile)
         reg_debug(ROOT, msg)
 
 

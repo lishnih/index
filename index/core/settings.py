@@ -7,7 +7,7 @@ from __future__ import ( division, absolute_import,
 
 import sys, os, re, time, pickle, logging
 
-try:    from .info import __version__
+try:    from .. import __version__
 except: __version__ = '<undefined>'
 
 

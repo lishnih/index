@@ -7,7 +7,7 @@ from __future__ import ( division, absolute_import,
 
 import re
 
-from ....lib.dump import plain
+from ....core.dump import plain
 from ....reg import reg_object, reg_object1, set_object
 from ....reg.result import *
 from ..auto_funcs import call

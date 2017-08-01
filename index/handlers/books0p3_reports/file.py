@@ -10,7 +10,7 @@ import os
 from ...reg import set_object, reg_object
 from ...reg.result import *
 
-from .lib.models import File
+from .stuff.models import File
 from .process import proceed
 
 

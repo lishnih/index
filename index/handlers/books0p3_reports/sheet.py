@@ -9,11 +9,11 @@ import re
 
 from ...reg import reg_object1, set_object
 from ...reg.result import *
-from .lib.backwardcompat import *
-from .lib.sheet_funcs import get_str
-from .lib.sheet_parse import proceed_marks, parse_doc, parse_table
-from .lib.xlrd_macro import search_regexp
-from .lib import models
+from .stuff.backwardcompat import *
+from .stuff.sheet_funcs import get_str
+from .stuff.sheet_parse import proceed_marks, parse_doc, parse_table
+from .stuff.xlrd_macro import search_regexp
+from .stuff import models
 
 
 def reg_sheet(sh, runtime, i, FILE=None):

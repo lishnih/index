@@ -8,10 +8,10 @@ from __future__ import ( division, absolute_import,
 import sys, os, re
 from PySide import QtCore, QtGui, __version__ as pyside_version
 
-from ..lib.backwardcompat import *
-from ..lib.info import __pkgname__, __description__, __version__
-from ..lib.settings import Settings
-from ..lib.dump_html import html_val, html
+from .. import __pkgname__, __description__, __version__
+from ..core.backwardcompat import *
+from ..core.settings import Settings
+from ..core.dump_html import html_val, html
 
 from ..export import Proceed                # Модуль обработки
 

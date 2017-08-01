@@ -8,8 +8,8 @@ from __future__ import ( division, absolute_import,
 import os
 
 from .file import proceed_file
-from .lib.data_funcs import filter_match
-from .lib.models import Dir
+from .stuff.data_funcs import filter_match
+from .stuff.models import Dir
 
 from ...reg import set_object, reg_object1
 from ...reg.result import *

@@ -8,9 +8,9 @@ from __future__ import ( division, absolute_import,
 import logging
 from PySide import QtGui
 
-from ..lib.backwardcompat import *
-from ..lib.items import FileItem
-from ..lib.dump import plain_type
+from ..core.backwardcompat import *
+from ..core.items import FileItem
+from ..core.dump import plain_type
 from .result import reg_error, reg_exception
 
 

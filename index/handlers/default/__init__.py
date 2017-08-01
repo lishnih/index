@@ -13,8 +13,8 @@ from .file import proceed_file
 from ...reg.result import *
 
 
-# def prepare(files, profile):
-#     return None
+# def opening(files, profile, options=None):
+#     return
 
 
 def proceed(filename, runtime=None, ROOT=None, status=None):
@@ -24,7 +24,7 @@ def proceed(filename, runtime=None, ROOT=None, status=None):
 
     # Начинаем обработку
     if os.path.isdir(filename):
-        logging.info("Обработка директории '{0}'".format(filename))
+        logging.info(["Processing directory", filename])
 
         treeview = options.get('treeview', 'list')
         # Dir
@@ -35,7 +35,7 @@ def proceed(filename, runtime=None, ROOT=None, status=None):
             proceed_dir(filename, runtime, ROOT, status)
 
     elif os.path.isfile(filename):
-        logging.info("Обработка файла '{0}'".format(filename))
+        logging.info(["Processing file", filename])
 
         # Dir
         dirname = os.path.dirname(filename)
@@ -48,8 +48,8 @@ def proceed(filename, runtime=None, ROOT=None, status=None):
         proceed_file(filename, runtime, DIR, status)
 
     else:
-        logging.warning("Не найден файл/директория '{0}'!".format(filename))
+        logging.warning(["Directory/file not found", filename])
 
 
-# def ending(files, profile, runtime):
-#     return None
+# def closing(files, profile, runtime):
+#     return

@@ -7,7 +7,7 @@ from __future__ import ( division, absolute_import,
 
 import re
 
-from ..lib.backwardcompat import string_types
+from ..stuff.backwardcompat import string_types
 
 
 def prepare_str(_dict, item, remarks, *args, **kargs):

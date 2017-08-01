@@ -8,7 +8,7 @@ from __future__ import ( division, absolute_import,
 import sys, argparse, logging
 
 from index.export import main
-from index.lib.argparse_funcs import readable_file_or_dir_list, readable_file
+from index.core.argparse_funcs import readable_file_or_dir_list, readable_file
 
 
 if __name__ == '__main__':

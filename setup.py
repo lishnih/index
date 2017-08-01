@@ -24,7 +24,7 @@ except IOError:
     README = CHANGES = ''
 
 
-from index.lib.info import __pkgname__, __description__, __version__
+from index import __pkgname__, __description__, __version__
 
 
 if __name__ == '__main__':
@@ -60,13 +60,14 @@ if __name__ == '__main__':
             'Environment :: Console',
             'Environment :: Win32 (MS Windows)',
             'Environment :: X11 Applications :: Qt',
+            'Intended Audience :: Manufacturing',
             'License :: OSI Approved :: MIT License',
             'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)',
             'Natural Language :: Russian',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
             'Programming Language :: Python :: 2.7',
-            'Programming Language :: Python :: 3.3',
+            'Programming Language :: Python :: 3',
             'Topic :: Database',
             'Topic :: Utilities',
         ],

@@ -6,17 +6,17 @@ from __future__ import ( division, absolute_import,
                          print_function, unicode_literals )
 
 try:
-    from .lib.backwardcompat import *
-    from .lib.info import __pkgname__, __description__, __version__
-    from .lib.dump import plain
-    from .lib.settings import Settings
-    from .lib.tkprop import propertyDialog
+    from . import __pkgname__, __description__, __version__
+    from .core.backwardcompat import *
+    from .core.dump import plain
+    from .core.settings import Settings
+    from .core.tkprop import propertyDialog
 except:
-    from lib.backwardcompat import *
-    from lib.info import __pkgname__, __description__, __version__
-    from lib.dump import plain
-    from lib.settings import Settings
-    from lib.tkprop import propertyDialog
+    from __init__ import __pkgname__, __description__, __version__
+    from core.backwardcompat import *
+    from core.dump import plain
+    from core.settings import Settings
+    from core.tkprop import propertyDialog
 
 import sys, os, glob, importlib, logging
 
