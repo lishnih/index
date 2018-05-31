@@ -2,10 +2,12 @@
 # coding=utf-8
 # Stan 2013-09-15
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
-import sys, argparse, logging
+import sys
+import argparse
+import logging
 
 from index.export import main
 from index.core.argparse_funcs import readable_file_or_dir_list, readable_file

@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2007-08-02
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 import logging
 from inspect import ismethod

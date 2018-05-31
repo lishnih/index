@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2015-06-05
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 from PySide.QtCore import QObject, Signal, Slot
 

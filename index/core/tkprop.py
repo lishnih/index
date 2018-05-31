@@ -2,10 +2,13 @@
 # coding=utf-8
 # Stan 2013-05-09
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
-from .dump import *
+try:
+    from .dump import *
+except:
+    from dump import *
 
 
 class base_cls(object):
@@ -33,19 +36,18 @@ class base_cls(object):
         self.update_idletasks()
         self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
 
-
     def escape(self, value):
         if isinstance(value, string_types):
             value = value.replace('\\', '\\\\')
-        return value
 
+        return value
 
     def buildTree(self, obj, name='root', parent=''):
         item = self.tree.insert(parent, 'end')
 
         if obj is None:
             value = plain_type(obj), "None", item
-            self.tree.item(item, text=name, value=value, tags = ('none',))
+            self.tree.item(item, text=name, value=value, tags=('none',))
             return
 
         if isinstance(obj, simple_types):
@@ -54,7 +56,7 @@ class base_cls(object):
             return
 
         value = plain_type(obj), "", item
-        self.tree.item(item, text=name, value=value, tags = ('self.tree',))
+        self.tree.item(item, text=name, value=value, tags=('self.tree',))
         if not parent:
             self.tree.tag_configure('none', background="Gray")
             self.tree.tag_configure('self.tree', background="Lightgrey")

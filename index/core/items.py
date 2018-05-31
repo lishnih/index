@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2011-06-30
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 from PySide import QtCore, QtGui
 
@@ -19,10 +19,8 @@ class Item(QtGui.QTreeWidgetItem):
         self.setBrief(brief)
         self.setSummary(summary)
 
-
     def setBrief(self, brief=None):
         self.setData(0, QtCore.Qt.UserRole, brief)
-
 
     def appendBrief(self, brief, once=False):
         if brief:
@@ -36,20 +34,16 @@ class Item(QtGui.QTreeWidgetItem):
 
             self.setBrief(brief_list)
 
-
     def setSummary(self, summary=None):
         self.setData(1, QtCore.Qt.UserRole, summary)
-
 
     def setOk(self, message=None):
         self.appendBrief(message)
         self.setResult(0)
 
-
     def setWarning(self, message=None):
         self.appendBrief(message)
         self.setResult(-1)
-
 
     def setError(self, message=None):
         self.appendBrief(message)
@@ -64,13 +58,13 @@ class Item(QtGui.QTreeWidgetItem):
 #   -2 - error   во время обработки
 
     def setResult(self, res=None):
-        if res == None:
+        if res is None:
             return
 
-        if self.res == None or self.res > res:
+        if self.res is None or self.res > res:
             self.res = res
 
-            if   res ==  0:
+            if res == 0:
                 self.setForeground(0, QtGui.QBrush(QtCore.Qt.blue))
             elif res == -1:
                 self.setForeground(0, QtGui.QBrush(QtCore.Qt.darkYellow))
@@ -79,7 +73,6 @@ class Item(QtGui.QTreeWidgetItem):
 
             if isinstance(self.parent, Item):
                 self.parent.setResult(res)
-
 
     def set_style(self, style=''):
         if 'B' in style:
@@ -92,18 +85,15 @@ class Item(QtGui.QTreeWidgetItem):
         if 'E' in style:
             self.setExpanded(True)
 
-
     def set_bold(self):
         font = self.font(0)
         font.setBold(True)
         self.setFont(0, font)
 
-
     def set_italic(self):
         font = self.font(0)
         font.setItalic(True)
         self.setFont(0, font)
-
 
     def set_quiet(self):
         self.setForeground(0, QtGui.QBrush(QtCore.Qt.gray))

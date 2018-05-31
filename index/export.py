@@ -2,22 +2,22 @@
 # coding=utf-8
 # Stan 2012-03-12
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
-import sys, os, importlib, logging
+import sys
+import os
+import importlib
+import logging
+
 from PySide import QtCore
-import yaml
 
 from .core.backwardcompat import *
 from .reg import set_object
 from .reg.result import *
 
 
-def Proceed(files, profile=None, options=None, tree_widget=None, status=None):
-    if not profile:
-        profile = 'default'
-
+def Proceed(files, profile='default', options={}, tree_widget=None, status=None):
     brief = {
                 "Input files": files,
                 "Profile": profile,

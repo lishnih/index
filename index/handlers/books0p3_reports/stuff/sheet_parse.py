@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2012-09-01
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 import re
 
@@ -69,7 +69,7 @@ def proceed_marks(sh, marks_values, SHEET):
                 reg_error(SHEET, "Выражение не найдено: '{0}', зависимые ячейки не будут вычисляться!".format(needle))
 
         elif l == 3:
-            key, y, x = params
+            key, y, x = value_list
             if isinstance(x, string_types) and last_x != None:
                 x = last_x + int(x)
             if isinstance(y, string_types) and last_y != None:

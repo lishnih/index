@@ -2,8 +2,14 @@
 # coding=utf-8
 # Stan 2013-05-07
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
+
+import sys
+import os
+import glob
+import importlib
+import logging
 
 try:
     from . import __pkgname__, __description__, __version__
@@ -11,14 +17,13 @@ try:
     from .core.dump import plain
     from .core.settings import Settings
     from .core.tkprop import propertyDialog
+
 except:
     from __init__ import __pkgname__, __description__, __version__
     from core.backwardcompat import *
     from core.dump import plain
     from core.settings import Settings
     from core.tkprop import propertyDialog
-
-import sys, os, glob, importlib, logging
 
 
 def import_file(filename):
@@ -41,7 +46,7 @@ class AppUI(tk.Tk):
         tk.Tk.__init__(self)
         self.title("tkSettings")
 
-        ### Menu ###
+        # === Menu ===
 
         self.menubar = tk.Menu(self)
 
@@ -66,7 +71,7 @@ class AppUI(tk.Tk):
 
         self.config(menu=self.menubar)
 
-        ### Widgets ###
+        # === Widgets ===
 
         # Frame with Buttons
         self.frame1 = tk.Frame(self)
@@ -107,7 +112,7 @@ class AppUI(tk.Tk):
         label1 = tk.Label(self, textvariable=self.status, anchor=tk.W)
         self.setStatus()
 
-        ### Grid widgets ###
+        # === Grid widgets ===
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1, minsize=120)
@@ -121,7 +126,7 @@ class AppUI(tk.Tk):
         self.grid_rowconfigure(1)
         label1.grid(row=1, column=0, columnspan=4, sticky='nwes')
 
-        ### Initial ###
+        # === Initial ===
 
         self.onLoadDefault()
 
@@ -145,7 +150,7 @@ class AppUI(tk.Tk):
         self.appendText(self.s.get_dict())
         self.setStatus(self.s.get_filename())
 
-    ### From menu ###
+    # === From menu ===
 
     def onAbout(self):
         text = """{0}\n{1}\nVersion {2}\n
@@ -202,7 +207,7 @@ Package: {4}
             self.setText()
             self.setStatus()
 
-    ### From buttons ###
+    # === From buttons ===
 
     def onShowSettings(self, event):
         propertyDialog(self.s.get_dict())

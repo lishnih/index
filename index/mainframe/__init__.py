@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2011-06-22
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 import sys, os, re
 from PySide import QtCore, QtGui, __version__ as pyside_version
@@ -183,8 +183,8 @@ class MainFrame(QtGui.QMainWindow):
         column = 0
         table.insertRow(row)
         for j in t:
-            text = QtGui.QTableWidgetItem(unicode(j)) # QLineEdit, QPlainTextEdit
-            table.setItem(row, column, text)          # setCellWidget
+            text = QtGui.QTableWidgetItem(unicode(j))  # QLineEdit, QPlainTextEdit
+            table.setItem(row, column, text)           # setCellWidget
             column += 1
             if column >= table.columnCount():
                 break

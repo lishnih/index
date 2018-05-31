@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2012-04-08
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 import logging
 from PySide import QtGui

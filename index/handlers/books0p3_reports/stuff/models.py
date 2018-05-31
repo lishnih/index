@@ -2,8 +2,8 @@
 # coding=utf-8
 # Stan 2012-03-01
 
-from __future__ import ( division, absolute_import,
-                         print_function, unicode_literals )
+from __future__ import (division, absolute_import,
+                        print_function, unicode_literals)
 
 import sys, os
 from datetime import datetime
@@ -78,8 +78,8 @@ class Handler(Base, aStr):                      # rev. 20150608
     rev       = Column(Integer)                 # Ревизия
     hash      = Column(String)                  # Hash
     disabled  = Column(Integer)                 # Состояние
-    created   = Column(Integer, default=datetime.utcnow)  # Время создания
-    updated   = Column(Integer, onupdate=datetime.utcnow) # Время обновления
+    created   = Column(Integer, default=datetime.utcnow)   # Время создания
+    updated   = Column(Integer, onupdate=datetime.utcnow)  # Время обновления
     extras    = Column(PickleType)              # Параметры
 
 #   def __init__(self, **kargs):
