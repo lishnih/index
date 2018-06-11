@@ -4,4 +4,4 @@
 
 __pkgname__ = __name__
 __description__ = "Index System"
-__version__ = "0.3"
+__version__ = "0.4"
