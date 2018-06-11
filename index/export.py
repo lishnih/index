@@ -7,17 +7,18 @@ from __future__ import (division, absolute_import,
 
 import sys
 import os
-import importlib
 import logging
-
-from PySide import QtCore
+from importlib import import_module
 
 from .core.backwardcompat import *
 from .reg import set_object
 from .reg.result import *
 
 
-def Proceed(files, profile='default', options={}, tree_widget=None, status=None):
+def Proceed(files='', profile='', options={}, tree_widget=None, status=None):
+    files = files or options.get('files')
+    profile = profile or options.get('profile', 'default')
+
     brief = {
                 "Input files": files,
                 "Profile": profile,
@@ -32,7 +33,7 @@ def Proceed(files, profile='default', options={}, tree_widget=None, status=None)
     # Загружаем обработчик (handler)
     handler = __package__ + '.handlers.' + profile
     try:
-        handler_module = importlib.import_module(handler)
+        handler_module = import_module(handler)
     except Exception as e:
         reg_exception(ROOT, e)
         status.error = "Error in module '{0}'!".format(handler)

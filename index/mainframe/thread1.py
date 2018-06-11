@@ -18,7 +18,6 @@ class Thread(QtCore.QThread):
         self.timer = None
         self.message = ""
 
-
     def set_callback(self, update_func, ending_func, interval=1000):
         # Таймер
         self.timer = QtCore.QTimer(self)
@@ -26,7 +25,6 @@ class Thread(QtCore.QThread):
         self.ending_func = ending_func
         self.interval = interval
         self.timer.timeout.connect(self.update)
-
 
     def update(self):
         if self.isRunning():
@@ -38,7 +36,6 @@ class Thread(QtCore.QThread):
             if self.ending_func:
                 self.ending_func(self.secs, self.message)
 
-
     def start(self, func, *args, **kargs):
         if self.timer:
             self.secs = 0
@@ -48,7 +45,6 @@ class Thread(QtCore.QThread):
         self.args = args
         self.kargs = kargs
         super(Thread, self).start()
-
 
     def run(self):
         if self.func:

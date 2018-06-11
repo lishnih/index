@@ -17,16 +17,15 @@ from .process import proceed
 def reg_file(filename, runtime, DIR=None):
     basename = os.path.basename(filename)
     statinfo = os.stat(filename)
-    size  = statinfo.st_size
+    size = statinfo.st_size
     mtime = statinfo.st_mtime
 
-    file_dict = dict(
-        _dir = DIR,
-        name = basename,
-        mtime = mtime,
-        size = size,
-#       statinfo = statinfo,
-    )
+    file_dict = {
+        '_dir': DIR,
+        'name': basename,
+        'mtime': mtime,
+        'size': size,
+    }
 
     session = runtime.get('session')
     FILE = reg_object(session, File, file_dict, DIR)
@@ -36,7 +35,7 @@ def reg_file(filename, runtime, DIR=None):
 
 def proceed_file(filename, runtime, DIR=None, status=None):
     # Проверяем требование выйти
-    if status.break_required == True:
+    if status.break_required:
         return
 
     FILE = reg_file(filename, runtime, DIR)

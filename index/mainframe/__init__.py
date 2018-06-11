@@ -5,7 +5,10 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
-import sys, os, re
+import sys
+import os
+import re
+import logging
 from PySide import QtCore, QtGui, __version__ as pyside_version
 
 from .. import __pkgname__, __description__, __version__
@@ -54,9 +57,9 @@ class MainFrame(QtGui.QMainWindow):
 
         # Список вкладок
         self.tab_list = ('brief', 'tracing', 'profiles')
-        self.tab_dict = dict(
-            profiles = self.ui.table3,
-        )
+        self.tab_dict = {
+            'profiles': self.ui.table3,
+        }
 
         # Загружаем данные во вкладки
         self.loadTabsData()
@@ -84,14 +87,12 @@ class MainFrame(QtGui.QMainWindow):
         time_str = "{0:02}:{1:02}:{2:02}".format(hours, mins, secs)
         return time_str
 
-
     def update_func(self, msecs):
         time_str = self.convert_time(msecs)
 
         status_text = "Processing '{0}' ...   |   {1}   |   Dirs: {2}, Files: {3} ({4})".format(status.message, time_str, status.dir, status.file, status.last_dir)
 
         self.ui.statusbar.showMessage(status_text)
-
 
     def ending_func(self, msecs, message=None):
         time_str = self.convert_time(msecs)
@@ -129,13 +130,11 @@ class MainFrame(QtGui.QMainWindow):
         self.profiles_names = self.loadTableData('profiles', self.tab_dict['profiles'])
         self.setAllComboDatas(self.tab_dict['profiles'], self.profiles_names)
 
-
     def setAllComboDatas(self, table, profiles_names):
         for i in range(table.rowCount()):
             self.setComboData(table, i, 1, profiles_names)
 
         table.resizeColumnsToContents()
-
 
     def setComboData(self, table, i, j, names):
         l = names[:]
@@ -164,10 +163,9 @@ class MainFrame(QtGui.QMainWindow):
 
         table.setCellWidget(i, j, box)
 
-
     def loadTableData(self, branch, table):
         row_list = self.s.get(branch, [])
-#         print(row_list)
+#       logging.info(row_list)
         names = []
         row = 0
         for i in row_list:
@@ -177,7 +175,6 @@ class MainFrame(QtGui.QMainWindow):
         table.resizeColumnsToContents()
 #       table.resizeRowsToContents()
         return names
-
 
     def insertRowTableData(self, table, row, t):
         column = 0
@@ -199,7 +196,6 @@ class MainFrame(QtGui.QMainWindow):
         else:
             event.ignore()
 
-
     # Событие, возникающее при передвижении объекта
 #   dragMoveEvent = dragEnterEvent
 
@@ -209,7 +205,6 @@ class MainFrame(QtGui.QMainWindow):
 #           event.accept()
 #       else:
 #           event.ignore()
-
 
     # Событие, возникающее при отпускании объекта
     def dropEvent(self, event):
@@ -226,7 +221,6 @@ class MainFrame(QtGui.QMainWindow):
         else:
             event.ignore()
 
-
     def filesDropped(self, files):
         if self.tab_list[self.ui.tabs.currentIndex()] == 'profiles':
             for i in files:
@@ -237,10 +231,9 @@ class MainFrame(QtGui.QMainWindow):
 
 # Context menu events
 
-
     def OnProfilesProceed(self):
         if th.isRunning():
-            print("running...")
+            logging.info("running...")
             return
 
         profiles = self.tab_dict['profiles']
@@ -249,18 +242,17 @@ class MainFrame(QtGui.QMainWindow):
 
         # Запускаем обработку
         self.ui.tree.clear()
-        th.start(Proceed, profile, profile, options, tree_widget=self.ui.tree, status=status)    # !!!
-
+        th.start(Proceed, files, profile, options, tree_widget=self.ui.tree, status=status)    # !!!
 
     def OnProfilesDelete(self):
-        print(self.current_row)
+        logging.info(self.current_row)
 
 
 # Events
 
     def OnTaskDir(self):
         if th.isRunning():
-            print("running...")
+            logging.info("running...")
             return
 
         # Предлагаем выбрать пользователю директорию
@@ -276,10 +268,9 @@ class MainFrame(QtGui.QMainWindow):
             self.ui.tree.clear()
             th.start(Proceed, selected_dir, None, None, tree_widget=self.ui.tree, status=status)
 
-
     def OnTaskFile(self):
         if th.isRunning():
-            print("running...")
+            logging.info("running...")
             return
 
         # Предлагаем выбрать пользователю файл
@@ -293,14 +284,12 @@ class MainFrame(QtGui.QMainWindow):
             self.ui.tree.clear()
             th.start(Proceed, selected_file, None, None, tree_widget=self.ui.tree)
 
-
     def OnClose(self):
         if th.isRunning():
-            print("running...")
+            logging.info("running...")
             return
 
         self.ui.tree.clear()
-
 
     def OnSaveMenu(self, action):
         branch = action.data()      # settings branch name
@@ -310,11 +299,9 @@ class MainFrame(QtGui.QMainWindow):
             for i in self.tab_dict.keys():
                 self.save_table_data(i)
 
-
     def OnOpenFolder(self):
         path = self.s.expand_prefix('~~~')
         os.startfile(path)
-
 
     def OnTreeItemSelected(self, item, prev=None):
         if not item:
@@ -330,7 +317,7 @@ class MainFrame(QtGui.QMainWindow):
   {1}
 </body>
 </html>"""
-        it = 1
+        it = 1  # Кол-во итераций
 
         text1 = item.data(0, QtCore.Qt.UserRole)
         if text1 is not None:
@@ -348,16 +335,13 @@ class MainFrame(QtGui.QMainWindow):
             text2 = tmpl.format(obj_name, obj_dump)
         self.ui.text2.setHtml(text2)
 
-
     def OnToolBoxChanged(self, current):
         if current == 1:
             self.ui.conf_tree.clear()
 #           view_conf(self.ui.conf_tree, self.s)
 
-
     def OnTabChanged(self, current):
         pass
-
 
     def OnTableItemRightClick(self, pos):
         profiles = self.tab_dict['profiles']
@@ -366,9 +350,8 @@ class MainFrame(QtGui.QMainWindow):
 #       self.ProfilesCMenu.exec_(QtGui.QCursor.pos())
         self.ProfilesCMenu.popup(QtGui.QCursor.pos())
 
-
     def OnAbout(self):
-        msg  = "{0}\n".format(__description__)
+        msg = "{0}\n".format(__description__)
         msg += "Version: {0}\n\n".format(__version__)
 
         msg += "Author: Stan <lishnih@gmail.com>\n"
@@ -379,10 +362,8 @@ class MainFrame(QtGui.QMainWindow):
         msg += "Qt: {0}\n".format(QtCore.__version__)
         QtGui.QMessageBox.about(None, "About", msg)
 
-
     def OnAbout_Qt(self):
         QtGui.QApplication.aboutQt()
-
 
     def closeEvent(self, event):
         if th.isRunning():
@@ -400,14 +381,12 @@ class MainFrame(QtGui.QMainWindow):
 
 # Сервисные функции
 
-
     def save_table_data(self, branch):      # settings branch name
         self.s.set(branch, [])
         table = self.tab_dict[branch]       # is QTableWidget
         for i in range(table.rowCount()):
             t = self.get_row_data(table, i)
             self.s.append(branch, t)
-
 
     def get_row_data(self, table, row):
         l = []
@@ -429,8 +408,5 @@ class MainFrame(QtGui.QMainWindow):
                     l.append(None)
         return tuple(l)
 
-
     def proceed_args(self, files=None, profile=None, options=None):
-        if files:
-            # Запускаем обработку
-            th.start(Proceed, files, profile, options, tree_widget=self.ui.tree, status=status)
+        th.start(Proceed, files, profile, options, tree_widget=self.ui.tree, status=status)

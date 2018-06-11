@@ -5,6 +5,8 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
+import logging
+
 from PySide.QtCore import QObject, Signal, Slot
 
 
@@ -26,7 +28,6 @@ class Status(QObject):
         self.message = text
         self.error = ''
 
-
     @property
     def message(self):
         return self._message
@@ -42,7 +43,6 @@ class Status(QObject):
                 message = "{0} и др. значения".format(message[0])
         self._message = message
 
-
     @property
     def dir(self):
         return self.ndirs
@@ -52,7 +52,6 @@ class Status(QObject):
         self.last_dir = filename
         self.ndirs += 1
 
-
     @property
     def file(self):
         return self.nfiles
@@ -60,7 +59,6 @@ class Status(QObject):
     @file.setter
     def file(self, filename):
         self.nfiles += 1
-
 
     @property
     def stop(self):
@@ -71,10 +69,9 @@ class Status(QObject):
         self.finished.emit()
 
 
-
 @Slot()
 def onFinished():
-    print('Processing finished')
+    logging.info('Processing finished')
 
 
 status = Status()

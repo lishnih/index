@@ -28,7 +28,7 @@ def reg_object(session, Object, object_dict, PARENT=None, style='', brief=None, 
         session.add(OBJECT)
 
         # Графика
-        if style != None:
+        if style is not None:
             tree_item = show_object(OBJECT, PARENT, style=style, brief=brief)
             if tree_item:
                 OBJECT._dict = object_dict
@@ -52,7 +52,7 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
         OBJECT = None
 
         if keys:
-            object_find = dict()
+            object_find = {}
             for i in keys:
                 if isinstance(i, string_types):
                     object_find[i] = object_dict[i]
@@ -60,7 +60,7 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
                     i1, i2 = i
                     object_find[i1] = object_dict[i2]
         else:
-            object_find = dict((key, value) for key, value in object_dict.items() if hasattr(Object, key))
+            object_find = {key: value for key, value in object_dict.items() if hasattr(Object, key)}
 
         try:
             rows = session.query(Object).filter_by(**object_find).all()
@@ -82,7 +82,7 @@ def reg_object1(session, Object, object_dict, PARENT=None, style='', brief=None,
             session.add(OBJECT)
 
         # Графика
-        if style != None:
+        if style is not None:
             tree_item = show_object(OBJECT, PARENT, style=style, brief=brief)
             if tree_item:
                 OBJECT._dict = object_dict

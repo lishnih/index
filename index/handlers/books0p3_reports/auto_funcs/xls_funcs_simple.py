@@ -20,7 +20,7 @@ def prepare_str(_dict, item, remarks, *args, **kargs):
 def proceed_int(_dict, item, remarks, *args, **kargs):
     val = _dict.get(item)
 
-    if val == None:
+    if val is None:
         return
     elif val == '' or val == '-' or val == '---':
         _dict[item] = 0
@@ -35,7 +35,7 @@ def proceed_int(_dict, item, remarks, *args, **kargs):
 def proceed_int_str(_dict, item, remarks, *args, **kargs):
     val = _dict.get(item)
 
-    if val == None:
+    if val is None:
         return
     elif val == '' or val == '-' or val == '---':
         _dict[item] = 0
@@ -51,7 +51,7 @@ def proceed_int_str(_dict, item, remarks, *args, **kargs):
 def proceed_float(_dict, item, remarks, *args, **kargs):
     val = _dict.get(item)
 
-    if val == None:
+    if val is None:
         return
     elif val == '' or val == '-' or val == '---':
         _dict[item] = 0

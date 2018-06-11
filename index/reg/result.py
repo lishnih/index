@@ -5,7 +5,8 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
-import logging, traceback
+import logging
+import traceback
 
 
 def reg_debug(OBJ, msg=None):
@@ -60,8 +61,10 @@ def reg_exception(OBJ, e, *args, **kargs):
 args: {1!r}
 kargs: {2!r}
 ===\n""".format(e, args, kargs)
-    try:    msg += tb_msg
-    except: msg += repr(tb_msg)
+    try:
+        msg += tb_msg
+    except:
+        msg += repr(tb_msg)
     msg += ")))))))\n"
 
     if OBJ and hasattr(OBJ, 'tree_item'):
@@ -79,13 +82,16 @@ def set_italic(OBJ):
     if OBJ and hasattr(OBJ, 'tree_item'):
         OBJ.tree_item.set_italic()
 
+
 def set_selected(OBJ):
     if OBJ and hasattr(OBJ, 'tree_item'):
         OBJ.tree_item.setSelected(True)
 
+
 def set_expanded(OBJ):
     if OBJ and hasattr(OBJ, 'tree_item'):
         OBJ.tree_item.setExpanded(True)
+
 
 def set_quiet(OBJ):
     if OBJ and hasattr(OBJ, 'tree_item'):

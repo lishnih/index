@@ -5,14 +5,13 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
-import sys, os
+import sys
+import os
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, Float, String, DateTime, PickleType, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref, relationship
-
-from .backwardcompat import *
 
 
 Base = declarative_base()
@@ -40,7 +39,7 @@ class Dir(Base, aStr):                          # rev. 20150711
 #   status    = Column(Integer)                 # Состояние
 
 #   def __init__(self, **kargs):
-#       kargs_reg = dict((key, value) for key, value in kargs.items() if hasattr(self, key))
+#       kargs_reg = {key: value for key, value in kargs.items() if hasattr(self, key)}
 #       Base.__init__(self, **kargs_reg)
 
     def __unicode__(self):
@@ -61,7 +60,7 @@ class File(Base, aStr):                         # rev. 20150711
 #   status    = Column(Integer)                 # Состояние
 
 #   def __init__(self, **kargs):
-#       kargs_reg = dict((key, value) for key, value in kargs.items() if hasattr(self, key))
+#       kargs_reg = {key: value for key, value in kargs.items() if hasattr(self, key)}
 #       Base.__init__(self, **kargs_reg)
 
     def __unicode__(self):
@@ -83,7 +82,7 @@ class Sheet(Base, aStr):                        # rev. 20160424
     visible   = Column(Integer)                 # Видимость листа
 
 #   def __init__(self, **kargs):
-#       kargs_reg = dict((key, value) for key, value in kargs.items() if hasattr(self, key))
+#       kargs_reg = {key: value for key, value in kargs.items() if hasattr(self, key)}
 #       Base.__init__(self, **kargs_reg)
 
     def __unicode__(self):

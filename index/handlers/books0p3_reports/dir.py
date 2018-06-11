@@ -26,7 +26,7 @@ def reg_dir(dirname, runtime, ROOT=None):
 
 def proceed_dir(dirname, runtime, ROOT=None, status=None):
     # Проверяем требование выйти
-    if status.break_required == True:
+    if status.break_required:
         return
 
     options = runtime.get('options', {})
@@ -34,37 +34,29 @@ def proceed_dir(dirname, runtime, ROOT=None, status=None):
     files_filter = options.get('files_filter')
 
     for dirname, dirs, files in os.walk(dirname):
-        if os.path.isdir(dirname):
-            # Dir
-            DIR = reg_dir(dirname, runtime, ROOT)
-            status.dir = dirname
+        # Dir
+        DIR = reg_dir(dirname, runtime, ROOT)
+        status.dir = dirname
 
-            set_expanded(DIR)
+        set_expanded(DIR)
 
-            basename = os.path.basename(dirname)
-            significant = filter_match(basename, dirs_filter)
-            DIR.significant = significant
+        basename = os.path.basename(dirname)
+        significant = filter_match(basename, dirs_filter)
+        DIR.significant = significant
 
-            for basename in files:
-                filename = os.path.join(dirname, basename)
-                if os.path.isfile(filename):
-                    if significant and filter_match(basename, files_filter):
-                        # File
-                        proceed_file(filename, runtime, DIR, status)
+        for basename in files:
+            filename = os.path.join(dirname, basename)
+            if significant and filter_match(basename, files_filter):
+                # File
+                proceed_file(filename, runtime, DIR, status)
 
-                    else:
-                        set_object(basename, DIR, style='D', brief="Файл не обрабатывается!")
-
-                else:
-                    set_object(basename, DIR, style='D', brief="Файл не найден!")
-
-        else:
-            set_object(dirname, ROOT, style='D', brief="Директория не найдена!")
+            else:
+                set_object(basename, DIR, style='D', brief="Файл не обрабатывается!")
 
 
 def proceed_dir_tree(dirname, runtime, ROOT=None, status=None):
     # Проверяем требование выйти
-    if status.break_required == True:
+    if status.break_required:
         return
 
     options = runtime.get('options', {})
@@ -102,8 +94,5 @@ def proceed_dir_tree(dirname, runtime, ROOT=None, status=None):
 
             else:
                 set_object(basename, DIR, style='D', brief="Файл не обрабатывается!")
-
-        else:
-            set_object(basename, DIR, style='D', brief="Файл не найден!")
 
     return DIR

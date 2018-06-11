@@ -5,7 +5,10 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
-import os, glob, importlib, logging
+import os
+import glob
+import importlib
+import logging
 
 
 modulesnames = []
@@ -18,7 +21,7 @@ for filename in glob.glob(os.path.join(modulepath, '*.py')):
         modulesnames.append(root)
 
 
-functions = dict()
+functions = {}
 
 for i in modulesnames:
     module = importlib.import_module('.' + i, __name__)

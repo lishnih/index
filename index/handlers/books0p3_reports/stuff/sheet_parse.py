@@ -27,7 +27,7 @@ def e_func(func_name, e, *args, **kargs):
 def proceed_marks(sh, marks_values, SHEET):
     MARKS = set_object("Marks", SHEET)
 
-    marks_dict = dict()
+    marks_dict = {}
     test = ""
 
     last_y, last_x = None, None
@@ -70,9 +70,9 @@ def proceed_marks(sh, marks_values, SHEET):
 
         elif l == 3:
             key, y, x = value_list
-            if isinstance(x, string_types) and last_x != None:
+            if isinstance(x, string_types) and last_x is not None:
                 x = last_x + int(x)
-            if isinstance(y, string_types) and last_y != None:
+            if isinstance(y, string_types) and last_y is not None:
                 y = last_y + int(y)
 
             if isinstance(x, int) and isinstance(y, int):
@@ -157,12 +157,12 @@ def parse_doc(sh, doc_options, session, models, marks_dict, SHEET):
     # Values
     for value_list in doc_values:
         key, ref_key = value_list
-        d = dict([(key+i, marks_dict[ref_key+i]) \
-            for i in ['','_list','_x','_y'] if ref_key+i in marks_dict])
+        d = dict([(key+i, marks_dict[ref_key+i])
+            for i in ['', '_list', '_x', '_y'] if ref_key+i in marks_dict])
         doc_dict.update(d)
 
     # Funcs
-    remarks = dict()
+    remarks = {}
     for func_list in doc_funcs:
         key = func_list[0]
         func_list = func_list[1:]
@@ -266,7 +266,6 @@ def parse_table_iter(sh, options, session, models, marks_dict, SHEET):
 
     typical_index = col_index1 or col_index2
 
-
     if isinstance(row_start, string_types):
         row_start = marks_dict[row_start+'_y']
 
@@ -287,9 +286,8 @@ def parse_table_iter(sh, options, session, models, marks_dict, SHEET):
     row_stop -= row_stop_skip
     TABLE.row_stop = row_stop
 
-
     for j in range(row_start, row_stop):
-        row_dict = dict()
+        row_dict = {}
         typical_column = get_value(sh, j, typical_index) if typical_index else True
         if typical_column:
             test = "Номер строки: {0}\n".format(j)
@@ -329,7 +327,7 @@ def parse_table_iter(sh, options, session, models, marks_dict, SHEET):
                 raise Exception("Undefined column mode: {0}".format(col_mode))
 
             # Funcs
-            remarks = dict()
+            remarks = {}
             for func_list in col_funcs:
                 key = func_list[0]
                 func_list = func_list[1:]

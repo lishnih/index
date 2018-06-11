@@ -5,7 +5,8 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
-import os, logging
+import os
+import logging
 
 from .dir import proceed_dir, proceed_dir_tree, reg_dir
 from .file import proceed_file
@@ -19,7 +20,7 @@ from ...reg.result import *
 
 def proceed(filename, runtime=None, ROOT=None, status=None):
     if not runtime:
-        runtime = dict()
+        runtime = {}
     options = runtime.get('options', {})
 
     # Начинаем обработку

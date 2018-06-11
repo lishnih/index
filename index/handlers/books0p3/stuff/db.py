@@ -5,13 +5,16 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
-import os, shutil, logging
+import os
+import shutil
+import logging
+
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker, attributes
 
 
-foreign_keys = dict()
-foreign_keys_c = dict()
+foreign_keys = {}
+foreign_keys_c = {}
 
 
 def initDb(config=None, session=None, base=None):
@@ -40,7 +43,7 @@ def initDb(config=None, session=None, base=None):
 
 def getDbUri(config=None):
     if not config:
-        config = dict()
+        config = {}
 
     db_uri = config.get("db_uri")
     if not db_uri:
@@ -122,8 +125,8 @@ def initlinks(Base):
                                 primary_tablename = primary_c.table.name
                                 foreign_tablename = foreign_c.table.name
                                 if foreign_tablename not in foreign_keys:
-                                    foreign_keys[foreign_tablename] = dict()
-                                    foreign_keys_c[model] = dict()
+                                    foreign_keys[foreign_tablename] = {}
+                                    foreign_keys_c[model] = {}
                                 foreign_keys[foreign_tablename][primary_tablename] = i
                                 foreign_keys_c[model][primary_tablename] = i
 
@@ -154,21 +157,20 @@ def link_objects(*args):
         im += 1
 
 
-
 def main():
     from models import Base
 
-    dbconfig = dict(db_uri = "sqlite://")
+    dbconfig = {'db_uri': "sqlite://"}
     initDb(dbconfig, base=Base)
     foreign_keys, foreign_keys_c = initlinks(Base)
 
-    print("foreign_keys:")
+    logging.info("foreign_keys:")
     for key, value in foreign_keys.items():
-        print(key, value)
+        logging.info(key, value)
 
-    print("foreign_keys_c:")
+    logging.info("foreign_keys_c:")
     for key, value in foreign_keys_c.items():
-        print(key, value)
+        logging.info(key, value)
 
 
 if __name__ == '__main__':

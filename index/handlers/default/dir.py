@@ -21,33 +21,25 @@ def reg_dir(dirname, runtime, ROOT=None):
 
 def proceed_dir(dirname, runtime, ROOT=None, status=None):
     # Проверяем требование выйти
-    if status.break_required == True:
+    if status.break_required:
         return
 
     for dirname, dirs, files in os.walk(dirname):
-        if os.path.isdir(dirname):
-            # Dir
-            DIR = reg_dir(dirname, runtime, ROOT)
-            status.dir = dirname
+        # Dir
+        DIR = reg_dir(dirname, runtime, ROOT)
+        status.dir = dirname
 
-            set_expanded(DIR)
+        set_expanded(DIR)
 
-            for basename in files:
-                filename = os.path.join(dirname, basename)
-                if os.path.isfile(filename):
-                    # File
-                    proceed_file(filename, runtime, DIR, status)
-
-                else:
-                    set_object(basename, DIR, style='D', brief="Файл не найден!")
-
-        else:
-            set_object(dirname, ROOT, style='D', brief="Директория не найдена!")
+        for basename in files:
+            # File
+            filename = os.path.join(dirname, basename)
+            proceed_file(filename, runtime, DIR, status)
 
 
 def proceed_dir_tree(dirname, runtime, ROOT=None, status=None):
     # Проверяем требование выйти
-    if status.break_required == True:
+    if status.break_required:
         return
 
     # Dir
@@ -71,9 +63,7 @@ def proceed_dir_tree(dirname, runtime, ROOT=None, status=None):
     for basename in sorted(ldir):
         filename = os.path.join(dirname, basename)
         if os.path.isfile(filename):
+            # File
             proceed_file(filename, runtime, DIR, status)
-
-        else:
-            set_object(basename, DIR, style='D', brief="Файл не найден!")
 
     return DIR

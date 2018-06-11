@@ -6,6 +6,7 @@ from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
 import logging
+
 from sqlalchemy import MetaData
 
 from ...reg import reg_object1
@@ -28,15 +29,15 @@ def insert_dict(names, bind_dict):
 
 
 def reg_sheet(sh, runtime, i, FILE=None):
-    sheet_dict = dict(
-        _file   = FILE,
-#       _fileprocessing = FILE,
-        name    = sh.name,
-        seq     = i,
-        ncols   = sh.ncols,
-        nrows   = sh.nrows,
-        visible = sh.visibility,
-    )
+    sheet_dict = {
+        '_file': FILE,
+#       '_fileprocessing': FILE,
+        'name': sh.name,
+        'seq': i,
+        'ncols': sh.ncols,
+        'nrows': sh.nrows,
+        'visible': sh.visibility,
+    }
 
     session = runtime.get('session')
     if session:
@@ -78,7 +79,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
     w = len(str(ncols))
 
     # Выбираем названия колонок, если указана соответствующая строка
-    if names_row != None and sh.nrows > names_row:
+    if names_row is not None and sh.nrows > names_row:
         for i in range(min(ncols, sh.ncols)):
 #           colname = sh.cell(names_row, i).value
             colname = get_value(sh, names_row, i)
@@ -151,7 +152,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
         qmarks = ['?' for j in range(tablecols)]
         sql = 'INSERT INTO "{0}" VALUES ({1});'.format(tablename, ','.join(qmarks))
         for i in range(start_from, sh.nrows):
-            needful = get_value(sh, i, col_index) if not col_index is None else True
+            needful = get_value(sh, i, col_index) if col_index is not None else True
             if needful:
                 sh_values = sh.row_values(i, 0, ncols)
 
@@ -171,7 +172,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
 
                 bind_params = [FILE._dir.name, FILE.name, SHEET.name, SHEET.id, i] + bind_params
 
-                try:                
+                try:
                     session.bind.execute(sql, bind_params)
                     reg_ok(SHEET)
                 except Exception as e:

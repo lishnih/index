@@ -126,7 +126,7 @@ class SettingsGroup(object):
             self.system.flush()
 
     def clean(self):
-        self.settings = dict()
+        self.settings = {}
         self.system.flush()
 
     def parse(self, value):

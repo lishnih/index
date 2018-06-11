@@ -5,7 +5,11 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
-import re, time, calendar, logging
+import re
+import time
+import calendar
+import logging
+
 import xlrd
 
 from .backwardcompat import *

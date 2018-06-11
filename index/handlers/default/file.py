@@ -16,13 +16,13 @@ def reg_file(filename, runtime, DIR=None):
     size  = statinfo.st_size
     mtime = statinfo.st_mtime
 
-    file_dict = dict(
-        _dir = DIR,
-        name = basename,
-        mtime = mtime,
-        size = size,
-        statinfo = statinfo,
-    )
+    file_dict = {
+        '_dir': DIR,
+        'name': basename,
+        'mtime': mtime,
+        'size': size,
+        'statinfo': statinfo,
+    }
 
     FILE = set_object(file_dict, DIR)
 
@@ -31,7 +31,7 @@ def reg_file(filename, runtime, DIR=None):
 
 def proceed_file(filename, runtime, DIR=None, status=None):
     # Проверяем требование выйти
-    if status.break_required == True:
+    if status.break_required:
         return
 
     FILE = reg_file(filename, runtime, DIR)

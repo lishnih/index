@@ -5,13 +5,14 @@
 from __future__ import (division, absolute_import,
                         print_function, unicode_literals)
 
-import re, logging
+import re
+import logging
 
 from .backwardcompat import *
 
 
 def get_list(val):
-    if val == None:
+    if val is None:
         return []
     elif isinstance(val, (list, tuple)):
         return val
@@ -39,7 +40,7 @@ def get_str_sequence(sequence_str):
 
 
 def get_int_sequence(sequence_str, from_list=None):
-    from_len = None if from_list == None else len(from_list)
+    from_len = None if from_list is None else len(from_list)
 
     int_sequence = []
     str_sequence = get_str_sequence(sequence_str)
@@ -68,12 +69,12 @@ def get_int_sequence(sequence_str, from_list=None):
                     step  = int(step)     if step  else 1
 
                     if stop <= 0:
-                        if from_len == None:
+                        if from_len is None:
                             raise ValueError("Impossible to calculate the count of array! Array is not defined!")
                         stop = from_len - stop - 1
 
             if res:
-                if stop == None:
+                if stop is None:
                     raise ValueError("Impossible to calculate the count of array! Array is not defined!")
 
                 for i in range(start, stop, step):
@@ -89,7 +90,7 @@ def get_int_sequence(sequence_str, from_list=None):
 
 
 def filter_match(name, filter, index=None):
-    if filter == None:
+    if filter is None:
         return True
 
     elif isinstance(filter, string_types):
@@ -100,7 +101,7 @@ def filter_match(name, filter, index=None):
             filter = res.group(1)
             index_list = get_int_sequence(filter)
 
-            if index == None:
+            if index is None:
                 assert None, 'index required!'
                 return False
 

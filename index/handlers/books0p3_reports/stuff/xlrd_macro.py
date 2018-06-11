@@ -47,13 +47,13 @@ def contain_regexp(sh, row, col, seaching_regexp):
 # Возращает [row, col] если нашёл и None в противном случае
 # sh - лист; seaching_regexp - регулярное выражение для поиска
 def search_regexp(sh, seaching_regexp, y1=None, x1=None, y2=None, x2=None):
-    if x1 == None:
+    if x1 is None:
         x1 = 0
-    if x2 == None:
+    if x2 is None:
         x2 = sh.ncols
-    if y1 == None:
+    if y1 is None:
         y1 = 0
-    if y2 == None:
+    if y2 is None:
         y2 = sh.nrows
 
     for i in range(x1, x2):

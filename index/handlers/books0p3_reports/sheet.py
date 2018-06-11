@@ -17,15 +17,15 @@ from .stuff import models
 
 
 def reg_sheet(sh, runtime, i, FILE=None):
-    sheet_dict = dict(
-        _file   = FILE,
-#       _fileprocessing = FILE,
-        name    = sh.name,
-        seq     = i,
-        ncols   = sh.ncols,
-        nrows   = sh.nrows,
-        visible = sh.visibility,
-    )
+    sheet_dict = {
+        '_file': FILE,
+#       '_fileprocessing': FILE,
+        'name': sh.name,
+        'seq': i,
+        'ncols': sh.ncols,
+        'nrows': sh.nrows,
+        'visible': sh.visibility,
+    }
 
     session = runtime.get('session')
     if session:
@@ -43,6 +43,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
 
     groups = []
     sheet_test = options.get('sheet_test')
+    SHEET.sheet_test = sheet_test
     if sheet_test:
         if isinstance(sheet_test, string_types):
             yx = search_regexp(sh, sheet_test)
@@ -61,7 +62,8 @@ def proceed_sheet(sh, runtime, i, FILE=None):
                 test_cell = get_str(sh, row, col)
                 SHEET.test_cell = test_cell
                 groups = [test_cell]
-                SHEET.test_groups = groups
+                if test_cell:
+                    SHEET.test_groups = groups
             elif l == 3:
                 row, col, test_pattern = sheet_test
                 test_cell = get_str(sh, row, col)
@@ -106,7 +108,7 @@ def proceed_sheet(sh, runtime, i, FILE=None):
             reg_warning(SHEET, "Проверьте значение по умолчанию: '{0!r}'".format(default_group))
             return
 
-    marks = dict()
+    marks = {}
     if 'marks' in group_options:
         marks_values = group_options['marks']
         set_object("> Marks (options)", SHEET, brief=marks_values)
